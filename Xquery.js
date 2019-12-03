@@ -243,6 +243,62 @@
                 console.log("** An error occurred during the transaction");
             };
         };
+
+        _X.XDraggable = function(options) {
+            var defaults = {
+                item: '',
+                dragArea: '',
+                mouse: '',
+            };
+            var settings = _X.XJoinObj(defaults, options);
+            var that = _X(settings.item);
+            var e = settings.mouse;
+            //positioning container that dont have full screen width
+            function WidthPosition() {
+                if (areaL == '0') {
+                    return areaW;
+                } else if (areaL > 0) {
+                    return areaW + areaL;
+                }
+            }
+            if ( (e.which === 1) ) {
+                var left = that.Xleft('offset');
+                var top = that.Xtop('offset');
+                var area = _X(settings.dragArea);
+                var areaL = area.Xleft('offset');
+                var areaT = area.Xtop('offset');
+                var areaW = area.Xwidth('offset');
+                var areaH = area.Xheight('offset');
+                var mousemove = function(e) {
+                    that.XaddClass('ui-state-disabled')
+                        .Xcss({position: 'absolute'});
+                    if ( (e.pageX > areaL) & (e.pageY > areaT) & (e.pageX < WidthPosition()) & (e.pageY < areaH) ) {
+                        that.Xcss({
+                            left: left + (e.pageX - MOUSE.XD) + 'px',
+                            top: top + (e.pageY - MOUSE.YD) + 'px',
+                        });
+                    // Constraints on Y Axis
+                    } else if ( (e.pageX <= areaL) & (e.pageY > areaT) & (e.pageY < areaH) || (e.pageX >= WidthPosition()) & (e.pageY > areaT) & (e.pageY < areaH) ) {
+                        that.Xcss({
+                            top: top + (e.pageY - MOUSE.YD) + 'px',
+                        });
+                    // Constraints on X Axis
+                    } else if ( (e.pageY <= areaT) & (e.pageX > areaL) & (e.pageX < WidthPosition()) || (e.pageY >= areaH) & (e.pageX > areaL) & (e.pageX < WidthPosition()) ) {
+                        that.Xcss({
+                            left: left + (e.pageX - MOUSE.XD) + 'px',
+                        });
+                    } else {}
+                };
+                var mouseup = function() {
+                    _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
+                    that.XremoveClass('ui-state-disabled');
+                };
+                _X(window).Xon({
+                    mousemove: mousemove,
+                    mouseup: mouseup
+                });
+            } else {}
+        };
         
         _X.Xradians = function(degrees) {
             return degrees * Math.PI / 180;
@@ -252,7 +308,7 @@
             return radians * 180 / Math.PI;
         };
         
-        _X.fn = _X.prototype = {
+        _X.prototype = {
             name:           'Xquery JavaScript Library',
             author:         'Adrian & Open Source',
             created:        '17-10-2019',
@@ -532,28 +588,17 @@
                 }
             },
             
-            XhasClass: function(selector) {
+            //_X(?).XhasClass('?, ?') => return TRUE / FALSE on class check
+            XhasClass: function(e) {
             	var elem;
                 var i = 0;
-                var s = selector.replace(/\s/g, '').split(',');
+                var s = e.replace(/\s/g, '').split(',');
             	while ( ( elem = this[ i++ ] ) ) {
             		if ( elem.nodeType === 1 && ( " " + elem.getAttribute("class") + " " ).indexOf( " " + s.join(' ') + " " ) > -1 ) {
             			return true;
             		}
             	}
             	return false;
-                /*selector has multiple values and is egal in what order are
-                } else {
-                	while ( (elem = this[ i++ ]) ) {
-                        for (var k = 0; k < s.length; k++) {
-                    		if ( elem.nodeType === 1 && (" " + elem.getAttribute("class") + " ").indexOf(" " + s[k] + " ") > -1 ) {
-                    		} else {
-                    		    x[0] = false;
-                    		}
-                        }
-                	}
-                	return x[0];
-                }*/
             },
 
             // type => parent || parent with element
