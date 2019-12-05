@@ -243,62 +243,6 @@
                 console.log("** An error occurred during the transaction");
             };
         };
-
-        _X.XDraggable = function(options) {
-            var defaults = {
-                item: '',
-                dragArea: '',
-                mouse: '',
-            };
-            var settings = _X.XJoinObj(defaults, options);
-            var that = _X(settings.item);
-            var e = settings.mouse;
-            //positioning container that dont have full screen width
-            function WidthPosition() {
-                if (areaL == '0') {
-                    return areaW;
-                } else if (areaL > 0) {
-                    return areaW + areaL;
-                }
-            }
-            if ( (e.which === 1) ) {
-                var left = that.Xleft('offset');
-                var top = that.Xtop('offset');
-                var area = _X(settings.dragArea);
-                var areaL = area.Xleft('offset');
-                var areaT = area.Xtop('offset');
-                var areaW = area.Xwidth('offset');
-                var areaH = area.Xheight('offset');
-                var mousemove = function(e) {
-                    that.XaddClass('ui-state-disabled')
-                        .Xcss({position: 'absolute'});
-                    if ( (e.pageX > areaL) & (e.pageY > areaT) & (e.pageX < WidthPosition()) & (e.pageY < areaH) ) {
-                        that.Xcss({
-                            left: left + (e.pageX - MOUSE.XD) + 'px',
-                            top: top + (e.pageY - MOUSE.YD) + 'px',
-                        });
-                    // Constraints on Y Axis
-                    } else if ( (e.pageX <= areaL) & (e.pageY > areaT) & (e.pageY < areaH) || (e.pageX >= WidthPosition()) & (e.pageY > areaT) & (e.pageY < areaH) ) {
-                        that.Xcss({
-                            top: top + (e.pageY - MOUSE.YD) + 'px',
-                        });
-                    // Constraints on X Axis
-                    } else if ( (e.pageY <= areaT) & (e.pageX > areaL) & (e.pageX < WidthPosition()) || (e.pageY >= areaH) & (e.pageX > areaL) & (e.pageX < WidthPosition()) ) {
-                        that.Xcss({
-                            left: left + (e.pageX - MOUSE.XD) + 'px',
-                        });
-                    } else {}
-                };
-                var mouseup = function() {
-                    _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
-                    that.XremoveClass('ui-state-disabled');
-                };
-                _X(window).Xon({
-                    mousemove: mousemove,
-                    mouseup: mouseup
-                });
-            } else {}
-        };
         
         _X.Xradians = function(degrees) {
             return degrees * Math.PI / 180;
@@ -630,7 +574,9 @@
                     } else {
                         elem = e.replace(/\s/g, '').split(',');
                         _X.Xeach(elem, function(k, v) {
-                            temp.push( _X.XSearchChildren({a: that, s: v})[0] );
+                            _X.Xeach(_X.XSearchChildren({a: that, s: v}), function(k2, v2) {
+                                temp.push(v2);
+                            });
                         });
                     }
                     _X.Xeach(temp, function(k, v) {
