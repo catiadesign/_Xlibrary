@@ -549,19 +549,12 @@
             //_X(?).Xfind('.?') => search for class elements
             //_X(?).Xfind('#?') => search for id elements
             //_X(?).Xfind('?') => search for tag elements
-            //
-            //_X(?).Xfind('parent') => return first parent from element
-            //
-            // if children elements are not found then search for parents 
             Xfind: function(e) {
                 var that = this;
                 var self = new _X();
                 var temp = [];
                 var allC;
-                var parent;
                 var elem;
-                var getAttr;
-                var replaceString;
                 if (that[0] !== undefined) {
                     //children
                     allC = that[0].children;
@@ -582,21 +575,33 @@
                     _X.Xeach(temp, function(k, v) {
                         self[k] = v;
                     });
-                    //parent
-                    if (self[0] === undefined) {
-                        parent = that[0].parentNode;
-                        if (e == 'parent') {
-                            self[0] = parent;
-                        } else {
+                } else {}
+                self.length = _X.GetObjectLength(self);
+                return self;
+            },
+
+            //_X(?).Xparent() => return first parent from element
+            //_X(?).Xparent('.?') => search for class parent element
+            //_X(?).Xparent('#?') => search for id parent element
+            Xparent: function(e) {
+                var that = this;
+                var self = new _X();
+                var parent;
+                var getAttr;
+                var replaceString;
+                if (that[0] !== undefined) {
+                    parent = that[0].parentNode;
+                    if (e === undefined) {
+                        self[0] = parent;
+                    } else {
+                        getAttr = parent.getAttribute(_X.XReturnClassOrId(e));
+                        replaceString = e.replace(/[.#]/g, '');
+                        while ((' ' + getAttr + ' ').indexOf(' ' + replaceString + ' ') < 0 && parent !== _X('html')[0]) {
+                            parent = parent.parentNode;
                             getAttr = parent.getAttribute(_X.XReturnClassOrId(e));
-                            replaceString = e.replace(/[.#]/g, '');
-                            while ((' ' + getAttr + ' ').indexOf(' ' + replaceString + ' ') < 0 && parent !== _X('html')[0]) {
-                                parent = parent.parentNode;
-                                getAttr = parent.getAttribute(_X.XReturnClassOrId(e));
-                                self[0] = parent;
-                            }
+                            self[0] = parent;
                         }
-                    } else {}                              
+                    }
                 } else {}
                 self.length = _X.GetObjectLength(self);
                 return self;
@@ -737,11 +742,9 @@
                 var time = this.time;
                 var l = this.left;
                 var k = 0;
-                //console.log(el, l, t, w, h);
                 (function Loop() {
                     setTimeout(function() {
                         k = k + 10;
-                        //console.log(k);
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
                                 left: (l - dist) + k + 'px',
@@ -770,11 +773,9 @@
                 var time = this.time;
                 var t = this.top;
                 var k = 0;
-                //console.log(el, l, t, w, h);
                 (function Loop() {
                     setTimeout(function() {
                         k = k + 10;
-                        //console.log(k);
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
                                 top: (t - dist) + k + 'px',
@@ -804,11 +805,9 @@
                 var l = this.left;
                 var t = this.top;
                 var k = 0;
-                //console.log(el, l, t, w, h);
                 (function Loop() {
                     setTimeout(function() {
                         k = k + 10;
-                        //console.log(k);
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
                                 left:   (l - dist) + k + 'px',
@@ -843,11 +842,9 @@
                 var w = this.width;
                 var h = this.height;
                 var k = 0;
-                //console.log(el, l, t, w, h);
                 (function Loop() {
                     setTimeout(function() {
                         k = k + 10;
-                        //console.log(k);
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
                                 left:   (l + dist) - k + 'px',
