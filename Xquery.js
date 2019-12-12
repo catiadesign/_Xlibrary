@@ -200,7 +200,6 @@
             for (var m in options) {
                 s[m] = options[m];
             }
-            //console.log(s);
             return s;
         };
         
@@ -437,7 +436,7 @@
             Xtext: function(e) {
                 var that = this;
                 if (e !== undefined) {
-                    that[0].innerText = e;
+                    that[0].innerText += e;
             	    return that;
                 } else {
                     if (that[0].innerText.length > 0) {
@@ -607,6 +606,7 @@
                 return self;
             },
             
+            //_X(?).Xwidth('? offset || client || inner || outer || box || scroll') 
             Xwidth: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -626,6 +626,7 @@
                 }
             },
             
+            //_X(?).Xheight('? offset || client || inner || outer || box || scroll') 
             Xheight: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -645,6 +646,7 @@
                 }
             },
             
+            //_X(?).Xleft('? offset || client || box || scroll') 
             Xleft: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -660,6 +662,7 @@
                 }
             },
             
+            //_X(?).Xtop('? offset || client || box || scroll')
             Xtop: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -675,6 +678,7 @@
                 }
             },
         
+            //_X(?).Xload('? url, ? function')
             Xload: function(url, callback) {
                 var that = this;
                 var newUrl = url.split(' ');
@@ -716,6 +720,7 @@
         
         };
 
+        //Effects for Hide / Show prototype function
         _X.EFFECT = {
             dist: 50,
             time: 10,
@@ -1061,7 +1066,7 @@
         return _X;
     }
     
-    if (typeof(window._X) === 'undefined') {
+    if (typeof window._X === 'undefined') {
         window._X = xquery();
     }
 })(window);
