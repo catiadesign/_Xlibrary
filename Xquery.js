@@ -1,4 +1,4 @@
-//jshint maxerr: 2000    
+//jshint maxerr: 2000
 /*
     name:       Xquery JavaScript Library
     version:    1.0.0
@@ -15,7 +15,7 @@
             var that;
             var elem;
             var k = 0;
-            var temp = [];            
+            var temp = [];
             if (id !== undefined) {
                 if (window === this) {
                     that = new _X();
@@ -73,36 +73,36 @@
         
         _X.Xsearch = function(options) {
             var defaults = {
-                    a: _X.ELEMENTS, //array
-                    s: '999', //search => string || array by ","
-                    l: 'search', // location => search || loc || title || key || ico || keyname
-                    d: 'min', // deep => min || med || max
-                    e: '999', // exclude based on search keyword
-                },
-                settings = _X.XJoinObj(defaults, options),
-                a = settings.a,
-                s = settings.s,
-                l = settings.l,
-                d = settings.d,
-                e = settings.e,
-                temp = [];
+                a: _X.ELEMENTS, //array
+                s: '999', //search => string || array by ","
+                l: 'search', // location => search || loc || title || key || ico || keyname
+                d: 'min', // deep => min || med || max
+                e: '999', // exclude based on search keyword
+            };
+            var settings = _X.XJoinObj(defaults, options);
+            var a = settings.a;
+            var s = settings.s;
+            var l = settings.l;
+            var d = settings.d;
+            var e = settings.e;
+            var temp = [];
             function SearchTemp(options) {
                 var defaults = {
-                        a: '',
-                        s: '',
-                        l: '',
-                        d: '',
-                        e: '',
-                    },
-                    settings = _X.XJoinObj(defaults, options),
-                    a = settings.a,
-                    s = settings.s,
-                    l = settings.l,
-                    d = settings.d,
-                    e = settings.e;
+                    a: '',
+                    s: '',
+                    l: '',
+                    d: '',
+                    e: '',
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                var a = settings.a;
+                var s = settings.s;
+                var l = settings.l;
+                var d = settings.d;
+                var e = settings.e;
                 function ReturnSearch(glob) {
                     function Exclude() {
-                        if (glob.search !== undefined) { 
+                        if (glob.search !== undefined) {
                             if (glob.search.indexOf(e) > -1) {return false}
                             else {return true}
                         } else {}
@@ -116,7 +116,7 @@
                 //Title    
                     else if (l == 'title' && glob.title !== undefined && Exclude() === true) {
                         return glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1;}
-                //Keyboard Key    
+                //Keyboard Key
                     else if (l == 'key' && glob.key !== undefined && Exclude() === true) {
                         return glob.key;}
                 //Icon
@@ -140,7 +140,7 @@
                             else {}
                         }
                     });
-                }
+                } else {}
             }
             if (s.indexOf(',') > -1) {
                 var search = s.replace(/\s/g, '').split(',');
@@ -155,48 +155,48 @@
         
         _X.Xeach = function(obj, callback) {
             var i = 0;
-        	if (obj.length > 0) {
-        		for (; i < obj.length; i++) {
-        			if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
-        				break;
-        			}
-        		}
-        	} else if (typeof obj == 'number') {
-        		for (; i < obj; i++) {
-        			if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
-        				break;
-        			}
-        		}		
-        	} else {
-        		for (i in obj) {
+            if (obj.length > 0) {
+                for (; i < obj.length; i++) {
+                    if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
+                        break;
+                    }
+                }
+            } else if (typeof obj == 'number') {
+                for (; i < obj; i++) {
+                    if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
+                        break;
+                    }
+                }
+            } else {
+                for (i in obj) {
                     if (obj.hasOwnProperty(i) && obj.hasOwnProperty('length') === false) {
                         if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
-                        	break;
+                            break;
                         }
-        		    }
-        		}
-        	}
-        	return obj;
+                    }
+                }
+            }
+            return obj;
         };
         
         _X.Xgrep = function(obj, callback) {
             var temp = [];
-        	var invertValue;
-        	for (var i = 0; i < obj.length; i++) {
-        		invertValue = !callback(obj[i]);
-        		//console.log(invertValue, callback());
-        		if (invertValue !== callback()) {
-        			temp.push(obj[i]);
-        		}
-        	}
-        	return temp;
+            var invertValue;
+            for (var i = 0; i < obj.length; i++) {
+                invertValue = !callback(obj[i]);
+                //console.log(invertValue, callback());
+                if (invertValue !== callback()) {
+                    temp.push(obj[i]);
+                }
+            }
+            return temp;
         };
         
         _X.XJoinObj = function(defaults, options){
             var s = {};
             for (var k in defaults) {
                 s[k] = defaults[k];
-            }        
+            }
             for (var m in options) {
                 s[m] = options[m];
             }
@@ -215,18 +215,18 @@
         
         _X.XReadAjax = function(options) {
             var defaults = {
-                    url: '',
-                    callback: '',
-                    dataType: '',
-                    /*
-                        "" (default) – get as string,
-                        "text" – get as string,
-                        "arraybuffer" – get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays),
-                        "blob" – get as Blob (for binary data, see chapter Blob),
-                        "document" – get as XML document (can use XPath and other XML methods),
-                        "json" – get as JSON (parsed automatically).
-                    */
-                };
+                url: '',
+                callback: '',
+                dataType: '',
+                /*
+                    "" (default) - get as string,
+                    "text" - get as string,
+                    "arraybuffer" - get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays),
+                    "blob" - get as Blob (for binary data, see chapter Blob),
+                    "document" - get as XML document (can use XPath and other XML methods),
+                    "json" - get as JSON (parsed automatically).
+                */
+            };
             var s = _X.XJoinObj(defaults, options);
             //var args = Array.prototype.slice.call(arguments, 2);
             var xhr = new XMLHttpRequest();
@@ -250,13 +250,66 @@
         _X.Xdegrees = function(radians) {
             return radians * 180 / Math.PI;
         };
+
+        _X.XDraggable = function(options) {
+            var defaults = {
+                item: '',
+                dragArea: '',
+                mouse: '',
+            };
+            var settings = _X.XJoinObj(defaults, options);
+            var that = _X(settings.item);
+            var e = settings.mouse;
+            if ( (e.which === 1) ) {
+                var xd = e.pageX;
+                var yd = e.pageY;
+                var left = that.Xleft('offset');
+                var top = that.Xtop('offset');
+                var area = _X(settings.dragArea);
+                var L = area.Xleft('box');
+                var T = area.Xtop('box');
+                var W = area.Xwidth('offset');
+                var H = area.Xheight('offset');
+                //console.log(left, top, L, T, W, H);
+                var mousemove = function(e) {
+                    var x = e.pageX;
+                    var y = e.pageY;
+                    that.XaddClass('xui_disabled')
+                        .Xcss({position: 'absolute'});
+                    if ( (x > L) & (y > T) & (x < L + W) & (y < T + H) ) {
+                        that.Xcss({
+                            left: left + (x - xd) + 'px',
+                            top: top + (y - yd) + 'px',
+                        });
+                    // Constraints on Y Axis
+                    } else if ( (x <= L) & (y > T) & (y < T + H) || (x >= L + W) & (y > T) & (y < T + H) ) {
+                        that.Xcss({
+                            top: top + (y - yd) + 'px',
+                        });
+                    // Constraints on X Axis
+                    } else if ( (y <= T) & (x > L) & (x < L + W) || (y >= T + H) & (x > L) & (x < L + W) ) {
+                        that.Xcss({
+                            left: left + (x - xd) + 'px',
+                        });
+                    } else {}
+                };
+                var mouseup = function() {
+                    _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
+                    that.XremoveClass('xui_disabled');
+                };
+                _X(window).Xon({
+                    mousemove: mousemove,
+                    mouseup: mouseup
+                });
+            } else {}
+        };
         
         _X.prototype = {
             name:           'Xquery JavaScript Library',
             author:         'Adrian & Open Source',
             created:        '17-10-2019',
-        	constructor:    _X,
-        	length:         0,
+            constructor:    _X,
+            length:         0,
 
             //_X(?).Xval() => GET element value
             //_X(?).Xval('?') => SET element value
@@ -293,7 +346,7 @@
                         v.className = _X.XDifferenceArray({type: 'join', arr1: elemA, arr2: selA});
                     }
                 });
-            	return that;	
+                return that;
             },
             
             //_X(?).XremoveClass('?, ?') => SET element class
@@ -304,7 +357,7 @@
                     var selA = e.replace(/\s/g, '').split(',');
                     v.className = _X.XDifferenceArray({type: 'diff', arr1: elemA, arr2: selA});
                 });
-            	return that;
+                return that;
             },
             
             //_X(?).XappendTo('?') => SET element to parent
@@ -313,7 +366,7 @@
                 var getEl = _X(e);
                 if (getEl.length > 0) {
                     getEl[0].appendChild(that[0]);
-                	return that;
+                    return that;
                 } else {
                     return that;
                 }
@@ -353,7 +406,7 @@
                 });
                 _X.Xeach(temp, function(k, v) {
                     self[k] = v;
-                });                
+                });
                 self.length = _X.GetObjectLength(self);
                 return self;
             },
@@ -387,7 +440,7 @@
                 } else {
                     that[0].innerHTML += e;
                 }
-            	return that;
+                return that;
             },
 
             //_X(?).Xprepend('?') => prepend OBJECT or HTML other object
@@ -398,8 +451,8 @@
                 } else {
                     that[0].innerHTML += e;
                 }
-            	return that;
-            },            
+                return that;
+            },
         
             //_X(?).Xshow() => show the current element
             //_X(?).Xshow('?') => show the current element with buildin EFFECTS
@@ -413,11 +466,11 @@
                         v.style.visibility = 'visible';
                     }
                 });
-            	return that;
+                return that;
             },
 
             //_X(?).Xhide() => hide the current element
-            //_X(?).Xhide('?') => hide the current element with buildin EFFECTS            
+            //_X(?).Xhide('?') => hide the current element with buildin EFFECTS
             Xhide: function(e) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
@@ -428,7 +481,7 @@
                         v.style.visibility = 'hidden';
                     }
                 });
-            	return that;
+                return that;
             },
 
             //_X(?).Xtext() => GET current element TEXT
@@ -437,7 +490,7 @@
                 var that = this;
                 if (e !== undefined) {
                     that[0].innerText += e;
-            	    return that;
+                        return that;
                 } else {
                     if (that[0].innerText.length > 0) {
                         return that[0].innerText;
@@ -446,7 +499,7 @@
             },
             
             //_X(?).Xattr('? element') => GET element attribute
-            //_X(?).Xattr({'? element': ? value}) => SET element attribute    
+            //_X(?).Xattr({'? element': ? value}) => SET element attribute
             Xattr: function(e) {
                 var that = this;
                 if (typeof e == 'object') {
@@ -460,7 +513,7 @@
             },
 
             //_X(?).Xcss('? element key') => GET element css value
-            //_X(?).Xcss({'? element key': ? value}) => SET element css                
+            //_X(?).Xcss({'? element key': ? value}) => SET element css
             Xcss: function(e) {
                 var that = this;
                 if (typeof e == 'object') {
@@ -484,7 +537,7 @@
                 }
             },
 
-            //_X(?).Xremove() => DELETE current element            
+            //_X(?).Xremove() => DELETE current element
             Xremove: function() {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
@@ -510,7 +563,7 @@
                         });
                     });
                 }
-            	return that;
+                return that;
             },
 
             //_X(?).Xoff( {'? function name': ? function name} ) => REMOVE event from element
@@ -519,7 +572,7 @@
                 _X.Xeach(e, function(k, v) {
                     that[0].removeEventListener(k, v);
                 });
-            	return that;
+                return that;
             },
             
             //_X(?).Xempty() => DELETE element contains
@@ -533,15 +586,15 @@
             
             //_X(?).XhasClass('?, ?') => return TRUE / FALSE on class check
             XhasClass: function(e) {
-            	var elem;
+                var elem;
                 var i = 0;
                 var s = e.replace(/\s/g, '').split(',');
-            	while ( ( elem = this[ i++ ] ) ) {
-            		if ( elem.nodeType === 1 && ( " " + elem.getAttribute("class") + " " ).indexOf( " " + s.join(' ') + " " ) > -1 ) {
-            			return true;
-            		}
-            	}
-            	return false;
+                while ( ( elem = this[ i++ ] ) ) {
+                    if ( elem.nodeType === 1 && ( " " + elem.getAttribute("class") + " " ).indexOf( " " + s.join(' ') + " " ) > -1 ) {
+                        return true;
+                    }
+                }
+                return false;
             },
 
             //_X(?).Xfind('children') => return all children on first level from element
@@ -633,7 +686,7 @@
                     if (e == 'offset') {
                         return that[0].offsetHeight;
                     } else if (e == 'client') {
-                        return that[0].clientHeight;            
+                        return that[0].clientHeight;
                     } else if (e == 'inner') {
                         return that[0].innerHeight;
                     } else if (e == 'outer') {
@@ -762,12 +815,12 @@
                                 el.Xhide().Xcss({
                                     left: l + 'px',
                                 });
-                            }                
-                        }            
+                            }
+                        }
                         if (k < dist) {
                             Loop();
                         }
-                    }, time);        
+                    }, time);
                 })();
             },
             
@@ -793,12 +846,12 @@
                                 el.Xhide().Xcss({
                                     top: t + 'px',
                                 });
-                            }                
-                        }            
+                            }
+                        }
                         if (k < dist) {
                             Loop();
                         }
-                    }, time);        
+                    }, time);
                 })();
             },
             
@@ -828,12 +881,12 @@
                                     left:   l + 'px',
                                     top:    t + 'px',
                                 });
-                            }                
-                        }                        
+                            }
+                        }
                         if (k < dist) {
                             Loop();
                         }
-                    }, time);        
+                    }, time);
                 })();
             },
             
@@ -871,60 +924,72 @@
                                     width:  w + 'px',
                                     height: h + 'px',
                                 });
-                            }                
+                            }
                         }
                         if (k < dist) {
                             Loop();
                         }
-                    }, time);        
+                    }, time);
                 })();
             },
             
         };
         
         _X.MATRICE = {
+            s: function(a) {
+                return Math.sin(a);
+            },
+            c: function(a) {
+                return Math.cos(a);
+            },                
             rotateAroundXAxis: function(a) {
+                var s = this.s(a);
+                var c = this.c(a);
                 return [
-                    1,       0,        0,     0,
-                    0,  Math.cos(a),  -Math.sin(a),     0,
-                    0,  Math.sin(a),   Math.cos(a),     0,
-                    0,       0,        0,     1
+                    1, 0, 0, 0,
+                    0, c, -s, 0,
+                    0, s, c, 0,
+                    0, 0, 0, 1
                 ];
             },
         
             rotateAroundYAxis: function(a) {
+                var s = this.s(a);
+                var c = this.c(a);             
                 return [
-                     Math.cos(a),   0, Math.sin(a),    0,
-                          0,   1,      0,    0,
-                    -Math.sin(a),   0, Math.cos(a),    0,
-                          0,   0,      0,    1
+                    c, 0, s, 0,
+                    0, 1, 0, 0,
+                    -s, 0, c, 0,
+                    0, 0, 0, 1
                 ];
             },
         
             rotateAroundZAxis: function(a) {
+                var s = this.s(a);
+                var c = this.c(a);             
                 return [
-                    Math.cos(a), -Math.sin(a),    0,    0,
-                    Math.sin(a),  Math.cos(a),    0,    0,
-                         0,       0,    1,    0,
-                         0,       0,    0,    1
+                    c, -s, 0, 0,
+                    s, c, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
                 ];
             },
         
             translate: function(x, y, z) {
                 return [
-                    1,  0,  0,  0,
-                    0,  1,  0,  0,
-                    0,  0,  1,  0,
-                    x,  y,  z,  1
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    x, y, z, 1
                 ];
             },
         
             scale: function(w, h, d) {
                 return [
-                    w,  0,  0,  0,
-                    0,  h,  0,  0,
-                    0,  0,  d,  0,
-                    0,  0,  0,  1
+                    w, 0, 0, 0,
+                    0, h, 0, 0,
+                    0, 0, d, 0,
+                    0, 0, 0, 1
                 ];
             },
         
@@ -995,19 +1060,19 @@
             var s = _X.XJoinObj(defaults, options);
             var result = [];
             if (s.type == 'diff') {
-                _X.Xeach(s.arr1, function(key, val) {
-                    if (s.arr2.join(' ').indexOf(val) < 0) {
-                        result.push(val);
+                _X.Xeach(s.arr1, function(k, v) {
+                    if (s.arr2.join(' ').indexOf(v) < 0) {
+                        result.push(v);
                     } else {}
                 });
                 return result.join(' ');
             } else if (s.type =='join') {
                 var temp = [];
-                _X.Xeach(s.arr2, function(key, val) {
-                    if (s.arr1.join(' ').indexOf(val) < 0) {
-                        temp.push(val);
+                _X.Xeach(s.arr2, function(k, v) {
+                    if (s.arr1.join(' ').indexOf(v) < 0) {
+                        temp.push(v);
                     } else {}
-                });        
+                });
                 return result.concat(s.arr1, temp).join(' ');
             }
         };
@@ -1028,16 +1093,16 @@
                     };
                 var settings = _X.XJoinObj(defaults, options);
                 var a = settings.a;
-                var s = settings.s;        
+                var s = settings.s;
                 var repstr = s.replace(/[.#]/g, '');
-                _X.Xeach(a, function(key, glob) {
-                    var getA = glob.getAttribute(_X.XReturnClassOrId(s)) || '';
+                _X.Xeach(a, function(k, v) {
+                    var getA = v.getAttribute(_X.XReturnClassOrId(s)) || '';
                     if ((' ' + getA + ' ').indexOf(' ' + repstr + ' ') > -1) {
-                        temp.push(glob);
-                    } else if (glob.tagName === s.toUpperCase()) {
-                        temp.push(glob);
-                    } else if (glob.children.length > 0 && (' ' + getA + ' ').indexOf(' ' + repstr + ' ') < 0) {
-                        XSearchChildrenTemp({a: glob.children, s: s});
+                        temp.push(v);
+                    } else if (v.tagName === s.toUpperCase()) {
+                        temp.push(v);
+                    } else if (v.children.length > 0 && (' ' + getA + ' ').indexOf(' ' + repstr + ' ') < 0) {
+                        XSearchChildrenTemp({a: v.children, s: s});
                     }
                 });
             }
@@ -1058,7 +1123,7 @@
             for (var k in obj) {
                 if (obj.hasOwnProperty(k) && k != 'length' && obj[k] !== undefined) {
                     pushkey.push(k);
-        	    }
+                }
             }
             return pushkey.length;
         };
