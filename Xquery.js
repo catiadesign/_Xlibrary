@@ -8,7 +8,7 @@
 */
 
 (function(window){
-    // 'use strict';
+    //'use strict';
     function xquery(){
         
         var _X = function(id) {
@@ -27,30 +27,35 @@
                             if (elem !== null) {
                                 that[0] = elem;
                             }
+                        }
                         //Clasa
-                        } else if (id.indexOf('.') > -1) {
+                        else if (id.indexOf('.') > -1) {
                             elem = document.getElementsByClassName(repstr);
                             for (; k < elem.length; k++) {
                                 that[k] = elem[k];
                             }
+                        }
                         //Tag
-                        } else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
+                        else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
                             elem = document.getElementsByTagName(id);
                             for (; k < elem.length; k++) {
                                 that[k] = elem[k];
                             }
+                        }
                         //Create Element
-                        } else if (id.indexOf('<') > -1) {
+                        else if (id.indexOf('<') > -1) {
                             elem = document.createElement(repstr);
                             that[0] = elem;
-                        } else {}
-                    } else if (typeof id == 'object') {
+                        }
+                    }
+                    else if (typeof id == 'object') {
                         if (id[0] === undefined || id === window || id === document) {
                             that[0] = id;
                         } else {
                             that[0] = id[0];
                         }
-                    } else if (id.indexOf(',') > -1) {
+                    }
+                    else if (id.indexOf(',') > -1) {
                         elem = id.replace(/\s/g, '').split(',');
                         _X.Xeach(elem, function(k1, v1) {
                             var q = _X(v1);
@@ -61,7 +66,7 @@
                         _X.Xeach(temp, function(k, v) {
                             that[k] = v;
                         });
-                    } else {}
+                    }
                     that.length = _X.GetObjectLength(that);
                 }
             } else {
@@ -73,11 +78,11 @@
         
         _X.Xsearch = function(options) {
             var defaults = {
-                a: _X.ELEMENTS, //array
-                s: '999', //search => string || array by ","
-                l: 'search', // location => search || loc || title || key || ico || keyname
-                d: 'min', // deep => min || med || max
-                e: '999', // exclude based on search keyword
+                a: _X.ELEMENTS, //array     => array where to search
+                s: '999',       //search    => string || array by ","
+                l: 'search',    //location  => search || loc || title || key || ico || keyname
+                d: 'min',       //deep      => min || med || max
+                e: '999',       //exclude   => based on search keyword
             };
             var settings = _X.XJoinObj(defaults, options);
             var a = settings.a;
@@ -107,37 +112,41 @@
                             else {return true}
                         } else {}
                     }
-                //Search
-                    if (l == 'search' && glob.search !== undefined && Exclude() === true) {
-                        return glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1;}
-                //Location
-                    else if (l == 'loc' && glob.loc !== undefined && Exclude() === true) {
-                        return glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1;}
-                //Title    
-                    else if (l == 'title' && glob.title !== undefined && Exclude() === true) {
-                        return glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1;}
-                //Keyboard Key
-                    else if (l == 'key' && glob.key !== undefined && Exclude() === true) {
-                        return glob.key;}
-                //Icon
-                    else if (l == 'ico' && glob.ico !== undefined && Exclude() === true) {
-                        return glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1;}
-                //Search by the Name of the Key not Value    
-                    else if (l == 'keyname' && Exclude() === true) {
-                        return key.toLowerCase().indexOf(s.toLowerCase()) > -1;}
-                    else {}
+                    //Search
+                    if (l == 'search' && glob.search !== undefined && Exclude() === true)
+                        {return glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                    
+                    //Location
+                    else if (l == 'loc' && glob.loc !== undefined && Exclude() === true)
+                        {return glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                    
+                    //Title
+                    else if (l == 'title' && glob.title !== undefined && Exclude() === true)
+                        {return glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                    
+                    //Keyboard Key
+                    else if (l == 'key' && glob.key !== undefined && Exclude() === true)
+                        {return glob.key;}
+                    
+                    //Icon
+                    else if (l == 'ico' && glob.ico !== undefined && Exclude() === true)
+                        {return glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                    
+                    //Search by the Name of the Key not Value    
+                    else if (l == 'keyname' && Exclude() === true)
+                        {return key.toLowerCase().indexOf(s.toLowerCase()) > -1;}
                 }
                 if (a !== undefined) {
                     _X.Xeach(a, function(key, glob) {
                         if (ReturnSearch(glob)) {
                             temp.push(glob);
                             if (glob.hasOwnProperty('items') && d == 'max') {
-                                SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});}
-                            else {}
+                                SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});
+                            } else {}
                         } else {
                             if (d == 'max' || d == 'med') {
-                                SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});}
-                            else {}
+                                SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});
+                            } else {}
                         }
                     });
                 } else {}
@@ -161,13 +170,15 @@
                         break;
                     }
                 }
-            } else if (typeof obj == 'number') {
+            }
+            else if (typeof obj == 'number') {
                 for (; i < obj; i++) {
                     if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
                         break;
                     }
                 }
-            } else {
+            }
+            else {
                 for (i in obj) {
                     if (obj.hasOwnProperty(i) && obj.hasOwnProperty('length') === false) {
                         if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
@@ -219,12 +230,12 @@
                 callback: '',
                 dataType: '',
                 /*
-                    "" (default) - get as string,
-                    "text" - get as string,
-                    "arraybuffer" - get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays),
-                    "blob" - get as Blob (for binary data, see chapter Blob),
-                    "document" - get as XML document (can use XPath and other XML methods),
-                    "json" - get as JSON (parsed automatically).
+                    ""(default)     => get as string
+                    "text"          => get as string
+                    "arraybuffer"   => get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays)
+                    "blob"          => get as Blob (for binary data, see chapter Blob)
+                    "document"      => get as XML document (can use XPath and other XML methods)
+                    "json"          => get as JSON (parsed automatically)
                 */
             };
             var s = _X.XJoinObj(defaults, options);
@@ -276,22 +287,25 @@
                     var y = e.pageY;
                     that.XaddClass('xui_disabled')
                         .Xcss({position: 'absolute'});
+                    // Center without borders
                     if ( (x > L) & (y > T) & (x < L + W) & (y < T + H) ) {
                         that.Xcss({
                             left: left + (x - xd) + 'px',
                             top: top + (y - yd) + 'px',
                         });
-                    // Constraints on Y Axis
-                    } else if ( (x <= L) & (y > T) & (y < T + H) || (x >= L + W) & (y > T) & (y < T + H) ) {
+                    }
+                    // Borders on Y Axis
+                    else if ( /*left side*/ (x <= L) & (y > T) & (y < T + H) || /*right side*/ (x >= L + W) & (y > T) & (y < T + H) ) {
                         that.Xcss({
                             top: top + (y - yd) + 'px',
                         });
-                    // Constraints on X Axis
-                    } else if ( (y <= T) & (x > L) & (x < L + W) || (y >= T + H) & (x > L) & (x < L + W) ) {
+                    }
+                    // Borders on X Axis
+                    else if ( /*top side*/ (y <= T) & (x > L) & (x < L + W) || /*bottom side*/ (y >= T + H) & (x > L) & (x < L + W) ) {
                         that.Xcss({
                             left: left + (x - xd) + 'px',
                         });
-                    } else {}
+                    }
                 };
                 var mouseup = function() {
                     _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
@@ -311,8 +325,8 @@
             constructor:    _X,
             length:         0,
 
-            //_X(?).Xval() => GET element value
-            //_X(?).Xval('?') => SET element value
+            //_X(?).Xval()      => GET element value
+            //_X(?).Xval('?')   => SET element value
             Xval: function(e) {
                 var that = this;
                 if (e === undefined) {
@@ -372,8 +386,8 @@
                 }
             },
             
-            //_X(?).Xis([? css element: ? css value]) => return TRUE / FALSE on a css element check
-            //_X(?).Xis('checked') => return TRUE / FALSE
+            //_X(?).Xis([? css element: ? css value])   => return TRUE / FALSE on a css element check
+            //_X(?).Xis('checked')                      => return TRUE / FALSE
             Xis: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -454,8 +468,8 @@
                 return that;
             },
         
-            //_X(?).Xshow() => show the current element
-            //_X(?).Xshow('?') => show the current element with buildin EFFECTS
+            //_X(?).Xshow()     => show the current element
+            //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
             Xshow: function(e) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
@@ -469,8 +483,8 @@
                 return that;
             },
 
-            //_X(?).Xhide() => hide the current element
-            //_X(?).Xhide('?') => hide the current element with buildin EFFECTS
+            //_X(?).Xhide()     => hide the current element
+            //_X(?).Xhide('?')  => hide the current element with buildin EFFECTS
             Xhide: function(e) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
@@ -484,8 +498,8 @@
                 return that;
             },
 
-            //_X(?).Xtext() => GET current element TEXT
-            //_X(?).Xtext('?') => SET the TEXT to element
+            //_X(?).Xtext()     => GET current element TEXT
+            //_X(?).Xtext('?')  => SET the TEXT to element
             Xtext: function(e) {
                 var that = this;
                 if (e !== undefined) {
@@ -498,8 +512,8 @@
                 }
             },
             
-            //_X(?).Xattr('? element') => GET element attribute
-            //_X(?).Xattr({'? element': ? value}) => SET element attribute
+            //_X(?).Xattr('? element')              => GET element attribute
+            //_X(?).Xattr({'? element': ? value})   => SET element attribute
             Xattr: function(e) {
                 var that = this;
                 if (typeof e == 'object') {
@@ -512,8 +526,8 @@
                 }
             },
 
-            //_X(?).Xcss('? element key') => GET element css value
-            //_X(?).Xcss({'? element key': ? value}) => SET element css
+            //_X(?).Xcss('? element key')               => GET element css value
+            //_X(?).Xcss({'? element key': ? value})    => SET element css
             Xcss: function(e) {
                 var that = this;
                 if (typeof e == 'object') {
@@ -547,8 +561,8 @@
                 });
             },
             
-            //_X(?).Xon( ['? ?', function(){}] ) => SET event like an array syntax
-            //_X(?).Xon( {'?': function(){}} ) => SET event like an object syntax
+            //_X(?).Xon( ['? ?', function(){}] )    => SET event like an array syntax
+            //_X(?).Xon( {'?': function(){}} )      => SET event like an object syntax
             Xon: function(e) {
                 var that = this;
                 if (e.length > 0 && e[0] !== null) {
@@ -597,10 +611,10 @@
                 return false;
             },
 
-            //_X(?).Xfind('children') => return all children on first level from element
-            //_X(?).Xfind('.?') => search for class elements
-            //_X(?).Xfind('#?') => search for id elements
-            //_X(?).Xfind('?') => search for tag elements
+            //_X(?).Xfind('children')   => return all children on first level from element
+            //_X(?).Xfind('.?')         => search for class elements
+            //_X(?).Xfind('#?')         => search for id elements
+            //_X(?).Xfind('?')          => search for tag elements
             Xfind: function(e) {
                 var that = this;
                 var self = new _X();
@@ -632,9 +646,9 @@
                 return self;
             },
 
-            //_X(?).Xparent() => return first parent from element
-            //_X(?).Xparent('.?') => search for class parent element
-            //_X(?).Xparent('#?') => search for id parent element
+            //_X(?).Xparent()       => return first parent from element
+            //_X(?).Xparent('.?')   => search for class parent element
+            //_X(?).Xparent('#?')   => search for id parent element
             Xparent: function(e) {
                 var that = this;
                 var self = new _X();
@@ -775,11 +789,11 @@
 
         //Effects for Hide / Show prototype function
         _X.EFFECT = {
-            dist: 50,
-            time: 10,
-            left: 0,
-            top: 0,
-            width: 0,
+            dist:   50,
+            time:   10,
+            left:   0,
+            top:    0,
+            width:  0,
             height: 0,
             ReturnElemenPos: function(elem) {
                 var el = _X(elem).Xcss({display: ''});
@@ -1053,9 +1067,9 @@
         
         _X.XDifferenceArray = function(options){
             var defaults = {
-                type: '', // diff => arr1 - arr2; join => arr1 + arr2
-                arr1: [], //element array
-                arr2: [], //selector array
+                type: '', //diff => arr1 - arr2 || join => arr1 + arr2
+                arr1: [], //first array
+                arr2: [], //second array
             };
             var s = _X.XJoinObj(defaults, options);
             var result = [];
@@ -1079,18 +1093,18 @@
         
         _X.XSearchChildren = function(options) {
             var defaults = {
-                    a: '', 
-                    s: '',
-                };
+                a: '', 
+                s: '',
+            };
             var settings = _X.XJoinObj(defaults, options);
             var a = settings.a;
             var s = settings.s;
             var temp = [];
             function XSearchChildrenTemp(options) {
                 var defaults = {
-                        a: '', 
-                        s: '',
-                    };
+                    a: '', 
+                    s: '',
+                };
                 var settings = _X.XJoinObj(defaults, options);
                 var a = settings.a;
                 var s = settings.s;
