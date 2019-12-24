@@ -378,7 +378,7 @@
             XappendTo: function(e) {
                 var that = this;
                 var getEl = _X(e);
-                if (getEl.length > 0) {
+                if (getEl.length > 0 && that.length > 0) {
                     getEl[0].appendChild(that[0]);
                     return that;
                 } else {
