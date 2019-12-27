@@ -276,11 +276,11 @@
                 var yd = e.pageY;
                 var left = that.Xleft('offset');
                 var top = that.Xtop('offset');
-                var area = _X(settings.dragArea);
-                var L = area.Xleft('box');
-                var T = area.Xtop('box');
-                var W = area.Xwidth('offset');
-                var H = area.Xheight('offset');
+                var A = _X(settings.dragArea);
+                var L = A.Xleft('box');
+                var T = A.Xtop('box');
+                var W = A.Xwidth('offset');
+                var H = A.Xheight('offset');
                 //console.log(left, top, L, T, W, H);
                 var mousemove = function(e) {
                     var x = e.pageX;
