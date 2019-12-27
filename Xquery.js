@@ -2,7 +2,7 @@
 
 (function(window){
     //'use strict';
-    function xquery(){
+    function xquery() {
         var info = {
             name:       'Xquery JavaScript Library',
             version:    '1.0.0',
@@ -109,7 +109,7 @@
                         if (glob.search !== undefined) {
                             if (glob.search.indexOf(e) > -1) {return false}
                             else {return true}
-                        } else {}
+                        }
                     }
                     //Search
                     if (l == 'search' && glob.search !== undefined && Exclude() === true)
@@ -141,14 +141,14 @@
                             temp.push(glob);
                             if (glob.hasOwnProperty('items') && d == 'max') {
                                 SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});
-                            } else {}
+                            }
                         } else {
                             if (d == 'max' || d == 'med') {
                                 SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});
-                            } else {}
+                            }
                         }
                     });
-                } else {}
+                }
             }
             if (s.indexOf(',') > -1) {
                 var search = s.replace(/\s/g, '').split(',');
@@ -270,7 +270,7 @@
             var settings = _X.XJoinObj(defaults, options);
             var that = _X(settings.item);
             var e = settings.mouse;
-            if ( (e.which === 1) ) {
+            if (e.which === 1) {
                 var xd = e.pageX;
                 var yd = e.pageY;
                 var left = that.Xleft('offset');
@@ -314,7 +314,7 @@
                     mousemove: mousemove,
                     mouseup: mouseup
                 });
-            } else {}
+            }
         };
         
         _X.prototype = {
@@ -508,7 +508,7 @@
                 } else {
                     if (that[0].innerText.length > 0) {
                         return that[0].innerText;
-                    } else {}
+                    }
                 }
             },
             
@@ -641,7 +641,7 @@
                     _X.Xeach(temp, function(k, v) {
                         self[k] = v;
                     });
-                } else {}
+                }
                 self.length = _X.GetObjectLength(self);
                 return self;
             },
@@ -668,7 +668,7 @@
                             self[0] = parent;
                         }
                     }
-                } else {}
+                }
                 self.length = _X.GetObjectLength(self);
                 return self;
             },
@@ -689,7 +689,7 @@
                         return that[0].getBoundingClientRect().width;
                     } else if (e == 'scroll') {
                         return that[0].scrollWidth;
-                    } else {}
+                    }
                 }
             },
             
@@ -709,7 +709,7 @@
                         return that[0].getBoundingClientRect().height;
                     } else if (e == 'scroll') {
                         return that[0].scrollHeight;
-                    } else {}
+                    }
                 }
             },
             
@@ -725,7 +725,7 @@
                         return that[0].getBoundingClientRect().left;
                     } else if (e == 'scroll') {
                         return that[0].scrollLeft;
-                    } else {}
+                    }
                 }
             },
             
@@ -741,7 +741,7 @@
                         return that[0].getBoundingClientRect().top;
                     } else if (e == 'scroll') {
                         return that[0].scrollTop;
-                    } else {}
+                    }
                 }
             },
         
@@ -776,7 +776,7 @@
                         _X(that).Xappend(ReturnData(url));
                         if (callback !== undefined) {
                             callback.apply(xhr, []);
-                        } else {}
+                        }
                         //console.log(xhr.getResponseHeader("Content-Type"));
                     }
                 };
@@ -1077,7 +1077,7 @@
                 _X.Xeach(s.arr1, function(k, v) {
                     if (s.arr2.join(' ').indexOf(v) < 0) {
                         result.push(v);
-                    } else {}
+                    }
                 });
                 return result.join(' ');
             } else if (s.type =='join') {
@@ -1085,7 +1085,7 @@
                 _X.Xeach(s.arr2, function(k, v) {
                     if (s.arr1.join(' ').indexOf(v) < 0) {
                         temp.push(v);
-                    } else {}
+                    }
                 });
                 return result.concat(s.arr1, temp).join(' ');
             }
@@ -1129,7 +1129,7 @@
                 return 'class';
             } else if (el.indexOf('#') > -1) {
                 return 'id';
-            } else {}
+            }
         };
         
         _X.GetObjectLength = function(obj) {
