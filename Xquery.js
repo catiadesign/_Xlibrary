@@ -1,16 +1,15 @@
 //jshint maxerr: 2000
-/*
-    name:       Xquery JavaScript Library
-    version:    1.0.0
-    author:     Adrian & Open Source
-    created:    17-10-2019
-    updated:    01-12-2019 
-*/
 
 (function(window){
     //'use strict';
     function xquery(){
-        
+        var info = {
+            name:       'Xquery JavaScript Library',
+            version:    '1.0.0',
+            author:     'Adrian & Open Source',
+            created:    '17-10-2019',
+            updated:    '01-12-2019',
+        };        
         var _X = function(id) {
             var that;
             var elem;
@@ -319,9 +318,10 @@
         };
         
         _X.prototype = {
-            name:           'Xquery JavaScript Library',
-            author:         'Adrian & Open Source',
-            created:        '17-10-2019',
+            name:           info.name,
+            author:         info.author,
+            created:        info.created,
+            version:        info.version,
             constructor:    _X,
             length:         0,
 
