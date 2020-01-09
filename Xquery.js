@@ -292,20 +292,20 @@
                     that.XaddClass('xui_disabled')
                         .Xcss({position: 'absolute'});
                     // Center without borders
-                    if ( (x > L) & (y > T) & (x < L + W) & (y < T + H) ) {
+                    if ( (x > L) && (y > T) && (x < L + W) && (y < T + H) ) {
                         that.Xcss({
                             left: left + (x - xd),
                             top: top + (y - yd),
                         });
                     }
                     // Borders on Y Axis
-                    else if ( /*left side*/ (x <= L) & (y > T) & (y < T + H) || /*right side*/ (x >= L + W) & (y > T) & (y < T + H) ) {
+                    else if ( /*left side*/ (x <= L) && (y > T) && (y < T + H) || /*right side*/ (x >= L + W) && (y > T) && (y < T + H) ) {
                         that.Xcss({
                             top: top + (y - yd),
                         });
                     }
                     // Borders on X Axis
-                    else if ( /*top side*/ (y <= T) & (x > L) & (x < L + W) || /*bottom side*/ (y >= T + H) & (x > L) & (x < L + W) ) {
+                    else if ( /*top side*/ (y <= T) && (x > L) && (x < L + W) || /*bottom side*/ (y >= T + H) && (x > L) && (x < L + W) ) {
                         that.Xcss({
                             left: left + (x - xd),
                         });
@@ -535,36 +535,12 @@
             //_X(?).Xcss({'? element key': ? value})    => SET element css
             Xcss: function(e) {
                 var that = this;
+                var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom'];
                 if (typeof e == 'object') {
                     _X.Xeach(that, function(k1, v1) {
                         _X.Xeach(e, function(k2, v2) {
                             if (v1.style !== undefined) {
-                                if (
-                                    (
-                                        k2 == 'left' ||
-                                        k2 == 'right' ||
-                                        k2 == 'top' ||
-                                        k2 == 'bottom' ||
-                                        k2 == 'width' ||
-                                        k2 == 'height' ||
-                                        k2 == 'margin' ||
-                                        k2 == 'padding' ||
-                                        //
-                                        k2 == 'perspective' ||
-                                        k2 == 'font-size' ||
-                                        //
-                                        k2 == 'margin-left' ||
-                                        k2 == 'margin-right' ||
-                                        k2 == 'margin-top' ||
-                                        k2 == 'margin-bottom' ||
-                                        //
-                                        k2 == 'padding-left' ||
-                                        k2 == 'padding-right' ||
-                                        k2 == 'padding-top' ||
-                                        k2 == 'padding-bottom'
-                                    )
-                                    && typeof v2 == 'number' && v2 !== 0
-                                ) {
+                                if (cssElements.indexOf(k2) > -1 && typeof v2 == 'number' && v2 !== 0) {
                                     v1.style[k2] = v2 + 'px';
                                 } else {
                                     v1.style[k2] = v2;
