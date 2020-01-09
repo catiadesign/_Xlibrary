@@ -294,20 +294,20 @@
                     // Center without borders
                     if ( (x > L) & (y > T) & (x < L + W) & (y < T + H) ) {
                         that.Xcss({
-                            left: left + (x - xd) + 'px',
-                            top: top + (y - yd) + 'px',
+                            left: left + (x - xd),
+                            top: top + (y - yd),
                         });
                     }
                     // Borders on Y Axis
                     else if ( /*left side*/ (x <= L) & (y > T) & (y < T + H) || /*right side*/ (x >= L + W) & (y > T) & (y < T + H) ) {
                         that.Xcss({
-                            top: top + (y - yd) + 'px',
+                            top: top + (y - yd),
                         });
                     }
                     // Borders on X Axis
                     else if ( /*top side*/ (y <= T) & (x > L) & (x < L + W) || /*bottom side*/ (y >= T + H) & (x > L) & (x < L + W) ) {
                         that.Xcss({
-                            left: left + (x - xd) + 'px',
+                            left: left + (x - xd),
                         });
                     }
                 };
@@ -853,15 +853,15 @@
                         k = k + 10;
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
-                                left: (l - dist) + k + 'px',
+                                left: (l - dist) + k,
                             });
                         } else if (hideshow == 'hide') {
                             el.Xshow().Xcss({
-                                left: l - k + 'px',
+                                left: l - k,
                             });
                             if (k == dist) {
                                 el.Xhide().Xcss({
-                                    left: l + 'px',
+                                    left: l,
                                 });
                             }
                         }
@@ -884,15 +884,15 @@
                         k = k + 10;
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
-                                top: (t - dist) + k + 'px',
+                                top: (t - dist) + k,
                             });
                         } else if (hideshow == 'hide') {
                             el.Xshow().Xcss({
-                                top: t - k + 'px',
+                                top: t - k,
                             });
                             if (k == dist) {
                                 el.Xhide().Xcss({
-                                    top: t + 'px',
+                                    top: t,
                                 });
                             }
                         }
@@ -916,18 +916,18 @@
                         k = k + 10;
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
-                                left:   (l - dist) + k + 'px',
-                                top:    (t - dist) + k + 'px',
+                                left:   (l - dist) + k,
+                                top:    (t - dist) + k,
                             });
                         } else if (hideshow == 'hide') {
                             el.Xshow().Xcss({
-                                left:   l - k + 'px',
-                                top:    t - k + 'px',
+                                left:   l - k,
+                                top:    t - k,
                             });
                             if (k == dist) {
                                 el.Xhide().Xcss({
-                                    left:   l + 'px',
-                                    top:    t + 'px',
+                                    left:   l,
+                                    top:    t,
                                 });
                             }
                         }
@@ -953,24 +953,24 @@
                         k = k + 10;
                         if (hideshow == 'show') {
                             el.Xshow().Xcss({
-                                left:   (l + dist) - k + 'px',
-                                top:    (t + dist) - k + 'px',
-                                width:  (w - dist * 2) + k * 2 + 'px',
-                                height: (h - dist * 2) + k * 2 + 'px',
+                                left:   (l + dist) - k,
+                                top:    (t + dist) - k,
+                                width:  (w - dist * 2) + k * 2,
+                                height: (h - dist * 2) + k * 2,
                             });
                         } else if (hideshow == 'hide') {
                             el.Xshow().Xcss({
-                                left:   l + k + 'px',
-                                top:    t + k + 'px',
-                                width:  w - k * 2 + 'px',
-                                height: h - k * 2 + 'px',
+                                left:   l + k,
+                                top:    t + k,
+                                width:  w - k * 2,
+                                height: h - k * 2,
                             });
                             if (k == dist) {
                                 el.Xhide().Xcss({
-                                    left:   l + 'px',
-                                    top:    t + 'px',
-                                    width:  w + 'px',
-                                    height: h + 'px',
+                                    left:   l,
+                                    top:    t,
+                                    width:  w,
+                                    height: h,
                                 });
                             }
                         }
