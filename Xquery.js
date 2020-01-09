@@ -9,7 +9,10 @@
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
             updated:    '01-12-2019',
-        };        
+        };
+        
+        var xs = 0;
+        
         var _X = function(id) {
             var that;
             var elem;
@@ -74,7 +77,9 @@
             }
             return that;
         };
-        
+
+        _X.ClassVirtual = function() {return '.' + 'VirtualClass' + 9 + xs++};    
+    
         _X.Xsearch = function(options) {
             var defaults = {
                 a: _X.ELEMENTS, //array     => array where to search
@@ -534,7 +539,36 @@
                     _X.Xeach(that, function(k1, v1) {
                         _X.Xeach(e, function(k2, v2) {
                             if (v1.style !== undefined) {
-                                v1.style[k2] = v2;
+                                if (
+                                    (
+                                        k2 == 'left' ||
+                                        k2 == 'right' ||
+                                        k2 == 'top' ||
+                                        k2 == 'bottom' ||
+                                        k2 == 'width' ||
+                                        k2 == 'height' ||
+                                        k2 == 'margin' ||
+                                        k2 == 'padding' ||
+                                        //
+                                        k2 == 'perspective' ||
+                                        k2 == 'font-size' ||
+                                        //
+                                        k2 == 'margin-left' ||
+                                        k2 == 'margin-right' ||
+                                        k2 == 'margin-top' ||
+                                        k2 == 'margin-bottom' ||
+                                        //
+                                        k2 == 'padding-left' ||
+                                        k2 == 'padding-right' ||
+                                        k2 == 'padding-top' ||
+                                        k2 == 'padding-bottom'
+                                    )
+                                    && typeof v2 == 'number' && v2 !== 0
+                                ) {
+                                    v1.style[k2] = v2 + 'px';
+                                } else {
+                                    v1.style[k2] = v2;
+                                }
                             }
                         });
                     });
