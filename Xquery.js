@@ -535,7 +535,7 @@
             //_X(?).Xcss({'? element key': ? value})    => SET element css
             Xcss: function(e) {
                 var that = this;
-                var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom'];
+                var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
                 if (typeof e == 'object') {
                     _X.Xeach(that, function(k1, v1) {
                         _X.Xeach(e, function(k2, v2) {
