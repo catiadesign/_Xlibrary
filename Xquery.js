@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '01-12-2019',
+            updated:    '10-01-2020',
         };
         
         var xs = 0;
@@ -571,7 +571,7 @@
                 });
             },
             
-            //_X(?).Xon( ['? ?', function(){}] )    => SET event like an array syntax
+            //_X(?).Xon( ['? ? ?', function(){}] )    => SET event like an array syntax
             //_X(?).Xon( {'?': function(){}} )      => SET event like an object syntax
             Xon: function(e) {
                 var that = this;
@@ -959,14 +959,14 @@
             
         };
         
-        _X.MATRICE = {
+        _X.MATRIX = {
             s: function(a) {
                 return Math.sin(a);
             },
             c: function(a) {
                 return Math.cos(a);
             },                
-            rotateAroundXAxis: function(a) {
+            RotateXAxis: function(a) {
                 var s = this.s(a);
                 var c = this.c(a);
                 return [
@@ -977,7 +977,7 @@
                 ];
             },
         
-            rotateAroundYAxis: function(a) {
+            RotateYAxis: function(a) {
                 var s = this.s(a);
                 var c = this.c(a);             
                 return [
@@ -988,7 +988,7 @@
                 ];
             },
         
-            rotateAroundZAxis: function(a) {
+            RotateZAxis: function(a) {
                 var s = this.s(a);
                 var c = this.c(a);             
                 return [
