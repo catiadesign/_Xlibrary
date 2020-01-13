@@ -82,7 +82,7 @@
     
         _X.Xsearch = function(options) {
             var defaults = {
-                a: _X.ELEMENTS, //array     => array where to search
+                a: ELEMENTS,    //array     => array where to search
                 s: '999',       //search    => string || array by ","
                 l: 'search',    //location  => search || loc || title || key || ico || keyname
                 d: 'min',       //deep      => min || med || max
