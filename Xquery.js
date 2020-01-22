@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '10-01-2020',
+            updated:    '22-01-2020',
         };
         
         var xs = 0;
@@ -683,7 +683,7 @@
                 return self;
             },
             
-            //_X(?).Xwidth('? offset || client || inner || outer || box || scroll') 
+            //_X(?).Xwidth('? offset || client || inner || outer || box || scroll || screen') 
             Xwidth: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -699,11 +699,13 @@
                         return that[0].getBoundingClientRect().width;
                     } else if (e == 'scroll') {
                         return that[0].scrollWidth;
+                    } else if (e == 'screen') {
+                        return that[0].screen.width;
                     }
                 }
             },
             
-            //_X(?).Xheight('? offset || client || inner || outer || box || scroll') 
+            //_X(?).Xheight('? offset || client || inner || outer || box || scroll || screen') 
             Xheight: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -719,11 +721,13 @@
                         return that[0].getBoundingClientRect().height;
                     } else if (e == 'scroll') {
                         return that[0].scrollHeight;
+                    } else if (e == 'screen') {
+                        return that[0].screen.height;
                     }
                 }
             },
             
-            //_X(?).Xleft('? offset || client || box || scroll') 
+            //_X(?).Xleft('? offset || client || box || scroll || screen') 
             Xleft: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -735,11 +739,13 @@
                         return that[0].getBoundingClientRect().left;
                     } else if (e == 'scroll') {
                         return that[0].scrollLeft;
+                    } else if (e == 'screen') {
+                        return that[0].screen.left;
                     }
                 }
             },
             
-            //_X(?).Xtop('? offset || client || box || scroll')
+            //_X(?).Xtop('? offset || client || box || scroll || screen')
             Xtop: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -751,6 +757,8 @@
                         return that[0].getBoundingClientRect().top;
                     } else if (e == 'scroll') {
                         return that[0].scrollTop;
+                    } else if (e == 'screen') {
+                        return that[0].screen.top;
                     }
                 }
             },
