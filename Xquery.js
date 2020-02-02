@@ -8,10 +8,11 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '22-01-2020',
+            updated:    '02-02-2020',
         };
         
         var xs = 0;
+        var effectStyles;
         
         var _X = function(id) {
             var that;
@@ -385,10 +386,8 @@
                 var getEl = _X(e);
                 if (getEl.length > 0 && that.length > 0) {
                     getEl[0].appendChild(that[0]);
-                    return that;
-                } else {
-                    return that;
                 }
+                return that;
             },
             
             //_X(?).Xis([? css element: ? css value])   => return TRUE / FALSE on a css element check
@@ -455,9 +454,13 @@
             Xappend: function(e) {
                 var that = this;
                 if (e !== undefined && typeof e == 'object') {
-                    that[0].appendChild(e[0]);
+                    _X.Xeach(that, function(k, v) {
+                        v.appendChild(e[0]);
+                    });
                 } else {
-                    that[0].innerHTML += e;
+                    _X.Xeach(that, function(k, v) {
+                        v.innerHTML += e;
+                    });
                 }
                 return that;
             },
@@ -571,8 +574,8 @@
                 });
             },
             
-            //_X(?).Xon( ['? ? ?', function(){}] )    => SET event like an array syntax
-            //_X(?).Xon( {'?': function(){}} )      => SET event like an object syntax
+            //_X(?).Xon( ['? ? ?', function(){}] )      => SET event like an array syntax
+            //_X(?).Xon( {'?': function(){}} )          => SET event like an object syntax
             Xon: function(e) {
                 var that = this;
                 if (e.length > 0 && e[0] !== null) {
@@ -603,7 +606,9 @@
             Xempty: function() {
                 var that = this;
                 if (that[0] !== undefined) {
-                    that[0].innerHTML = '';
+                    _X.Xeach(that, function(k, v) {
+                        v.innerHTML = '';
+                    });
                     return that;
                 }
             },
@@ -774,10 +779,10 @@
                         return newUrl[0];
                     }
                 }
-                function ReturnData(url) {
+                function ReturnData(to, url) {
                     if (url.indexOf('#') > -1) {
-                        var temp = _X(that).Xappend(xhr.responseText).Xfind(newUrl[1]);
-                        _X(that).Xempty();
+                        var temp = _X(to).Xappend(xhr.responseText).Xfind(newUrl[1]);
+                        _X(to).Xempty();
                         return temp;
                     } else {
                         return xhr.responseText;
@@ -791,11 +796,13 @@
                 //xhr.getAllResponseHeaders();
                 xhr.onload = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        _X(that).Xappend(ReturnData(url));
-                        if (callback !== undefined) {
-                            callback.apply(xhr, []);
-                        }
-                        //console.log(xhr.getResponseHeader("Content-Type"));
+                        _X.Xeach(that, function(k, v) {
+                            _X(v).Xappend(ReturnData(v, url));
+                            if (callback !== undefined) {
+                                callback.apply(xhr, []);
+                            }
+                            //console.log(xhr.getResponseHeader("Content-Type"));
+                        });
                     }
                 };
                 xhr.onerror = function() {
@@ -807,165 +814,101 @@
 
         //Effects for Hide / Show prototype function
         _X.EFFECT = {
-            dist:   50,
-            time:   10,
-            left:   0,
-            top:    0,
-            width:  0,
-            height: 0,
-            ReturnElemenPos: function(elem) {
-                var el = _X(elem).Xcss({display: ''});
-                var l = el.Xleft('offset');
-                var t = el.Xtop('offset');
-                var w = el.Xwidth('offset');
-                var h = el.Xheight('offset');
-                this.left = l;
-                this.top = t;
-                this.width = w;
-                this.height = h;
+            timeout: function(elem) {
+                setTimeout(function() {
+                    _X(elem).Xhide();
+                }, 200);                
             },
-            
+            elemCss: function(effectname) {
+                return {
+                    'animation-name': effectname,
+                    'animation-duration': '.5s',
+                    'animation-timing-function': 'ease',
+                    'animation-direction': 'normal',
+                    'animation-fill-mode': 'none',
+                };
+            },
+            AddAnimation: function(name, matrix) {
+                if (!effectStyles) {
+                    effectStyles = document.createElement('style');
+                    effectStyles.type = 'text/css';
+                    document.head.appendChild(effectStyles);
+                }
+                function CreateEffectShow(matrix) {
+                    return `from {transform: matrix3d( ${ matrix } ); opacity: 0;} to {transform: matrix3d(1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1); opacity: 1;}`;
+                }
+        
+                function CreateEffectHide(matrix) {
+                    return `from {transform: matrix3d(1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1); opacity: 1;} to {transform: matrix3d( ${ matrix }); opacity: 0;}`;
+                }            
+                effectStyles.sheet.insertRule(`@keyframes ${ name + '_motion_show' } { ${ CreateEffectShow(matrix) } }`);
+                effectStyles.sheet.insertRule(`@keyframes ${ name + '_motion_hide' } { ${ CreateEffectHide(matrix) } }`);
+            },       
             drop_left: function (elem, hideshow) {
-                this.ReturnElemenPos(elem);
-                var el = _X(elem);
-                var dist = this.dist;
-                var time = this.time;
-                var l = this.left;
-                var k = 0;
-                (function Loop() {
-                    setTimeout(function() {
-                        k = k + 10;
-                        if (hideshow == 'show') {
-                            el.Xshow().Xcss({
-                                left: (l - dist) + k,
-                            });
-                        } else if (hideshow == 'hide') {
-                            el.Xshow().Xcss({
-                                left: l - k,
-                            });
-                            if (k == dist) {
-                                el.Xhide().Xcss({
-                                    left: l,
-                                });
-                            }
-                        }
-                        if (k < dist) {
-                            Loop();
-                        }
-                    }, time);
-                })();
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('drop_left_motion_show'));
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('drop_left_motion_hide'));
+                    this.timeout(elem);
+                }                  
             },
-            
             drop_top: function(elem, hideshow) {
-                this.ReturnElemenPos(elem);
-                var el = _X(elem);
-                var dist = this.dist;
-                var time = this.time;
-                var t = this.top;
-                var k = 0;
-                (function Loop() {
-                    setTimeout(function() {
-                        k = k + 10;
-                        if (hideshow == 'show') {
-                            el.Xshow().Xcss({
-                                top: (t - dist) + k,
-                            });
-                        } else if (hideshow == 'hide') {
-                            el.Xshow().Xcss({
-                                top: t - k,
-                            });
-                            if (k == dist) {
-                                el.Xhide().Xcss({
-                                    top: t,
-                                });
-                            }
-                        }
-                        if (k < dist) {
-                            Loop();
-                        }
-                    }, time);
-                })();
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('drop_top_motion_show'));
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('drop_top_motion_hide'));
+                    this.timeout(elem);
+                }                  
             },
-            
             drop_left_top: function(elem, hideshow) {
-                this.ReturnElemenPos(elem);
-                var el = _X(elem);
-                var dist = this.dist;
-                var time = this.time;
-                var l = this.left;
-                var t = this.top;
-                var k = 0;
-                (function Loop() {
-                    setTimeout(function() {
-                        k = k + 10;
-                        if (hideshow == 'show') {
-                            el.Xshow().Xcss({
-                                left:   (l - dist) + k,
-                                top:    (t - dist) + k,
-                            });
-                        } else if (hideshow == 'hide') {
-                            el.Xshow().Xcss({
-                                left:   l - k,
-                                top:    t - k,
-                            });
-                            if (k == dist) {
-                                el.Xhide().Xcss({
-                                    left:   l,
-                                    top:    t,
-                                });
-                            }
-                        }
-                        if (k < dist) {
-                            Loop();
-                        }
-                    }, time);
-                })();
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('drop_left_top_motion_show'));
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('drop_left_top_motion_hide'));
+                    this.timeout(elem);
+                }                   
             },
-            
-            unfold_all: function(elem, hideshow) {
-                this.ReturnElemenPos(elem);
-                var el = _X(elem);
-                var dist = this.dist;
-                var time = this.time;
-                var l = this.left;
-                var t = this.top;
-                var w = this.width;
-                var h = this.height;
-                var k = 0;
-                (function Loop() {
-                    setTimeout(function() {
-                        k = k + 10;
-                        if (hideshow == 'show') {
-                            el.Xshow().Xcss({
-                                left:   (l + dist) - k,
-                                top:    (t + dist) - k,
-                                width:  (w - dist * 2) + k * 2,
-                                height: (h - dist * 2) + k * 2,
-                            });
-                        } else if (hideshow == 'hide') {
-                            el.Xshow().Xcss({
-                                left:   l + k,
-                                top:    t + k,
-                                width:  w - k * 2,
-                                height: h - k * 2,
-                            });
-                            if (k == dist) {
-                                el.Xhide().Xcss({
-                                    left:   l,
-                                    top:    t,
-                                    width:  w,
-                                    height: h,
-                                });
-                            }
-                        }
-                        if (k < dist) {
-                            Loop();
-                        }
-                    }, time);
-                })();
+            unfold_small: function(elem, hideshow) {
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('unfold_small_motion_show'));
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('unfold_small_motion_hide'));
+                    this.timeout(elem);
+                }                
             },
-            
+            unfold_big: function(elem, hideshow) {
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('unfold_big_motion_show'));
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('unfold_big_motion_hide'));
+                    this.timeout(elem);
+                }
+            },
+            reverse: function(elem, hideshow) {
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('reverse_motion_show'));                    
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('reverse_motion_hide'));
+                    this.timeout(elem);
+                }
+            },
+            swipe: function(elem, hideshow) {
+                if (hideshow == 'show') {
+                    _X(elem).Xshow().Xcss(this.elemCss('swipe_motion_show'));                    
+                } else if (hideshow == 'hide') {
+                    _X(elem).Xcss(this.elemCss('swipe_motion_hide'));
+                    this.timeout(elem);
+                }
+            },                   
         };
+
+        _X.EFFECT.AddAnimation('swipe', '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1');
+        _X.EFFECT.AddAnimation('reverse', '1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5');
+        _X.EFFECT.AddAnimation('unfold_big', '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5');
+        _X.EFFECT.AddAnimation('unfold_small', '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5');
+        _X.EFFECT.AddAnimation('drop_left', '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1');
+        _X.EFFECT.AddAnimation('drop_top', '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1');
+        _X.EFFECT.AddAnimation('drop_left_top', '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1');
         
         _X.MATRIX = {
             s: function(a) {
@@ -973,7 +916,10 @@
             },
             c: function(a) {
                 return Math.cos(a);
-            },                
+            },
+            t: function(a) {
+                return Math.tan(a);
+            },                            
             RotateXAxis: function(a) {
                 var s = this.s(a);
                 var c = this.c(a);
@@ -1021,6 +967,17 @@
                     w, 0, 0, 0,
                     0, h, 0, 0,
                     0, 0, d, 0,
+                    0, 0, 0, 1
+                ];
+            },
+
+            skew: function(x, y) {
+                var tx = this.t(x);
+                var ty = this.t(y);
+                return [
+                    1, tx, 0, 0,
+                    ty, 1, 0, 0,
+                    0, 0, 1, 0,
                     0, 0, 0, 1
                 ];
             },
