@@ -478,11 +478,11 @@
         
             //_X(?).Xshow()     => show the current element
             //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
-            Xshow: function(e) {
+            Xshow: function(effect) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
-                    if (e !== undefined) {
-                        _X.EFFECT[e](v, 'show');
+                    if (effect !== undefined) {
+                        _X.EFFECT.loadEffect(effect, v, 'show');
                     } else {
                         v.style.display = '';
                         v.style.visibility = 'visible';
@@ -493,11 +493,11 @@
 
             //_X(?).Xhide()     => hide the current element
             //_X(?).Xhide('?')  => hide the current element with buildin EFFECTS
-            Xhide: function(e) {
+            Xhide: function(effect) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
-                    if (e !== undefined) {
-                        _X.EFFECT[e](v, 'hide');
+                    if (effect !== undefined) {
+                        _X.EFFECT.loadEffect(effect, v, 'hide');
                     } else {
                         v.style.display = 'none';
                         v.style.visibility = 'hidden';
@@ -814,11 +814,6 @@
 
         //Effects for Hide / Show prototype function
         _X.EFFECT = {
-            timeout: function(elem) {
-                setTimeout(function() {
-                    _X(elem).Xhide();
-                }, 200);                
-            },
             elemCss: function(effectname) {
                 return {
                     'animation-name': effectname,
@@ -829,77 +824,30 @@
                 };
             },
             AddAnimation: function(name, matrix) {
+                var matNull = '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1';
                 if (!effectStyles) {
                     effectStyles = document.createElement('style');
                     effectStyles.type = 'text/css';
                     document.head.appendChild(effectStyles);
                 }
-                function CreateEffectShow(matrix) {
-                    return `from {transform: matrix3d( ${ matrix } ); opacity: 0;} to {transform: matrix3d(1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1); opacity: 1;}`;
-                }
-        
-                function CreateEffectHide(matrix) {
-                    return `from {transform: matrix3d(1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1); opacity: 1;} to {transform: matrix3d( ${ matrix }); opacity: 0;}`;
-                }            
-                effectStyles.sheet.insertRule(`@keyframes ${ name + '_motion_show' } { ${ CreateEffectShow(matrix) } }`);
-                effectStyles.sheet.insertRule(`@keyframes ${ name + '_motion_hide' } { ${ CreateEffectHide(matrix) } }`);
-            },       
-            drop_left: function (elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('drop_left_motion_show'));
-                } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('drop_left_motion_hide'));
-                    this.timeout(elem);
-                }                  
+                effectStyles.sheet.insertRule(`@keyframes ${name + '_motion_show'} { 
+                    ${`from {transform: matrix3d( ${matrix} ); opacity: 0;} to {transform: matrix3d( ${matNull} ); opacity: 1;}`}
+                }`);
+                effectStyles.sheet.insertRule(`@keyframes ${name + '_motion_hide'} {
+                    ${`from {transform: matrix3d( ${matNull} ); opacity: 1;} to {transform: matrix3d( ${matrix} ); opacity: 0;}`}
+                }`);
             },
-            drop_top: function(elem, hideshow) {
+            loadEffect: function(effect, elem, hideshow) {
+                var that = this;
                 if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('drop_top_motion_show'));
+                    _X(elem).Xshow().Xcss(that.elemCss(effect + '_motion_show'));
                 } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('drop_top_motion_hide'));
-                    this.timeout(elem);
-                }                  
-            },
-            drop_left_top: function(elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('drop_left_top_motion_show'));
-                } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('drop_left_top_motion_hide'));
-                    this.timeout(elem);
-                }                   
-            },
-            unfold_small: function(elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('unfold_small_motion_show'));
-                } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('unfold_small_motion_hide'));
-                    this.timeout(elem);
-                }                
-            },
-            unfold_big: function(elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('unfold_big_motion_show'));
-                } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('unfold_big_motion_hide'));
-                    this.timeout(elem);
+                    _X(elem).Xcss(that.elemCss(effect + '_motion_hide'));
+                    setTimeout(function() {
+                        _X(elem).Xhide();
+                    }, 200); 
                 }
             },
-            reverse: function(elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('reverse_motion_show'));                    
-                } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('reverse_motion_hide'));
-                    this.timeout(elem);
-                }
-            },
-            swipe: function(elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(this.elemCss('swipe_motion_show'));                    
-                } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(this.elemCss('swipe_motion_hide'));
-                    this.timeout(elem);
-                }
-            },                   
         };
 
         _X.EFFECT.AddAnimation('swipe', '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1');
