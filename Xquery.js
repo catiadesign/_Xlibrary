@@ -12,7 +12,7 @@
         };
         
         var xs = 0;
-        var effectStyles;
+        var effectStyles = null;
         
         var _X = function(id) {
             var that;
@@ -814,6 +814,15 @@
 
         //Effects for Hide / Show prototype function
         _X.EFFECT = {
+            type: [
+                {name: 'swipe', format: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
+                {name: 'reverse', format: '1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'unfold_big', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'unfold_small', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5'},
+                {name: 'drop_left', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
+                {name: 'drop_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
+                {name: 'drop_left_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},                
+            ],
             elemCss: function(effectname) {
                 return {
                     'animation-name': effectname,
@@ -848,15 +857,15 @@
                     }, 200); 
                 }
             },
+            init: function() {
+                var that = this;
+                _X.Xeach(that.type, function(k, v) {
+                    that.AddAnimation(v.name, v.format);
+                });
+            },
         };
 
-        _X.EFFECT.AddAnimation('swipe', '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1');
-        _X.EFFECT.AddAnimation('reverse', '1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5');
-        _X.EFFECT.AddAnimation('unfold_big', '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5');
-        _X.EFFECT.AddAnimation('unfold_small', '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5');
-        _X.EFFECT.AddAnimation('drop_left', '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1');
-        _X.EFFECT.AddAnimation('drop_top', '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1');
-        _X.EFFECT.AddAnimation('drop_left_top', '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1');
+        _X.EFFECT.init();
         
         _X.MATRIX = {
             s: function(a) {
