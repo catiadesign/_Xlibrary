@@ -322,7 +322,119 @@
                 });
             }
         };
+
+        /*Create DIV elements from object
+        Structure Example:
+        var x = [
+            {
+                //add class name
+                clasa: {},
+                
+                //add css
+                css: {},
+                
+                //add mouse events 
+                on: {},
+                
+                //add icon
+                icon: {},
+                
+                //add function
+                init: {},
+                
+                //add subelemnts
+                items: [
+                    {
+                        clasa: {},
+                        css: {},
+                        on: {},
+                        icon: {},
+                        init: {},
+                        items: [
+                            ...
+                        ],
+                    },{
+                        ...
+                    }
+                ],
+            },{
+                ...
+            }
+        ];*/
         
+        //a => array
+        //t => element where to append
+        _X.CreateDivElements = function(options) {
+            var defaults = {
+                a: '',
+                t: '',
+            };
+            var s = _X.XJoinObj(defaults, options);
+            _X.prototype._css = function(elem) {
+                var that = this;
+                if (elem !== undefined) {
+                    that.Xcss(elem);
+                }                    
+                return that;
+            };        
+            _X.prototype._icon = function(elem) {
+                var that = this;
+                if (elem !== undefined) {
+                    that.XAddIcon(elem);
+                }                    
+                return that;
+            };
+            _X.prototype._on = function(elem) {
+                var that = this;
+                if (elem !== undefined) {
+                    that.Xon(elem);
+                }                    
+                return that;
+            };
+            _X.prototype._clasa = function(elem) {
+                var that = this;
+                if (elem !== undefined) {
+                    that.XaddClass(elem);
+                }                    
+                return that;
+            };
+            _X.prototype._init = function(elem) {
+                var that = this;
+                if (elem !== undefined) {
+                    elem(that);
+                }                    
+                return that;
+            };          
+            _X.prototype.Items = function(elem) {
+                var that = this;
+                if (elem.hasOwnProperty('items')) {
+                    _X.Xeach(elem.items, function(k, v) {
+                        that.Xappend(_X('<div')
+                                .XappendTo(that)
+                                ._clasa(v.clasa)
+                                ._css(v.css)
+                                ._icon(v.icon)
+                                ._on(v.on)
+                                ._init(v.init)
+                                .Items(v)
+                        );
+                    });
+                }                    
+                return that;
+            };        
+            _X.Xeach(s.a, function(k, v) {
+                _X('<div')
+                    .XappendTo(s.t)
+                    .XaddClass(v.clasa)
+                    ._css(v.css)
+                    ._icon(v.icon)
+                    ._on(v.on)
+                    ._init(v.init)
+                    .Items(v);
+            });            
+        };
+        
+        //_X Object Prototype
         _X.prototype = {
             name:           info.name,
             author:         info.author,
@@ -796,13 +908,13 @@
                 //xhr.getAllResponseHeaders();
                 xhr.onload = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        _X.Xeach(that, function(k, v) {
-                            _X(v).Xappend(ReturnData(v, url));
+                        //_X.Xeach(that, function(k, v) {
+                            _X(that).Xappend(ReturnData(that, url));
                             if (callback !== undefined) {
                                 callback.apply(xhr, []);
                             }
                             //console.log(xhr.getResponseHeader("Content-Type"));
-                        });
+                        //});
                     }
                 };
                 xhr.onerror = function() {
@@ -839,12 +951,8 @@
                     effectStyles.type = 'text/css';
                     document.head.appendChild(effectStyles);
                 }
-                effectStyles.sheet.insertRule(`@keyframes ${name + '_motion_show'} { 
-                    ${`from {transform: matrix3d( ${matrix} ); opacity: 0;} to {transform: matrix3d( ${matNull} ); opacity: 1;}`}
-                }`);
-                effectStyles.sheet.insertRule(`@keyframes ${name + '_motion_hide'} {
-                    ${`from {transform: matrix3d( ${matNull} ); opacity: 1;} to {transform: matrix3d( ${matrix} ); opacity: 0;}`}
-                }`);
+                effectStyles.sheet.insertRule('@keyframes ' + name + '_motion_show {from {transform: matrix3d(' + matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
+                effectStyles.sheet.insertRule('@keyframes ' + name + '_motion_hide {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + matrix + '); opacity: 0;}}', 0);
             },
             loadEffect: function(effect, elem, hideshow) {
                 var that = this;
