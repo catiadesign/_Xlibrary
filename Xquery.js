@@ -342,7 +342,7 @@
                 //add function
                 init: {},
                 
-                //add subelemnts
+                //add subelements
                 items: [
                     {
                         clasa: {},
@@ -374,37 +374,37 @@
                 var that = this;
                 if (elem !== undefined) {
                     that.Xcss(elem);
-                }                    
+                }
                 return that;
             };        
             _X.prototype._icon = function(elem) {
                 var that = this;
                 if (elem !== undefined) {
                     that.XAddIcon(elem);
-                }                    
+                }
                 return that;
             };
             _X.prototype._on = function(elem) {
                 var that = this;
                 if (elem !== undefined) {
                     that.Xon(elem);
-                }                    
+                }
                 return that;
             };
             _X.prototype._clasa = function(elem) {
                 var that = this;
                 if (elem !== undefined) {
                     that.XaddClass(elem);
-                }                    
+                }
                 return that;
             };
             _X.prototype._init = function(elem) {
                 var that = this;
                 if (elem !== undefined) {
                     elem(that);
-                }                    
+                }
                 return that;
-            };          
+            };
             _X.prototype.Items = function(elem) {
                 var that = this;
                 if (elem.hasOwnProperty('items')) {
@@ -419,19 +419,19 @@
                                 .Items(v)
                         );
                     });
-                }                    
+                }
                 return that;
-            };        
+            };
             _X.Xeach(s.a, function(k, v) {
                 _X('<div')
                     .XappendTo(s.t)
-                    .XaddClass(v.clasa)
+                    ._clasa(v.clasa)
                     ._css(v.css)
                     ._icon(v.icon)
                     ._on(v.on)
                     ._init(v.init)
                     .Items(v);
-            });            
+            });
         };
         
         //_X Object Prototype
@@ -928,12 +928,12 @@
         _X.EFFECT = {
             type: [
                 {name: 'swipe', format: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
-                {name: 'reverse', format: '1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'reverse', format: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
                 {name: 'unfold_big', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
                 {name: 'unfold_small', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5'},
                 {name: 'drop_left', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
                 {name: 'drop_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
-                {name: 'drop_left_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},                
+                {name: 'drop_left_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},
             ],
             elemCss: function(effectname) {
                 return {
@@ -974,6 +974,7 @@
         };
 
         _X.EFFECT.init();
+        //console.log(effectStyles.sheet.cssRules);
         
         _X.MATRIX = {
             s: function(a) {
@@ -984,7 +985,7 @@
             },
             t: function(a) {
                 return Math.tan(a);
-            },                            
+            },
             RotateXAxis: function(a) {
                 var s = this.s(a);
                 var c = this.c(a);
@@ -998,7 +999,7 @@
         
             RotateYAxis: function(a) {
                 var s = this.s(a);
-                var c = this.c(a);             
+                var c = this.c(a);
                 return [
                     c, 0, s, 0,
                     0, 1, 0, 0,
@@ -1009,7 +1010,7 @@
         
             RotateZAxis: function(a) {
                 var s = this.s(a);
-                var c = this.c(a);             
+                var c = this.c(a);
                 return [
                     c, -s, 0, 0,
                     s, c, 0, 0,
