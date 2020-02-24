@@ -171,14 +171,14 @@
             var i = 0;
             if (obj.length > 0) {
                 for (; i < obj.length; i++) {
-                    if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
+                    if (callback.call( obj[i], i, obj[i] ) === false) {
                         break;
                     }
                 }
             }
             else if (typeof obj == 'number') {
                 for (; i < obj; i++) {
-                    if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
+                    if (callback.call( obj[i], i, obj[i] ) === false) {
                         break;
                     }
                 }
@@ -186,7 +186,7 @@
             else {
                 for (i in obj) {
                     if (obj.hasOwnProperty(i) && obj.hasOwnProperty('length') === false) {
-                        if (callback.call( obj[ i ], i, obj[ i ] ) === false) {
+                        if (callback.call( obj[i], i, obj[i] ) === false) {
                             break;
                         }
                     }
