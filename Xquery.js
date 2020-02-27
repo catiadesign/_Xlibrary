@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '02-02-2020',
+            updated:    '24-02-2020',
         };
         
         var xs = 0;
@@ -84,7 +84,7 @@
         _X.Xsearch = function(options) {
             var defaults = {
                 a: ELEMENTS,    //array     => array where to search
-                s: '999',       //search    => string || array by ","
+                s: '999',       //search    => string || array by ','
                 l: 'search',    //location  => search || loc || title || key || ico || keyname
                 d: 'min',       //deep      => min || med || max
                 e: '999',       //exclude   => based on search keyword
@@ -235,12 +235,12 @@
                 callback: '',
                 dataType: '',
                 /*
-                    ""(default)     => get as string
-                    "text"          => get as string
-                    "arraybuffer"   => get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays)
-                    "blob"          => get as Blob (for binary data, see chapter Blob)
-                    "document"      => get as XML document (can use XPath and other XML methods)
-                    "json"          => get as JSON (parsed automatically)
+                    ''(default)     => get as string
+                    'text'          => get as string
+                    'arraybuffer'   => get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays)
+                    'blob'          => get as Blob (for binary data, see chapter Blob)
+                    'document'      => get as XML document (can use XPath and other XML methods)
+                    'json'          => get as JSON (parsed automatically)
                 */
             };
             var s = _X.XJoinObj(defaults, options);
@@ -255,7 +255,7 @@
                 }
             };
             xhr.onerror = function() {
-                console.log("** An error occurred during the transaction");
+                console.log('** An error occurred during the transaction');
             };
         };
         
@@ -540,6 +540,24 @@
                 self.length = _X.GetObjectLength(self);
                 return self;
             },
+
+            //_X(?).XcontainsClass('?') => GET a selection of elements based on class (+ length)
+            XcontainsClass: function(e) {
+                var that = this;
+                var self = new _X();
+                var temp = [];
+                _X.Xeach(that, function(k, v) {
+                    var elemA = _X.XGetClasa(v);
+                    if (elemA.indexOf(e) > -1) {
+                        temp.push(v);
+                    }
+                });
+                _X.Xeach(temp, function(k, v) {
+                    self[k] = v;
+                });
+                self.length = _X.GetObjectLength(self);
+                return self;
+            },
         
             //_X(?).Xhave([? css element: ? css value]) => Check elements CSS based on a CSS element (+ length) 
             Xhave: function(e) {
@@ -731,7 +749,7 @@
                 var i = 0;
                 var s = e.replace(/\s/g, '').split(',');
                 while ( ( elem = this[ i++ ] ) ) {
-                    if ( elem.nodeType === 1 && ( " " + elem.getAttribute("class") + " " ).indexOf( " " + s.join(' ') + " " ) > -1 ) {
+                    if ( elem.nodeType === 1 && ( " " + elem.getAttribute('class') + " " ).indexOf( " " + s.join(' ') + " " ) > -1 ) {
                         return true;
                     }
                 }
@@ -913,12 +931,12 @@
                             if (callback !== undefined) {
                                 callback.apply(xhr, []);
                             }
-                            //console.log(xhr.getResponseHeader("Content-Type"));
+                            //console.log(xhr.getResponseHeader('Content-Type'));
                         //});
                     }
                 };
                 xhr.onerror = function() {
-                    console.log("** An error occurred during the transaction");
+                    console.log('** An error occurred during the transaction');
                 };    
             },
         
