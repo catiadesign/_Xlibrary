@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '24-02-2020',
+            updated:    '05-03-2020',
         };
         
         var xs = 0;
@@ -142,15 +142,15 @@
                         {return key.toLowerCase().indexOf(s.toLowerCase()) > -1;}
                 }
                 if (a !== undefined) {
-                    _X.Xeach(a, function(key, glob) {
-                        if (ReturnSearch(glob)) {
-                            temp.push(glob);
-                            if (glob.hasOwnProperty('items') && d == 'max') {
-                                SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});
+                    _X.Xeach(a, function(k, _v) {
+                        if (ReturnSearch(_v)) {
+                            temp.push(_v);
+                            if (_v.hasOwnProperty('items') && d == 'max') {
+                                SearchTemp({a: _v.items, s: s, l: l, d: d, e: e});
                             }
                         } else {
                             if (d == 'max' || d == 'med') {
-                                SearchTemp({a: glob.items, s: s, l: l, d: d, e: e});
+                                SearchTemp({a: _v.items, s: s, l: l, d: d, e: e});
                             }
                         }
                     });
@@ -158,8 +158,8 @@
             }
             if (s.indexOf(',') > -1) {
                 var search = s.replace(/\s/g, '').split(',');
-                _X.Xeach(search, function(key, glob) {
-                    SearchTemp({a: a, s: glob, l: l, d: d, e: e});
+                _X.Xeach(search, function(k, _v) {
+                    SearchTemp({a: a, s: _v, l: l, d: d, e: e});
                 });
             } else {
                 SearchTemp({a: a, s: s, l: l, d: d, e: e});
@@ -980,7 +980,7 @@
                     _X(elem).Xcss(that.elemCss(effect + '_motion_hide'));
                     setTimeout(function() {
                         _X(elem).Xhide();
-                    }, 200); 
+                    }, 150); 
                 }
             },
             init: function() {
