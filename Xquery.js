@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '05-03-2020',
+            updated:    '19-03-2020',
         };
         
         var xs = 0;
@@ -258,14 +258,6 @@
                 console.log('** An error occurred during the transaction');
             };
         };
-        
-        _X.Xradians = function(degrees) {
-            return degrees * Math.PI / 180;
-        };
-        
-        _X.Xdegrees = function(radians) {
-            return radians * 180 / Math.PI;
-        };
 
         _X.XDraggable = function(options) {
             var defaults = {
@@ -454,6 +446,19 @@
                     return that;
                 }
             },
+
+            //_X(?).Xfirst() => GET last element (+ length)
+            Xfirst: function() {
+                var that = this;
+                var self = new _X();
+                _X.Xeach(that, function(k, v) {
+                    if (k === 0) {
+                        self[0] = v;
+                    }
+                });
+                self.length = _X.GetObjectLength(self);
+                return self;
+            },
             
             //_X(?).Xlast() => GET last element (+ length)
             Xlast: function() {
@@ -559,7 +564,7 @@
                 return self;
             },
         
-            //_X(?).Xhave([? css element: ? css value]) => Check elements CSS based on a CSS element (+ length) 
+            //_X(?).Xhave([? 'css element', ? 'css value']) => Check elements CSS based on a CSS element (+ length) 
             Xhave: function(e) {
                 var that = this;
                 var self = new _X();
@@ -993,45 +998,62 @@
 
         _X.EFFECT.init();
         //console.log(effectStyles.sheet.cssRules);
+
+        _X.Xradians = function(degrees) {
+            return degrees * (Math.PI / 180);
+        };
+        
+        _X.Xdegrees = function(radians) {
+            return radians * (180 / Math.PI);
+        };
+
+        _X.Xsin = function(val) {
+            if (Math.sin(val) < -0.999999) {
+                return -1;
+            } else if (Math.sin(val) < 0.000001 && Math.sin(val) > -0.000001) {
+                return 0;                
+            } else if (Math.sin(val) > 0.999999) {
+                return 1;                
+            } else {
+                return Math.sin(val);
+            }
+        };  
+        
+        _X.Xcos = function(val) {
+            if (Math.cos(val) < -0.999999) {
+                return -1;       
+            } else if (Math.cos(val) < 0.000001 && Math.cos(val) > -0.000001) {
+                return 0;                
+            } else if (Math.cos(val) > 0.999999) {
+                return 1;
+            } else {
+                return Math.cos(val);
+            }
+        };        
         
         _X.MATRIX = {
-            s: function(a) {
-                return Math.sin(a);
-            },
-            c: function(a) {
-                return Math.cos(a);
-            },
-            t: function(a) {
-                return Math.tan(a);
-            },
             RotateXAxis: function(a) {
-                var s = this.s(a);
-                var c = this.c(a);
                 return [
                     1, 0, 0, 0,
-                    0, c, -s, 0,
-                    0, s, c, 0,
+                    0, _X.Xcos(a), -_X.Xsin(a), 0,
+                    0, _X.Xsin(a), _X.Xcos(a), 0,
                     0, 0, 0, 1
                 ];
             },
         
             RotateYAxis: function(a) {
-                var s = this.s(a);
-                var c = this.c(a);
                 return [
-                    c, 0, s, 0,
+                    _X.Xcos(a), 0, _X.Xsin(a), 0,
                     0, 1, 0, 0,
-                    -s, 0, c, 0,
+                    -_X.Xsin(a), 0, _X.Xcos(a), 0,
                     0, 0, 0, 1
                 ];
             },
         
             RotateZAxis: function(a) {
-                var s = this.s(a);
-                var c = this.c(a);
                 return [
-                    c, -s, 0, 0,
-                    s, c, 0, 0,
+                    _X.Xcos(a), -_X.Xsin(a), 0, 0,
+                    _X.Xsin(a), _X.Xcos(a), 0, 0,
                     0, 0, 1, 0,
                     0, 0, 0, 1
                 ];
@@ -1056,11 +1078,9 @@
             },
 
             skew: function(x, y) {
-                var tx = this.t(x);
-                var ty = this.t(y);
                 return [
-                    1, tx, 0, 0,
-                    ty, 1, 0, 0,
+                    1, Math.tan(x), 0, 0,
+                    Math.tan(y), 1, 0, 0,
                     0, 0, 1, 0,
                     0, 0, 0, 1
                 ];
@@ -1107,13 +1127,29 @@
                     result0[3], result1[3], result2[3], result3[3]
                 ];
             },
+
+            MatrixCorrect: function(mat) {
+                var temp = [];
+                _X.Xeach(mat, function(k, v) {
+                    if (v < -0.999999) {
+                        temp.push(-1);
+                    } else if (v < 0.000001 && v > -0.000001) {
+                        temp.push(0);                
+                    } else if (v > 0.999999) {
+                        temp.push(1);                
+                    } else {
+                        temp.push(v);
+                    }            
+                });
+                return temp;
+            },
         
             multiplyArrayOfMatrices: function(matrices) {
                 var inputMatrix = matrices[0];
                 for(var i = 1; i < matrices.length; i++) {
                     inputMatrix = this.multiplyMatrices(inputMatrix, matrices[i]);
                 }
-                return inputMatrix;
+                return this.MatrixCorrect(inputMatrix);
             },
         };
         
