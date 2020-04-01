@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '19-03-2020',
+            updated:    '01-04-2020',
         };
         
         var xs = 0;
@@ -220,20 +220,22 @@
         };
         
         _X.XAddNull = function(val) {
-                if (val.length === 1) { val = '0' + val; }
-                return val;
-            };
+            if (val.length === 1) { val = '0' + val; }
+            return val;
+        };
 
         _X.XAddColor = function() {
-                function IntHex() { return _X.XAddNull(Math.floor((Math.random() * 255) + 1).toString(16)) }
-                return '#' + IntHex() + IntHex() + IntHex();
-            };
+            function IntHex() { return _X.XAddNull(Math.floor((Math.random() * 255) + 1).toString(16)) }
+            return '#' + IntHex() + IntHex() + IntHex();
+        };
         
         _X.XReadAjax = function(options) {
             var defaults = {
                 url: '',
                 callback: '',
                 dataType: '',
+                syncron: true,
+                timeout: 0,
                 /*
                     ''(default)     => get as string
                     'text'          => get as string
@@ -246,9 +248,15 @@
             var s = _X.XJoinObj(defaults, options);
             //var args = Array.prototype.slice.call(arguments, 2);
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', s.url, true);
-            xhr.responseType = s.dataType;
-            xhr.send();
+            xhr.ontimeout = function () {
+                console.error("Timed out.");
+            };            
+            xhr.open('GET', s.url, s.syncron);
+            if (s.syncron === true) {
+                xhr.responseType = s.dataType;
+                xhr.timeout = s.timeout;
+            }
+            xhr.send(null);
             xhr.onload = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     s.callback.apply(xhr, []);
@@ -447,7 +455,7 @@
                 }
             },
 
-            //_X(?).Xfirst() => GET last element (+ length)
+            //_X(?).Xfirst() => GET first element (+ length)
             Xfirst: function() {
                 var that = this;
                 var self = new _X();
@@ -771,7 +779,7 @@
                 var temp = [];
                 var allC;
                 var elem;
-                if (that[0] !== undefined) {
+                if (that[0] !== undefined || that[0] !== null) {
                     //children
                     allC = that[0].children;
                     if (e == 'children') {
@@ -805,7 +813,7 @@
                 var parent;
                 var getAttr;
                 var replaceString;
-                if (that[0] !== undefined) {
+                if (that[0] !== undefined || that[0] !== null) {
                     parent = that[0].parentNode;
                     if (e === undefined) {
                         self[0] = parent;
@@ -823,7 +831,7 @@
                 return self;
             },
             
-            //_X(?).Xwidth('? offset || client || inner || outer || box || scroll || screen') 
+            //_X(?).Xwidth('? offset || client || inner || outer || box || scroll || screen || natural') 
             Xwidth: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -831,6 +839,8 @@
                         return that[0].offsetWidth;
                     } else if (e == 'client') {
                         return that[0].clientWidth;
+                    } else if (e == 'natural') {
+                        return that[0].naturalWidth;                        
                     } else if (e == 'inner') {
                         return that[0].innerWidth;
                     } else if (e == 'outer') {
@@ -845,7 +855,7 @@
                 }
             },
             
-            //_X(?).Xheight('? offset || client || inner || outer || box || scroll || screen') 
+            //_X(?).Xheight('? offset || client || inner || outer || box || scroll || screen || natural') 
             Xheight: function(e) {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -853,6 +863,8 @@
                         return that[0].offsetHeight;
                     } else if (e == 'client') {
                         return that[0].clientHeight;
+                    } else if (e == 'natural') {
+                        return that[0].naturalHeight;                           
                     } else if (e == 'inner') {
                         return that[0].innerHeight;
                     } else if (e == 'outer') {
@@ -926,7 +938,7 @@
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', ReturnUrl(url), true);
                 xhr.responseType = '';
-                xhr.send();
+                xhr.send(null);
                 //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 //xhr.getAllResponseHeaders();
                 xhr.onload = function() {
