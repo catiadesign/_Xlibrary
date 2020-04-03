@@ -79,7 +79,18 @@
             return that;
         };
 
+        //Generate Random Class
         _X.ClassVirtual = function() {return '.' + 'VirtualClass' + 9 + xs++};    
+
+        //Add Free Space
+        _X.AddSpace = function(noOfSpaces) {
+            var space = " ";
+            var returnValue = "";
+            _X.Xeach(noOfSpaces, function(k, v) {
+                returnValue += space;
+            });
+            return returnValue;
+        };
     
         _X.Xsearch = function(options) {
             var defaults = {
