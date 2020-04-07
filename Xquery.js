@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '01-04-2020',
+            updated:    '07-04-2020',
         };
         
         var xs = 0;
@@ -1154,15 +1154,19 @@
             MatrixCorrect: function(mat) {
                 var temp = [];
                 _X.Xeach(mat, function(k, v) {
-                    if (v < -0.999999) {
-                        temp.push(-1);
-                    } else if (v < 0.000001 && v > -0.000001) {
-                        temp.push(0);                
-                    } else if (v > 0.999999) {
-                        temp.push(1);                
-                    } else {
+                    if (k < 12)
+                        if (v < -0.999999) {
+                            temp.push(-1);
+                        } else if (v < 0.000001 && v > -0.000001) {
+                            temp.push(0);                
+                        } else if (v > 0.999999) {
+                            temp.push(1);                
+                        } else {
+                            temp.push(v);
+                        }
+                    else {
                         temp.push(v);
-                    }            
+                    }    
                 });
                 return temp;
             },
