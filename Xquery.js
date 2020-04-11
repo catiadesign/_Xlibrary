@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '07-04-2020',
+            updated:    '11-04-2020',
         };
         
         var xs = 0;
@@ -1162,10 +1162,10 @@
                         } else if (v > 0.999999) {
                             temp.push(1);                
                         } else {
-                            temp.push(v);
+                            temp.push(Math.round(v * 1000000)/1000000);
                         }
                     else {
-                        temp.push(v);
+                        temp.push(Math.round(v * 1000000)/1000000);
                     }    
                 });
                 return temp;
