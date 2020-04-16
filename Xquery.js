@@ -1171,7 +1171,7 @@
                 return temp;
             },
         
-            multiplyArrayOfMatrices: function(matrices) {
+            Multiply: function(matrices) {
                 var inputMatrix = matrices[0];
                 for(var i = 1; i < matrices.length; i++) {
                     inputMatrix = this.multiplyMatrices(inputMatrix, matrices[i]);
