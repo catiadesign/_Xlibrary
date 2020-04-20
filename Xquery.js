@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '11-04-2020',
+            updated:    '20-04-2020',
         };
         
         var xs = 0;
@@ -459,7 +459,11 @@
             Xval: function(e) {
                 var that = this;
                 if (e === undefined) {
-                    return that[0].value;
+                    if (isNaN(that[0].value)) {
+                        return that[0].value;
+                    } else {
+                        return parseInt(that[0].value);
+                    }
                 } else {
                     that[0].value = e;
                     return that;
