@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '20-04-2020',
+            updated:    '22-04-2020',
         };
         
         var xs = 0;
@@ -107,6 +107,7 @@
             var d = settings.d;
             var e = settings.e;
             var temp = [];
+            var search;
             function SearchTemp(options) {
                 var defaults = {
                     a: '',
@@ -167,13 +168,14 @@
                     });
                 }
             }
-            if (s.indexOf(',') > -1) {
-                var search = s.replace(/\s/g, '').split(',');
+            if (typeof s == 'string' && s.indexOf(',') > -1) {
+                search = s.replace(/\s/g, '').split(',');
                 _X.Xeach(search, function(k, _v) {
                     SearchTemp({a: a, s: _v, l: l, d: d, e: e});
                 });
             } else {
-                SearchTemp({a: a, s: s, l: l, d: d, e: e});
+                search = s || '';
+                SearchTemp({a: a, s: search, l: l, d: d, e: e});
             }
             return temp;
         };
