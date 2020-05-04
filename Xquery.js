@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '22-04-2020',
+            updated:    '01-05-2020',
         };
         
         var xs = 0;
@@ -285,6 +285,7 @@
                 item: '',
                 dragArea: '',
                 mouse: '',
+                clasa: 'xui_disabled',
             };
             var settings = _X.XJoinObj(defaults, options);
             var that = _X(settings.item);
@@ -303,7 +304,7 @@
                 var mousemove = function(e) {
                     var x = e.pageX;
                     var y = e.pageY;
-                    that.XaddClass('xui_disabled')
+                    that.XaddClass(settings.clasa)
                         .Xcss({position: 'absolute'});
                     // Center without borders
                     if ( (x > L) && (y > T) && (x < L + W) && (y < T + H) ) {
@@ -327,7 +328,7 @@
                 };
                 var mouseup = function() {
                     _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
-                    that.XremoveClass('xui_disabled');
+                    that.XremoveClass(settings.clasa);
                 };
                 _X(window).Xon({
                     mousemove: mousemove,
@@ -1062,57 +1063,27 @@
         
         _X.MATRIX = {
             RotateXAxis: function(a) {
-                return [
-                    1, 0, 0, 0,
-                    0, _X.Xcos(a), -_X.Xsin(a), 0,
-                    0, _X.Xsin(a), _X.Xcos(a), 0,
-                    0, 0, 0, 1
-                ];
+                return [1, 0, 0, 0, 0, _X.Xcos(a), -_X.Xsin(a), 0, 0, _X.Xsin(a), _X.Xcos(a), 0, 0, 0, 0, 1];
             },
         
             RotateYAxis: function(a) {
-                return [
-                    _X.Xcos(a), 0, _X.Xsin(a), 0,
-                    0, 1, 0, 0,
-                    -_X.Xsin(a), 0, _X.Xcos(a), 0,
-                    0, 0, 0, 1
-                ];
+                return [_X.Xcos(a), 0, _X.Xsin(a), 0, 0, 1, 0, 0, -_X.Xsin(a), 0, _X.Xcos(a), 0, 0, 0, 0, 1];
             },
         
             RotateZAxis: function(a) {
-                return [
-                    _X.Xcos(a), -_X.Xsin(a), 0, 0,
-                    _X.Xsin(a), _X.Xcos(a), 0, 0,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1
-                ];
+                return [_X.Xcos(a), -_X.Xsin(a), 0, 0, _X.Xsin(a), _X.Xcos(a), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             },
         
             translate: function(x, y, z) {
-                return [
-                    1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0,
-                    x, y, z, 1
-                ];
+                return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1];
             },
         
             scale: function(w, h, d) {
-                return [
-                    w, 0, 0, 0,
-                    0, h, 0, 0,
-                    0, 0, d, 0,
-                    0, 0, 0, 1
-                ];
+                return [w, 0, 0, 0, 0, h, 0, 0, 0, 0, d, 0, 0, 0, 0, 1];
             },
 
             skew: function(x, y) {
-                return [
-                    1, Math.tan(x), 0, 0,
-                    Math.tan(y), 1, 0, 0,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1
-                ];
+                return [1, Math.tan(x), 0, 0, Math.tan(y), 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             },
         
             multiplyMatrixAndPoint: function(matrix, point) {
@@ -1179,7 +1150,7 @@
         
             Multiply: function(matrices) {
                 var inputMatrix = matrices[0];
-                for(var i = 1; i < matrices.length; i++) {
+                for (var i = 1; i < matrices.length; i++) {
                     inputMatrix = this.multiplyMatrices(inputMatrix, matrices[i]);
                 }
                 return this.MatrixCorrect(inputMatrix);
