@@ -8,7 +8,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '01-05-2020',
+            updated:    '04-05-2020',
         };
         
         var xs = 0;
@@ -795,11 +795,9 @@
                 var that = this;
                 var self = new _X();
                 var temp = [];
-                var allC;
                 var elem;
                 if (that[0] !== undefined || that[0] !== null) {
                     //children
-                    allC = that[0].children;
                     if (e == 'children') {
                         _X.Xeach(that, function(k1, v1) {
                             _X.Xeach(v1.children, function(k2, v2) {
