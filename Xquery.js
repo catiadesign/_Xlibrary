@@ -1,4 +1,6 @@
 //jshint maxerr: 2000
+//last version
+//https://github.com/catiadesign/Xquery/blob/master/Xquery.js
 
 (function(window){
     //'use strict';
@@ -8,7 +10,6 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:    '04-05-2020',
         };
         
         var xs = 0;
