@@ -338,10 +338,13 @@
             }
         };
 
-        /*Create DIV elements from object
+        /*Create elements from object
         Structure Example:
         var x = [
             {
+                create the element
+                elem: '<div' || '<img' || .. html tag
+                
                 //add class name
                 clasa: {},
                 
@@ -360,6 +363,7 @@
                 //add subelements
                 items: [
                     {
+                        elem: ''
                         clasa: {},
                         css: {},
                         on: {},
@@ -379,40 +383,12 @@
         
         //a => array
         //t => element where to append
-        _X.CreateDivElements = function(options) {
+        _X.CreateElements = function(options) {
             var defaults = {
-                a: '',
-                t: '',
+                a: '', //array
+                t: '', //append to
             };
             var s = _X.XJoinObj(defaults, options);
-            _X.prototype._css = function(elem) {
-                var that = this;
-                if (elem !== undefined) {
-                    that.Xcss(elem);
-                }
-                return that;
-            };        
-            _X.prototype._icon = function(elem) {
-                var that = this;
-                if (elem !== undefined) {
-                    that.XAddIcon(elem);
-                }
-                return that;
-            };
-            _X.prototype._on = function(elem) {
-                var that = this;
-                if (elem !== undefined) {
-                    that.Xon(elem);
-                }
-                return that;
-            };
-            _X.prototype._clasa = function(elem) {
-                var that = this;
-                if (elem !== undefined) {
-                    that.XaddClass(elem);
-                }
-                return that;
-            };
             _X.prototype._init = function(elem) {
                 var that = this;
                 if (elem !== undefined) {
@@ -420,33 +396,32 @@
                 }
                 return that;
             };
-            _X.prototype.Items = function(elem) {
+            _X.prototype._items = function(elem) {
                 var that = this;
                 if (elem.hasOwnProperty('items')) {
-                    _X.Xeach(elem.items, function(k, v) {
-                        that.Xappend(_X('<div')
-                                .XappendTo(that)
-                                ._clasa(v.clasa)
-                                ._css(v.css)
-                                ._icon(v.icon)
-                                ._on(v.on)
-                                ._init(v.init)
-                                .Items(v)
-                        );
-                    });
+                    ReturnElements(elem.items, that);
                 }
                 return that;
             };
-            _X.Xeach(s.a, function(k, v) {
-                _X('<div')
-                    .XappendTo(s.t)
-                    ._clasa(v.clasa)
-                    ._css(v.css)
-                    ._icon(v.icon)
-                    ._on(v.on)
-                    ._init(v.init)
-                    .Items(v);
-            });
+            function ReturnElements(array, appendto) {
+                _X.Xeach(array, function(k, v) {
+                    if (v.elem === undefined) {
+                        v.elem = '<div';
+                    } else {
+                        v.elem = v.elem;
+                    }
+                    _X(v.elem)
+                        .XappendTo(appendto)
+                        .XaddClass(v.clasa)
+                        .Xattr(v.attr)
+                        .Xcss(v.css)
+                        .XAddIcon(v.icon)
+                        .Xon(v.on)
+                        ._init(v.init)
+                        ._items(v);
+                });
+            }
+            ReturnElements(s.a, s.t);
         };
         
         //_X Object Prototype
@@ -686,13 +661,17 @@
             //_X(?).Xattr({'? element': ? value})   => SET element attribute
             Xattr: function(e) {
                 var that = this;
-                if (typeof e == 'object') {
-                    _X.Xeach(e, function(k, v) {
-                        that[0].setAttribute(k, v);
-                    });
-                    return that;
+                if (e !== undefined) {
+                    if (typeof e == 'object') {
+                        _X.Xeach(e, function(k, v) {
+                            that[0].setAttribute(k, v);
+                        });
+                        return that;
+                    } else {
+                        return that[0].getAttribute(e);
+                    }
                 } else {
-                    return that[0].getAttribute(e);
+                    return that;
                 }
             },
 
@@ -701,28 +680,32 @@
             Xcss: function(e) {
                 var that = this;
                 var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
-                if (typeof e == 'object') {
-                    _X.Xeach(that, function(k1, v1) {
-                        _X.Xeach(e, function(k2, v2) {
-                            if (v1.style !== undefined) {
-                                if (cssElements.indexOf(k2) > -1 && typeof v2 == 'number' && v2 !== 0) {
-                                    v1.style[k2] = v2 + 'px';
-                                } else {
-                                    v1.style[k2] = v2;
+                if (e !== undefined) {    
+                    if (typeof e == 'object') {
+                        _X.Xeach(that, function(k1, v1) {
+                            _X.Xeach(e, function(k2, v2) {
+                                if (v1.style !== undefined) {
+                                    if (cssElements.indexOf(k2) > -1 && typeof v2 == 'number' && v2 !== 0) {
+                                        v1.style[k2] = v2 + 'px';
+                                    } else {
+                                        v1.style[k2] = v2;
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
-                    return that;
-                } else if (typeof e == 'string') {
-                    if (that[0] !== undefined && that[0].style[e] !== undefined) {
-                        var elem = that[0].style[e];
-                        if ( elem.indexOf('px') > -1 ) {
-                            return parseInt(elem);
-                        } else {
-                            return elem;
+                        return that;
+                    } else if (typeof e == 'string') {
+                        if (that[0] !== undefined && that[0].style[e] !== undefined) {
+                            var elem = that[0].style[e];
+                            if ( elem.indexOf('px') > -1 ) {
+                                return parseInt(elem);
+                            } else {
+                                return elem;
+                            }
                         }
                     }
+                } else {
+                    return that;
                 }
             },
 
@@ -740,17 +723,19 @@
             //_X(?).Xon( {'?': function(){}} )          => SET event like an object syntax
             Xon: function(e) {
                 var that = this;
-                if (e.length > 0 && e[0] !== null) {
-                    var sel = e[0].split(/[ ]+/);
-                    _X.Xeach(sel, function(k, v) {
-                        that[0].addEventListener(v, e[1]);
-                    });
-                } else {
-                    _X.Xeach(that, function(k1, v1) {
-                        _X.Xeach(e, function(k2, v2) {
-                            v1.addEventListener(k2, v2);
+                if (e !== undefined) {
+                    if (e.length > 0 && e[0] !== null) {
+                        var sel = e[0].split(/[ ]+/);
+                        _X.Xeach(sel, function(k, v) {
+                            that[0].addEventListener(v, e[1]);
                         });
-                    });
+                    } else {
+                        _X.Xeach(that, function(k1, v1) {
+                            _X.Xeach(e, function(k2, v2) {
+                                v1.addEventListener(k2, v2);
+                            });
+                        });
+                    }
                 }
                 return that;
             },
