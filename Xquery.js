@@ -383,7 +383,7 @@
         
         //a => array
         //t => element where to append
-        _X.CreateElements = function(options) {
+        _X.CreateTagElements = function(options) {
             var defaults = {
                 a: '', //array
                 t: '', //append to
@@ -432,6 +432,54 @@
             version:        info.version,
             constructor:    _X,
             length:         0,
+
+            //Add Icon || Image
+            XAddIcon: function(options) {
+                var defaults = {
+                    ico: '',
+                    color: '',
+                    size: '',
+                    clasa: '',
+                    css: {},
+                    on: {},
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                var that = this;
+                if (options !== undefined) {
+                    if (settings.ico.indexOf('/') > -1) {
+                        _X('<img')
+                            .XappendTo(that)
+                            .Xattr({
+                                width: settings.size,
+                                height: settings.size,
+                                src: settings.ico,
+                            })
+                            .XaddClass('xui_corner_all')
+                            .Xcss(settings.css)
+                            .Xcss({
+                                color: settings.color,
+                                'pointer-events': 'none',
+                                'vertical-align': 'middle',
+                            })
+                            .Xon(settings.on);
+                    } else {
+                        _X('<i')
+                            .XappendTo(that)
+                            .XaddClass('material-icons')
+                            .XaddClass(settings.clasa)
+                            .Xappend(settings.ico)
+                            .Xcss(settings.css)
+                            .Xcss({
+                                'text-shadow': '1px 1px 1px #636363',
+                                //'text-shadow': '1px 1px 1px black, -1px -1px 1px white', //other way of display
+                                color: settings.color,
+                                'font-size': settings.size,
+                            })
+                            .Xon(settings.on);
+                    }
+                }
+                return this;
+            },
 
             //_X(?).Xval()      => GET element value
             //_X(?).Xval('?')   => SET element value
