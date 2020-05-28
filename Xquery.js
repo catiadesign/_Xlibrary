@@ -958,45 +958,61 @@
             },
         
             //_X(?).Xload('? url, ? function')
-            Xload: function(url, callback) {
+            Xload: function(options) {
                 var that = this;
-                var newUrl = url.split(' ');
+                var defaults = {
+                    url: '',
+                    callback: undefined,
+                    dataType: '',
+                    syncron: true,
+                    /*
+                        ''(default)     => get as string
+                        'text'          => get as string
+                        'arraybuffer'   => get as ArrayBuffer (for binary data, see chapter ArrayBuffer, binary arrays)
+                        'blob'          => get as Blob (for binary data, see chapter Blob)
+                        'document'      => get as XML document (can use XPath and other XML methods)
+                        'json'          => get as JSON (parsed automatically)
+                    */
+                };
+                var s = _X.XJoinObj(defaults, options);
+                var newUrl;
+                var xhr = new XMLHttpRequest();
                 function ReturnUrl(url) {
                     if (url.indexOf('#') < 0) {
                         return url;
                     } else {
+                        newUrl = url.split(' ');
                         return newUrl[0];
                     }
                 }
-                function ReturnData(to, url) {
-                    if (url.indexOf('#') > -1) {
-                        var temp = _X(to).Xappend(xhr.responseText).Xfind(newUrl[1]);
-                        _X(to).Xempty();
-                        return temp;
+                function ReturnData(to, url, responseType) {
+                    if (url.indexOf('#') < 0) {
+                        return responseType;
                     } else {
-                        return xhr.responseText;
+                        newUrl = url.split(' ');
+                        var temp = _X(to).Xappend(responseType).Xfind(newUrl[1]);
+                        _X(to).Xempty();
+                        return temp;                        
                     }
                 }
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', ReturnUrl(url), true);
-                xhr.responseType = '';
+                xhr.open('GET', ReturnUrl(s.url), s.syncron);
+                xhr.responseType = s.dataType;
                 xhr.send(null);
-                //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                //xhr.getAllResponseHeaders();
                 xhr.onload = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        //_X.Xeach(that, function(k, v) {
-                            _X(that).Xappend(ReturnData(that, url));
-                            if (callback !== undefined) {
-                                callback.apply(xhr, []);
-                            }
-                            //console.log(xhr.getResponseHeader('Content-Type'));
-                        //});
+                    if (this.readyState == 4 && this.status == 200) {
+                        if (s.callback !== undefined) {
+                            s.callback.apply(xhr, []);
+                        } else {
+                            _X(that).Xappend(ReturnData(that, s.url, xhr.response));
+                        }
                     }
                 };
                 xhr.onerror = function() {
-                    console.log('** An error occurred during the transaction');
-                };    
+                    console.log('*** Error ***');
+                };                
+                //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                //xhr.getAllResponseHeaders();
+                //xhr.getResponseHeader('Content-Type')
             },
         
         };
