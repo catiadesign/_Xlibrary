@@ -249,7 +249,6 @@
                 callback: '',
                 dataType: '',
                 syncron: true,
-                timeout: 0,
                 /*
                     ''(default)     => get as string
                     'text'          => get as string
@@ -260,16 +259,9 @@
                 */
             };
             var s = _X.XJoinObj(defaults, options);
-            //var args = Array.prototype.slice.call(arguments, 2);
             var xhr = new XMLHttpRequest();
-            xhr.ontimeout = function () {
-                console.error("Timed out.");
-            };            
             xhr.open('GET', s.url, s.syncron);
-            if (s.syncron === true) {
-                xhr.responseType = s.dataType;
-                xhr.timeout = s.timeout;
-            }
+            xhr.responseType = s.dataType;
             xhr.send(null);
             xhr.onload = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -277,7 +269,7 @@
                 }
             };
             xhr.onerror = function() {
-                console.log('** An error occurred during the transaction');
+                console.log('*** Error ***');
             };
         };
 
