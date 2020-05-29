@@ -10,6 +10,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
+            update:     '29.05.2020',
         };
         
         var xs = 0;
@@ -266,10 +267,9 @@
             xhr.onload = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     s.callback.apply(xhr, []);
+                } else {
+                    console.log('*** Error ***');
                 }
-            };
-            xhr.onerror = function() {
-                console.log('*** Error ***');
             };
         };
 
@@ -875,89 +875,65 @@
             
             //_X(?).Xwidth('? offset || client || inner || outer || box || scroll || screen || natural') 
             Xwidth: function(e) {
-                var that = this;
-                if (that[0] !== undefined) {
-                    if (e == 'offset') {
-                        return that[0].offsetWidth;
-                    } else if (e == 'client') {
-                        return that[0].clientWidth;
-                    } else if (e == 'natural') {
-                        return that[0].naturalWidth;                        
-                    } else if (e == 'inner') {
-                        return that[0].innerWidth;
-                    } else if (e == 'outer') {
-                        return that[0].outerWidth;
+                var that = this[0];
+                var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
+                if (that !== undefined) {
+                    if (elem.indexOf(e) > -1) {
+                        return that[e + 'Width'];
                     } else if (e == 'box') {
-                        return that[0].getBoundingClientRect().width;
-                    } else if (e == 'scroll') {
-                        return that[0].scrollWidth;
+                        return that.getBoundingClientRect().width;                        
                     } else if (e == 'screen') {
-                        return that[0].screen.width;
+                        return that.screen.width;
                     }
                 }
             },
             
             //_X(?).Xheight('? offset || client || inner || outer || box || scroll || screen || natural') 
             Xheight: function(e) {
-                var that = this;
-                if (that[0] !== undefined) {
-                    if (e == 'offset') {
-                        return that[0].offsetHeight;
-                    } else if (e == 'client') {
-                        return that[0].clientHeight;
-                    } else if (e == 'natural') {
-                        return that[0].naturalHeight;                           
-                    } else if (e == 'inner') {
-                        return that[0].innerHeight;
-                    } else if (e == 'outer') {
-                        return that[0].outerHeight;
+                var that = this[0];
+                var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
+                if (that !== undefined) {
+                    if (elem.indexOf(e) > -1) {
+                        return that[e + 'Height'];
                     } else if (e == 'box') {
-                        return that[0].getBoundingClientRect().height;
-                    } else if (e == 'scroll') {
-                        return that[0].scrollHeight;
+                        return that.getBoundingClientRect().height;
                     } else if (e == 'screen') {
-                        return that[0].screen.height;
+                        return that.screen.height;
                     }
                 }
             },
             
             //_X(?).Xleft('? offset || client || box || scroll || screen') 
             Xleft: function(e) {
-                var that = this;
-                if (that[0] !== undefined) {
-                    if (e == 'offset') {
-                        return that[0].offsetLeft;
-                    } else if (e == 'client') {
-                        return that[0].clientLeft;
+                var that = this[0];
+                var elem = ['offset' ,'client', 'scroll'];
+                if (that !== undefined) {
+                    if (elem.indexOf(e) > -1) {
+                        return that[e + 'Left'];
                     } else if (e == 'box') {
-                        return that[0].getBoundingClientRect().left;
-                    } else if (e == 'scroll') {
-                        return that[0].scrollLeft;
+                        return that.getBoundingClientRect().left;
                     } else if (e == 'screen') {
-                        return that[0].screen.left;
+                        return that.screen.left;
                     }
                 }
             },
             
             //_X(?).Xtop('? offset || client || box || scroll || screen')
             Xtop: function(e) {
-                var that = this;
-                if (that[0] !== undefined) {
-                    if (e == 'offset') {
-                        return that[0].offsetTop;
-                    } else if (e == 'client') {
-                        return that[0].clientTop;
+                var that = this[0];
+                var elem = ['offset' ,'client', 'scroll'];
+                if (that !== undefined) {
+                    if (elem.indexOf(e) > -1) {
+                        return that[e + 'Top'];
                     } else if (e == 'box') {
-                        return that[0].getBoundingClientRect().top;
-                    } else if (e == 'scroll') {
-                        return that[0].scrollTop;
+                        return that.getBoundingClientRect().top;
                     } else if (e == 'screen') {
-                        return that[0].screen.top;
+                        return that.screen.top;
                     }
                 }
             },
         
-            //_X(?).Xload('? url, ? function')
+            //_X(?).Xload({url: '', callback: '', dataType: ''})
             Xload: function(options) {
                 var that = this;
                 var defaults = {
@@ -1005,16 +981,14 @@
                         } else {
                             _X(that).Xappend(ReturnData(that, s.url, xhr.response));
                         }
+                    } else {
+                        console.log('*** Error ***');
                     }
                 };
-                xhr.onerror = function() {
-                    console.log('*** Error ***');
-                };                
                 //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 //xhr.getAllResponseHeaders();
                 //xhr.getResponseHeader('Content-Type')
             },
-        
         };
 
         //Effects for Hide / Show prototype function
