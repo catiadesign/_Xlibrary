@@ -1050,42 +1050,45 @@
         _X.Xdegrees = function(radians) {
             return radians * (180 / Math.PI);
         };
-
-        _X.Xsin = function(val) {
-            if (Math.sin(val) < -0.999999) {
-                return -1;
-            } else if (Math.sin(val) < 0.000001 && Math.sin(val) > -0.000001) {
-                return 0;                
-            } else if (Math.sin(val) > 0.999999) {
-                return 1;                
-            } else {
-                return Math.sin(val);
-            }
-        };  
-        
-        _X.Xcos = function(val) {
-            if (Math.cos(val) < -0.999999) {
-                return -1;       
-            } else if (Math.cos(val) < 0.000001 && Math.cos(val) > -0.000001) {
-                return 0;                
-            } else if (Math.cos(val) > 0.999999) {
-                return 1;
-            } else {
-                return Math.cos(val);
-            }
-        };        
         
         _X.MATRIX = {
+            min: 0.000001,
+            max: 0.999999,
+            
+            sin: function(val) {
+                if (Math.sin(val) < -this.max) {
+                    return -1;
+                } else if (Math.sin(val) < this.min && Math.sin(val) > -this.min) {
+                    return 0;                
+                } else if (Math.sin(val) > this.max) {
+                    return 1;                
+                } else {
+                    return Math.sin(val);
+                }
+            },
+            
+            cos: function(val) {
+                if (Math.cos(val) < -this.max) {
+                    return -1;       
+                } else if (Math.cos(val) < this.min && Math.cos(val) > -this.min) {
+                    return 0;                
+                } else if (Math.cos(val) > this.max) {
+                    return 1;
+                } else {
+                    return Math.cos(val);
+                }
+            },
+            
             RotateXAxis: function(a) {
-                return [1, 0, 0, 0, 0, _X.Xcos(a), -_X.Xsin(a), 0, 0, _X.Xsin(a), _X.Xcos(a), 0, 0, 0, 0, 1];
+                return [1, 0, 0, 0, 0, this.cos(a), -this.sin(a), 0, 0, this.sin(a), this.cos(a), 0, 0, 0, 0, 1];
             },
         
             RotateYAxis: function(a) {
-                return [_X.Xcos(a), 0, _X.Xsin(a), 0, 0, 1, 0, 0, -_X.Xsin(a), 0, _X.Xcos(a), 0, 0, 0, 0, 1];
+                return [this.cos(a), 0, this.sin(a), 0, 0, 1, 0, 0, -this.sin(a), 0, this.cos(a), 0, 0, 0, 0, 1];
             },
         
             RotateZAxis: function(a) {
-                return [_X.Xcos(a), -_X.Xsin(a), 0, 0, _X.Xsin(a), _X.Xcos(a), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+                return [this.cos(a), -this.sin(a), 0, 0, this.sin(a), this.cos(a), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             },
         
             translate: function(x, y, z) {
@@ -1144,13 +1147,14 @@
 
             MatrixCorrect: function(mat) {
                 var temp = [];
+                var that = this;
                 _X.Xeach(mat, function(k, v) {
                     if (k < 12)
-                        if (v < -0.999999) {
+                        if (v < -this.max) {
                             temp.push(-1);
-                        } else if (v < 0.000001 && v > -0.000001) {
+                        } else if (v < this.min && v > -this.min) {
                             temp.push(0);                
-                        } else if (v > 0.999999) {
+                        } else if (v > this.max) {
                             temp.push(1);                
                         } else {
                             temp.push(Math.round(v * 1000000)/1000000);
