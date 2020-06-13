@@ -10,7 +10,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            update:     '29.05.2020',
+            update:     '13.06.2020',
         };
         
         var xs = 0;
@@ -127,33 +127,28 @@
                 function ReturnSearch(glob) {
                     function Exclude() {
                         if (glob.search !== undefined) {
-                            if (glob.search.indexOf(e) > -1) {return false}
-                            else {return true}
+                            return glob.search.indexOf(e) > -1 ? false : true;
                         }
                     }
                     //Search
-                    if (l == 'search' && glob.search !== undefined && Exclude() === true)
-                        {return glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                    return (l == 'search' && glob.search !== undefined && Exclude() === true) ? glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1
                     
                     //Location
-                    else if (l == 'loc' && glob.loc !== undefined && Exclude() === true)
-                        {return glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                        : (l == 'loc' && glob.loc !== undefined && Exclude() === true) ? glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1
                     
                     //Title
-                    else if (l == 'title' && glob.title !== undefined && Exclude() === true)
-                        {return glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                        : (l == 'title' && glob.title !== undefined && Exclude() === true) ? glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1
                     
                     //Keyboard Key
-                    else if (l == 'key' && glob.key !== undefined && Exclude() === true)
-                        {return glob.key;}
+                        : (l == 'key' && glob.key !== undefined && Exclude() === true) ? glob.key
                     
                     //Icon
-                    else if (l == 'ico' && glob.ico !== undefined && Exclude() === true)
-                        {return glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                        : (l == 'ico' && glob.ico !== undefined && Exclude() === true) ? glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1
                     
                     //Search by the Name of the Key not Value    
-                    else if (l == 'keyname' && Exclude() === true)
-                        {return key.toLowerCase().indexOf(s.toLowerCase()) > -1;}
+                        : (l == 'keyname' && Exclude() === true) ? key.toLowerCase().indexOf(s.toLowerCase()) > -1
+                    //    
+                        : '';
                 }
                 if (a !== undefined) {
                     _X.Xeach(a, function(k, _v) {
@@ -470,7 +465,7 @@
                             .Xon(settings.on);
                     }
                 }
-                return this;
+                return that;
             },
 
             //_X(?).Xval()      => GET element value
@@ -478,11 +473,7 @@
             Xval: function(e) {
                 var that = this;
                 if (e === undefined) {
-                    if (isNaN(that[0].value)) {
-                        return that[0].value;
-                    } else {
-                        return parseInt(that[0].value);
-                    }
+                    return isNaN(that[0].value) ? that[0].value : parseInt(that[0].value);
                 } else {
                     that[0].value = e;
                     return that;
@@ -556,17 +547,9 @@
                 if (that[0] !== undefined) {
                     if (typeof e == 'object') {
                         var getA = that[0].style[e[0]] || '';
-                        if (getA === e[1]) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return (getA === e[1]) ? true : false;
                     } else if (e.indexOf('checked') > -1) {
-                        if (that[0].checked === true) {
-                            return true;
-                        } else if (that[0].checked === false) {
-                            return false;
-                        }
+                        return (that[0].checked === true) ? true : false;
                     }
                 }
             },
@@ -719,17 +702,13 @@
             //_X(?).Xcss({'? element key': ? value})    => SET element css
             Xcss: function(e) {
                 var that = this;
-                var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
+                var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'max-width', 'min-width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
                 if (e !== undefined) {    
                     if (typeof e == 'object') {
                         _X.Xeach(that, function(k1, v1) {
                             _X.Xeach(e, function(k2, v2) {
                                 if (v1.style !== undefined) {
-                                    if (cssElements.indexOf(k2) > -1 && typeof v2 == 'number' && v2 !== 0) {
-                                        v1.style[k2] = v2 + 'px';
-                                    } else {
-                                        v1.style[k2] = v2;
-                                    }
+                                    return (cssElements.indexOf(k2) > -1 && typeof v2 == 'number' && v2 !== 0) ? v1.style[k2] = v2 + 'px' : v1.style[k2] = v2;
                                 }
                             });
                         });
@@ -737,11 +716,7 @@
                     } else if (typeof e == 'string') {
                         if (that[0] !== undefined && that[0].style[e] !== undefined) {
                             var elem = that[0].style[e];
-                            if ( elem.indexOf('px') > -1 ) {
-                                return parseInt(elem);
-                            } else {
-                                return elem;
-                            }
+                            return (elem.indexOf('px') > -1) ? parseInt(elem) : elem;
                         }
                     }
                 } else {
@@ -878,13 +853,10 @@
                 var that = this[0];
                 var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
                 if (that !== undefined) {
-                    if (elem.indexOf(e) > -1) {
-                        return that[e + 'Width'];
-                    } else if (e == 'box') {
-                        return that.getBoundingClientRect().width;                        
-                    } else if (e == 'screen') {
-                        return that.screen.width;
-                    }
+                    return (elem.indexOf(e) > -1) ? that[e + 'Width']
+                        : (e == 'box') ? that.getBoundingClientRect().width
+                        : (e == 'screen') ? that.screen.width
+                        : null;
                 }
             },
             
@@ -893,13 +865,10 @@
                 var that = this[0];
                 var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
                 if (that !== undefined) {
-                    if (elem.indexOf(e) > -1) {
-                        return that[e + 'Height'];
-                    } else if (e == 'box') {
-                        return that.getBoundingClientRect().height;
-                    } else if (e == 'screen') {
-                        return that.screen.height;
-                    }
+                    return (elem.indexOf(e) > -1) ? that[e + 'Height']
+                        : (e == 'box') ? that.getBoundingClientRect().height
+                        : (e == 'screen') ? that.screen.height
+                        : null;
                 }
             },
             
@@ -908,13 +877,10 @@
                 var that = this[0];
                 var elem = ['offset' ,'client', 'scroll'];
                 if (that !== undefined) {
-                    if (elem.indexOf(e) > -1) {
-                        return that[e + 'Left'];
-                    } else if (e == 'box') {
-                        return that.getBoundingClientRect().left;
-                    } else if (e == 'screen') {
-                        return that.screen.left;
-                    }
+                    return (elem.indexOf(e) > -1) ? that[e + 'Left']
+                        : (e == 'box') ? that.getBoundingClientRect().left
+                        : (e == 'screen') ?  that.screen.left
+                        : null;
                 }
             },
             
@@ -923,13 +889,10 @@
                 var that = this[0];
                 var elem = ['offset' ,'client', 'scroll'];
                 if (that !== undefined) {
-                    if (elem.indexOf(e) > -1) {
-                        return that[e + 'Top'];
-                    } else if (e == 'box') {
-                        return that.getBoundingClientRect().top;
-                    } else if (e == 'screen') {
-                        return that.screen.top;
-                    }
+                    return (elem.indexOf(e) > -1) ? that[e + 'Top']
+                        : (e == 'box') ? that.getBoundingClientRect().top
+                        : (e == 'screen') ? that.screen.top
+                        : null;
                 }
             },
         
@@ -1056,27 +1019,17 @@
             max: 0.999999,
             
             sin: function(val) {
-                if (Math.sin(val) < -this.max) {
-                    return -1;
-                } else if (Math.sin(val) < this.min && Math.sin(val) > -this.min) {
-                    return 0;                
-                } else if (Math.sin(val) > this.max) {
-                    return 1;                
-                } else {
-                    return Math.sin(val);
-                }
+                return Math.sin(val) < -this.max ? -1
+                    : Math.sin(val) < this.min && Math.sin(val) > -this.min ? 0
+                    : Math.sin(val) > this.max ? 1
+                    : Math.round(Math.sin(val) * 1000000)/1000000;
             },
             
             cos: function(val) {
-                if (Math.cos(val) < -this.max) {
-                    return -1;       
-                } else if (Math.cos(val) < this.min && Math.cos(val) > -this.min) {
-                    return 0;                
-                } else if (Math.cos(val) > this.max) {
-                    return 1;
-                } else {
-                    return Math.cos(val);
-                }
+                return Math.cos(val) < -this.max ? -1
+                    : Math.cos(val) < this.min && Math.cos(val) > -this.min ? 0
+                    : Math.cos(val) > this.max ? 1
+                    : Math.round(Math.cos(val) * 1000000)/1000000;
             },
             
             RotateXAxis: function(a) {
@@ -1126,6 +1079,9 @@
             },
         
             multiplyMatrices: function(matrixA, matrixB) {
+                var R = function(v) {
+                    return Math.round(v * 1000000) / 1000000;
+                };
                 // Slice the second matrix up into columns
                 var column0 = [matrixB[0], matrixB[4], matrixB[8], matrixB[12]];
                 var column1 = [matrixB[1], matrixB[5], matrixB[9], matrixB[13]];
@@ -1138,32 +1094,11 @@
                 var result3 = this.multiplyMatrixAndPoint(matrixA, column3);
                 // Turn the result columns back into a single matrix
                 return [
-                    result0[0], result1[0], result2[0], result3[0],
-                    result0[1], result1[1], result2[1], result3[1],
-                    result0[2], result1[2], result2[2], result3[2],
-                    result0[3], result1[3], result2[3], result3[3]
+                    R(result0[0]), R(result1[0]), R(result2[0]), R(result3[0]),
+                    R(result0[1]), R(result1[1]), R(result2[1]), R(result3[1]),
+                    R(result0[2]), R(result1[2]), R(result2[2]), R(result3[2]),
+                    R(result0[3]), R(result1[3]), R(result2[3]), R(result3[3]),
                 ];
-            },
-
-            MatrixCorrect: function(mat) {
-                var temp = [];
-                var that = this;
-                _X.Xeach(mat, function(k, v) {
-                    if (k < 12)
-                        if (v < -this.max) {
-                            temp.push(-1);
-                        } else if (v < this.min && v > -this.min) {
-                            temp.push(0);                
-                        } else if (v > this.max) {
-                            temp.push(1);                
-                        } else {
-                            temp.push(Math.round(v * 1000000)/1000000);
-                        }
-                    else {
-                        temp.push(Math.round(v * 1000000)/1000000);
-                    }    
-                });
-                return temp;
             },
         
             Multiply: function(matrices) {
@@ -1171,7 +1106,7 @@
                 for (var i = 1; i < matrices.length; i++) {
                     inputMatrix = this.multiplyMatrices(inputMatrix, matrices[i]);
                 }
-                return this.MatrixCorrect(inputMatrix);
+                return inputMatrix;
             },
         };
         
