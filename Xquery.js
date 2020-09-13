@@ -10,7 +10,7 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            update:     '13.06.2020',
+            updated:     '24.08.2020',
         };
         
         var xs = 0;
@@ -130,24 +130,18 @@
                             return glob.search.indexOf(e) > -1 ? false : true;
                         }
                     }
-                    //Search
+                        //Search
                     return (l == 'search' && glob.search !== undefined && Exclude() === true) ? glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1
-                    
-                    //Location
+                        //Location
                         : (l == 'loc' && glob.loc !== undefined && Exclude() === true) ? glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1
-                    
-                    //Title
+                        //Title
                         : (l == 'title' && glob.title !== undefined && Exclude() === true) ? glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1
-                    
-                    //Keyboard Key
+                        //Keyboard Key
                         : (l == 'key' && glob.key !== undefined && Exclude() === true) ? glob.key
-                    
-                    //Icon
+                        //Icon
                         : (l == 'ico' && glob.ico !== undefined && Exclude() === true) ? glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1
-                    
-                    //Search by the Name of the Key not Value    
+                        //Search by the Name of the Key not Value    
                         : (l == 'keyname' && Exclude() === true) ? key.toLowerCase().indexOf(s.toLowerCase()) > -1
-                    //    
                         : '';
                 }
                 if (a !== undefined) {
@@ -383,6 +377,7 @@
                 }
                 return that;
             };
+            //research in Items and apply again all Properties
             _X.prototype._items = function(elem) {
                 var that = this;
                 if (elem.hasOwnProperty('items')) {
@@ -432,7 +427,7 @@
                 };
                 var settings = _X.XJoinObj(defaults, options);
                 var that = this;
-                if (options !== undefined) {
+                if (options !== undefined && settings.ico !== '') {
                     if (settings.ico.indexOf('/') > -1) {
                         _X('<img')
                             .XappendTo(that)
@@ -879,7 +874,7 @@
                 if (that !== undefined) {
                     return (elem.indexOf(e) > -1) ? that[e + 'Left']
                         : (e == 'box') ? that.getBoundingClientRect().left
-                        : (e == 'screen') ?  that.screen.left
+                        : (e == 'screen') ? that.screen.left
                         : null;
                 }
             },
@@ -939,11 +934,10 @@
                 xhr.send(null);
                 xhr.onload = function() {
                     if (this.readyState == 4 && this.status == 200) {
+                        _X(that).Xappend(ReturnData(that, s.url, xhr.response));
                         if (s.callback !== undefined) {
                             s.callback.apply(xhr, []);
-                        } else {
-                            _X(that).Xappend(ReturnData(that, s.url, xhr.response));
-                        }
+                        } else {}
                     } else {
                         console.log('*** Error ***');
                     }
@@ -957,12 +951,12 @@
         //Effects for Hide / Show prototype function
         _X.EFFECT = {
             type: [
-                {name: 'swipe', format: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
-                {name: 'reverse', format: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
-                {name: 'unfold_big', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
-                {name: 'unfold_small', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5'},
-                {name: 'drop_left', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
-                {name: 'drop_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
+                {name: 'swipe',         format: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
+                {name: 'reverse',       format: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'unfold_big',    format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'unfold_small',  format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5'},
+                {name: 'drop_left',     format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
+                {name: 'drop_top',      format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
                 {name: 'drop_left_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},
             ],
             elemCss: function(effectname) {
@@ -1015,33 +1009,32 @@
         };
         
         _X.MATRIX = {
-            min: 0.000001,
-            max: 0.999999,
-            
-            sin: function(val) {
-                return Math.sin(val) < -this.max ? -1
-                    : Math.sin(val) < this.min && Math.sin(val) > -this.min ? 0
-                    : Math.sin(val) > this.max ? 1
-                    : Math.round(Math.sin(val) * 1000000)/1000000;
+            round: function(val) {
+                var min = 0.000001;
+                var max = 0.999999;
+                var rnd = 1000000;
+                return val < -max ? -1
+                    : val < min && val > -min ? 0
+                    : val > max ? 1
+                    : Math.round(val * rnd) / rnd;                
             },
             
-            cos: function(val) {
-                return Math.cos(val) < -this.max ? -1
-                    : Math.cos(val) < this.min && Math.cos(val) > -this.min ? 0
-                    : Math.cos(val) > this.max ? 1
-                    : Math.round(Math.cos(val) * 1000000)/1000000;
-            },
-            
-            RotateXAxis: function(a) {
-                return [1, 0, 0, 0, 0, this.cos(a), -this.sin(a), 0, 0, this.sin(a), this.cos(a), 0, 0, 0, 0, 1];
+            RotateXAxis: function(val) {
+                var s = this.round(Math.sin(val));
+                var c = this.round(Math.cos(val));
+                return [1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1];
             },
         
-            RotateYAxis: function(a) {
-                return [this.cos(a), 0, this.sin(a), 0, 0, 1, 0, 0, -this.sin(a), 0, this.cos(a), 0, 0, 0, 0, 1];
+            RotateYAxis: function(val) {
+                var s = this.round(Math.sin(val));
+                var c = this.round(Math.cos(val));                
+                return [c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1];
             },
         
-            RotateZAxis: function(a) {
-                return [this.cos(a), -this.sin(a), 0, 0, this.sin(a), this.cos(a), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+            RotateZAxis: function(val) {
+                var s = this.round(Math.sin(val));
+                var c = this.round(Math.cos(val));                
+                return [c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             },
         
             translate: function(x, y, z) {
