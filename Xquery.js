@@ -2,6 +2,92 @@
 //last version
 //https://github.com/catiadesign/Xquery/blob/master/Xquery.js
 
+var SETTINGS = {
+    theme: {
+        def: 'blue',
+        sel: 'blue',
+        array: ['orange', 'blue', 'grey'],
+        title: 'Theme:',
+        tooltip: 'Change website theme',
+    }, effect: {
+        def: 'swipe',
+        sel: 'swipe',
+        array: ['drop_left', 'drop_top', 'drop_left_top', 'unfold_small', 'unfold_big', 'reverse', 'swipe'],
+        title: 'Effect:',
+        tooltip: 'Change the way windows appear',
+    }, modal: {
+        def: 'false',
+        sel: 'false',
+        array: ['true', 'false'],
+        title: 'Modal:',
+        tooltip: 'Add a modal effect to windows, you cannot select whats under',
+    }, drag: {
+        def: 'true',
+        sel: 'true',
+        array: ['true', 'false'],
+        title: 'Draggable:',
+        tooltip: 'Drag the Windows',
+    }, resize: {
+        def: 'true',
+        sel: 'true',
+        array: ['true', 'false'],
+        title: 'Resize:',
+        tooltip: 'Resize the windows',
+    }, header: {
+        def: 'true',
+        sel: 'true',
+        array: ['true', 'false'],
+        title: 'Header:',
+        tooltip: 'With or without theme header',
+    }, autorefresh: {
+        def: 'false',
+        sel: 'false',
+        array: ['true', 'false'],
+        title: 'Windows Auto Refresh:',
+        tooltip: 'If you dont want the windows to refresh on bring to front, change this to false',
+    }, autosearch: {
+        def: 'false',
+        sel: 'false',
+        array: ['true', 'false'],
+        title: 'Auto Search:',
+        tooltip: 'Search on typing without Enter',
+    }, icotitlepos: {
+        def: 5,
+        sel: 5,
+        array: [0, 5, 10, 15, 20, 25, 30, 35],
+        title: 'Ico Title Position:',
+        tooltip: 'Position Ico Title',
+    }, searchlimit: {
+        def: 200,
+        sel: 200,
+        array: [10, 50, 200, 600, 1000, 2000],
+        title: 'Limit Search:',
+        tooltip: 'Choose a limit from search elements in Explorer',
+    }, backimage: {
+        def: 'bodyback001.jpg',
+        sel: 'bodyback001.jpg',
+        array: ['bodyback001.jpg', 'bodyback002.jpg', 'bodyback003.jpg', 'bodyback004.jpg', 'bodyback005.jpg', 'bodyback006.jpg', 'none'],
+        title: 'Background:',
+        tooltip: '',
+    },
+};
+
+var MOUSE = {X: 0, Y: 0, XD: 0, YD: 0};
+
+var SELECTED = {item: 0, obj: 0, obj2: 0};
+
+var DefaultSearchLocation = [];
+
+var NULLWIN = function() {
+    return {
+        winElem:    undefined,
+        winBar:     undefined,
+        winOverlay: undefined,
+        winData:    {tophide: 0, left: 0, top: 0, width: 0, height: 0},
+    };
+};
+var WIN = { key: 0, full: [NULLWIN()] };
+
 (function(window){
     //'use strict';
     function xquery() {
@@ -10,12 +96,12 @@
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17-10-2019',
-            updated:     '24.08.2020',
+            updated:     '26.09.2020',
         };
         
         var xs = 0;
         var effectStyles = null;
-        
+       
         var _X = function(id) {
             var that;
             var elem;
@@ -96,7 +182,7 @@
     
         _X.Xsearch = function(options) {
             var defaults = {
-                a: ELEMENTS,    //array     => array where to search
+                a: DefaultSearchLocation,    //array     => array where to search
                 s: '999',       //search    => string || array by ','
                 l: 'search',    //location  => search || loc || title || key || ico || keyname
                 d: 'min',       //deep      => min || med || max
@@ -222,6 +308,13 @@
             }
             return s;
         };
+
+        _X.FWidth = function(width) {
+            return _X('.active_screen').Xfind('.desktop_website').Xwidth('offset') / width;
+        };
+        _X.FHeight = function(height) {
+            return _X('.active_screen').Xfind('.desktop_website').Xheight('offset') / height;
+        };
         
         _X.XAddNull = function(val) {
             if (val.length === 1) { val = '0' + val; }
@@ -282,28 +375,28 @@
                 var T = A.Xtop('box');
                 var W = A.Xwidth('offset');
                 var H = A.Xheight('offset');
-                //console.log(left, top, L, T, W, H);
+                //console.log(left, top, A, L, T, W, H);
                 var mousemove = function(e) {
                     var x = e.pageX;
                     var y = e.pageY;
                     that.XaddClass(settings.clasa)
-                        .Xcss({position: 'absolute'});
+                        .css({position: 'absolute'});
                     // Center without borders
                     if ( (x > L) && (y > T) && (x < L + W) && (y < T + H) ) {
-                        that.Xcss({
+                        that.css({
                             left: left + (x - xd),
                             top: top + (y - yd),
                         });
                     }
                     // Borders on Y Axis
                     else if ( /*left side*/ (x <= L) && (y > T) && (y < T + H) || /*right side*/ (x >= L + W) && (y > T) && (y < T + H) ) {
-                        that.Xcss({
+                        that.css({
                             top: top + (y - yd),
                         });
                     }
                     // Borders on X Axis
                     else if ( /*top side*/ (y <= T) && (x > L) && (x < L + W) || /*bottom side*/ (y >= T + H) && (x > L) && (x < L + W) ) {
-                        that.Xcss({
+                        that.css({
                             left: left + (x - xd),
                         });
                     }
@@ -317,6 +410,1039 @@
                     mouseup: mouseup
                 });
             }
+        };
+
+        _X.AddTooltip = function(options) {
+            var defaults = {
+                tooltip: true,
+                title: '',
+            };
+            var settings = _X.XJoinObj(defaults, options);
+            if (settings.tooltip === true && _X('body').XhasClass('mousedown_true') === false) {
+                _X('<div')
+                    .XappendTo('body')
+                    .XaddClass('tooltip_class, xui_content, xui_corner_all, shadow_border')
+                    .css({
+                        position: 'absolute',
+                        'white-space': 'nowrap',
+                        display: 'none',
+                        padding: 3,
+                        'z-index': 2000,
+                    })
+                    .Xappend(settings.title);
+            } else {}
+        };
+
+        _X.ReturnElements = function(options) {
+            var defaults = {
+                item: '',
+                obj: '',
+                pushItem: true,
+                pushObj: true,
+                pushObj2: true,
+            };
+            var s = _X.XJoinObj(defaults, options);
+            if (s.pushItem === true) {SELECTED.item = s.item;}
+            if (s.pushObj === true) {SELECTED.obj = s.obj;}
+            if (s.pushObj2 === true) {SELECTED.obj2 = s.obj;}
+        };  
+
+        _X.CubeIcon = function(options) {
+            var defaults = {
+                to: _X('.active_screen').Xfind('.desktop_icons'),
+                array: [],
+                cube: false,
+                perspective: '',
+                transform: '',
+                size: 60, // Number or Array [from, to]
+                clasa: '',
+                rotationAngle: 0, // Number or Array [from, to]
+                opacity: 0.8,
+                margin: 3,
+                css: {},
+                icoControls: false,
+                click: 'dblclick',
+                tooltip: true,
+                menuRC: _X.Xsearch({s: 'rc2'}),
+                title: true,
+                pushObj: true,
+                pushItem: true,
+                clasaIco: '',
+                drag: true,
+                check: false,
+                dragArea: '.screen_faces',
+            };
+            var s = _X.XJoinObj(defaults, options);
+            var temp;
+            var opacity = s.opacity;
+            var RandomAngle = function() {
+                if (typeof s.rotationAngle == 'object') {
+                    return Math.floor( (Math.random() * (s.rotationAngle[1] - s.rotationAngle[0] + 1) ) + s.rotationAngle[0]);
+                } else {
+                    return s.rotationAngle;
+                }
+            };
+            var RandomSize = function() {
+                if (typeof s.size == 'object') {
+                    return Math.floor( (Math.random() * (s.size[1] - s.size[0] + 1) ) + s.size[0]);
+                } else {
+                    return s.size;
+                }
+            };
+            _X.prototype.FrontSide = function(obj, size) {
+                var that = this;
+                if (that.XhasClass('front')) {
+                    that.css({'z-index': 1})
+                        .XAddIcon({
+                            ico: obj.ico,
+                            color: obj.color,
+                            size: size,
+                            clasa: s.clasaIco,
+                            css: {'margin-left': -1},
+                        });
+                    if (s.title === true) {
+                        _X('<div')
+                            .XappendTo(that)
+                            .XaddClass('format_text, edit_title')
+                            .css({
+                                position: 'absolute',
+                                left: 0,
+                                right: 0,
+                                bottom: SETTINGS.icotitlepos.sel,
+                                'text-align': 'center',
+                                'background-color': '#f7f7f7',
+                                'font-size': 12,
+                            })
+                            .Xappend(obj.title);
+                    } else {}
+                } else {} 
+                return this;
+            };
+            _X.prototype.Cubefaces = function(obj, size) { 
+                var that = this;
+                var angle = RandomAngle();
+                var cubeFaces = {
+                    front:  {clasa: 'front, ico_full_body', color: '#FFFFFF', opacity: 1, matrix: _X.MATRIX.xyz(angle, angle, 0)},
+                    back:   {clasa: 'back', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle + 180, 0)},
+                    left:   {clasa: 'left', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle - 90, 0)},
+                    right:  {clasa: 'right', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle + 90, 0)},
+                    top:    {clasa: 'top', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle - 90, 0, angle)},
+                    bottom: {clasa: 'bottom', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle + 90, 0, -angle)},
+                };
+                if (s.cube === true) {
+                    // All Faces
+                    _X.Xeach(cubeFaces, function(k, v) {
+                        _X('<div')
+                            .XappendTo(that)
+                            .XaddClass(v.clasa)
+                            .css({
+                                position: 'absolute',
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 0,
+                                overflow: 'hidden',
+                                'text-align': 'center',
+                                border: '1px solid',
+                                opacity: v.opacity,
+                                'background-color': v.color,
+                                'border-radius': 10,
+                                //'backface-visibility': 'hidden',
+                                //transform: 'rotateX(' + v.x + 'deg) rotateY(' + v.y + 'deg) rotateZ(' + v.z + 'deg)',
+                                'transform-origin': size / 2 + 'px' + _X.AddSpace(1) + size / 2 + 'px' + _X.AddSpace(1) + -size / 2 + 'px',
+                                transform: 'matrix3d(' + v.matrix + ')',
+                            })
+                            .FrontSide(obj, size);
+                    });
+                } else {
+                    // One Face
+                    _X('<div')
+                        .XappendTo(that)
+                        .XaddClass(cubeFaces.front.clasa)
+                        .XaddClass('xui_corner_all')
+                        .css({
+                            position: 'absolute',
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            overflow: 'hidden',
+                            'text-align': 'center',
+                            cursor: 'pointer',
+                            border: '1px solid transparent',
+                        })
+                        .FrontSide(obj, size)
+                        .Xon({
+                            mouseenter: function() {
+                                _X(this).XaddClass('shadow_border');
+                            },
+                            mouseleave: function() {
+                                _X(this).XremoveClass('shadow_border');
+                            },
+                        });
+                }
+                return this;
+            };
+            _X.Xeach(s.array, function(_k, _v) {
+                var size = RandomSize();
+                _X('<div')
+                    .XappendTo(s.to)
+                    .XaddClass(s.clasa)
+                    .XaddClass('xcube')
+                    .css(s.css)
+                    .css({
+                        position: 'relative',
+                        margin: s.margin,
+                        width: size,
+                        height: size,
+                        perspective: s.perspective,
+                        'transform-style': s.transform,
+                        cursor: 'pointer'
+                    })
+                    .Xon([s.click, function(e) {
+                        _X('.ico_controls').Xremove();
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        _v.init();
+                    }])
+                    .Xon({
+                        mouseenter: function() {
+                            _X(this).Xfind('children').XaddClass('xui_hover');
+                            _X.AddTooltip({tooltip: s.tooltip, title: _v.title});
+                            _X(this).Xfind('children').CheckBox({check: s.check});
+                        },
+                        mouseleave: function() {
+                            _X(this).Xfind('children').XremoveClass('xui_hover');
+                            _X('.tooltip_class').Xremove();
+                            _X('.input_checkbox').Xremove();
+                        },
+                        mousedown: function(e) {
+                            _X('.ico_controls').Xremove();
+                            _X('.xcube').Xfind('children').XremoveClass('xui_focus');
+                            _X('.xcube').css({'z-index': 1});
+                            _X(this).css({'z-index': 2});
+                            //
+                            if (s.drag === true) {
+                                _X.XDraggable({item: this, mouse: e, dragArea: s.dragArea});
+                            } else {}
+                            _X.ReturnElements({item: this, obj: _v, pushItem: s.pushItem, pushObj: s.pushObj});
+                        },
+                        click: function(e) {
+                            var that = this;
+                            _X(that).Xfind('children').XaddClass('xui_focus');
+                            if (_X('.thiswindow').XhasClass('console_window')) {
+                                var x = new _X.Window();
+                                var readyObjectConsole = JSON.stringify(_v, null, 2);
+                                x.GetElements('.console_window');
+                                x.right
+                                    .css({'user-select': 'text'})
+                                    .Xappend(_X('<br'))
+                                    .Xappend(_X('<div').Xappend('Object:').css({color: 'red'}))
+                                    .Xappend(readyObjectConsole)
+                                    .Xappend(_X('<hr'));
+                                var height = x.right[0].scrollHeight;
+                                x.right[0].scrollTop = height;
+                            } else {}
+                            if (s.icoControls === true) {
+                                CubeIconsControl({elem: that});
+                            } else {}
+                        },
+                        contextmenu: function(e) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            var x = new _X.Window();
+                            x.init({
+                                windowType: x.type[3],
+                                fontSize: 13,
+                                width: 115,
+                                height: 'auto',
+                                open: false,
+                                clasa: 'remove_on_mousedown',
+                            });
+                            x.right.MenuElements({
+                                array: s.menuRC,
+                                pushObj: false,
+                                pushItem: false,
+                                icoSize: 25,
+                                click: 'mousedown',
+                                color: false,
+                            });
+                            x.win.OpenWindow();
+                            WIN.full.splice(WIN.key, 1);
+                        },
+                    })
+                    .Cubefaces(_v, size);
+            });
+        };
+
+        _X.Window = function() {
+            var self = this;
+            this.buttons = {
+                WindowClose: {
+                    search: 'rc1 rc2',
+                    title: 'Close',
+                    ico: 'cancel',
+                    init: function() {
+                        _X(WIN.full[WIN.key].winElem).Xremove();
+                        _X(WIN.full[WIN.key].winBar).Xremove();
+                        _X(WIN.full[WIN.key].winOverlay).Xremove();
+                        WIN.full.splice(WIN.key, 1);
+                        _X('.thiswindow').Xlast().css({'z-index': 1501});
+                        _X('.xui_overlay').Xlast().css({'z-index': 1500});
+                        _X('.thiswindow_statusbar').Xlast().XaddClass('xui_highlight');
+                        self.ResizeStatusBar();
+                    },
+                },
+                WindowMinMax: {
+                    search: 'rc1',
+                    title: 'MinMax',
+                    ico: 'aspect_ratio',
+                    init: function() {
+                        var that = _X(WIN.full[WIN.key].winElem);
+                        var store = WIN.full[WIN.key].winData;
+                        var elL = that.Xleft('offset');
+                        var elT = that.Xtop('offset');
+                        var elW = that.Xwidth('offset');
+                        var elH = that.Xheight('offset');
+                        var winW = _X('.active_screen').Xfind('.desktop_website').Xwidth('offset');
+                        var winH = _X('.active_screen').Xfind('.desktop_website').Xheight('offset');
+                        if (elW < winW && elH > 39) {
+                            store.left = elL;
+                            store.top = elT;
+                            store.width = elW;
+                            store.height = elH;
+                            //console.log(store);
+                            that.css({
+                                left: 0,
+                                top: 0,
+                                width: winW,
+                                height: winH
+                            });
+                        } else {
+                            if (store.width !== 0 && store.hight !== 0 && elH > 39) {
+                                that.css({
+                                    left: store.left,
+                                    top: store.top,
+                                    width: store.width,
+                                    height: store.height
+                                });
+                            }
+                        }
+                    },
+                },
+                WindowHideShow: {
+                    search: 'rc1 rc2',
+                    title: 'HideShow',
+                    ico: 'toll',
+                    init: function() {
+                        var that = _X(WIN.full[WIN.key].winElem);
+                        var overlay = _X(WIN.full[WIN.key].winOverlay);
+                        if ( that.Xis(['display', 'none']) ) {
+                            that.Xshow(SETTINGS.effect.sel);
+                            overlay.Xshow(SETTINGS.effect.sel);
+                        } else {
+                            that.Xhide(SETTINGS.effect.sel);
+                            overlay.Xhide(SETTINGS.effect.sel);
+                        }
+                    },
+                },
+                WindowTopHide: {
+                    search: 'rc1',
+                    title: 'TopHide',
+                    ico: 'get_app',
+                    init: function() {
+                        var that = _X(WIN.full[WIN.key].winElem);
+                        var store = WIN.full[WIN.key].winData;
+                        var elH = that.Xheight('offset');
+                        //console.log(elH);
+                        if (elH > 39) {
+                            store.tophide = elH;
+                            that.Xfind('.thiswindow_body, .thiswindow_footer').Xhide();
+                            that.css({height: 39});
+                        } else {
+                            that.Xfind('.thiswindow_body, .thiswindow_footer').Xshow();
+                            that.css({height: store.tophide});
+                        }
+                    },
+                },
+            };
+            this.type = {
+                1: {maxSize: true, drag: true, resize: true, modal: true, statusbar: true, overflow: 'hidden', menuRC: _X.Xsearch({a: this.buttons, s: 'rc1'})},
+                2: {maxSize: false, drag: true, resize: false, modal: true, statusbar: true, overflow: 'visible', menuRC: _X.Xsearch({a: this.buttons, s: 'rc2'})},
+                3: {maxSize: false, drag: false, resize: false, modal: false, statusbar: false, overflow: 'hidden', menuRC: []},
+            };
+            this.GetElements = function(val) {
+                var x = function() {
+                    if (val === undefined) {return _X(WIN.full[WIN.key].winElem)}
+                    else {return _X(val)}
+                };
+                this.win =            x(),
+                this.header =         x().Xfind('.thiswindow_header');
+                this.top =            x().Xfind('.body_top1');
+                this.top2 =           x().Xfind('.body_top2');
+                this.left =           x().Xfind('.body_left');
+                this.middle =         x().Xfind('.body_middle');
+                this.right =          x().Xfind('.body_right');
+                this.rightTop =       x().Xfind('.body_right_top');
+                this.rightBottom =    x().Xfind('.body_right_bottom');
+                this.footer =         x().Xfind('.footer_text');
+            };
+            this.AutoLeftResize = function() {
+                if (_X('.screen_faces').Xwidth('offset') < 700) {return 0}
+                else {return 130}
+            };
+            this.ResizableFn = function(options) {
+                var defaults = {
+                    item: '',
+                    mouse: '',
+                };
+                var s = _X.XJoinObj(defaults, options);
+                var that = _X(s.item);
+                var e = s.mouse;
+                if (e.which === 1) {
+                    var xd = e.pageX;
+                    var yd = e.pageY;
+                    var left = that.Xleft('offset');
+                    var width = that.css('width');
+                    var height = that.css('height');
+                    var mousemove = function(e) {
+                        if (_X('.ico_submenu_resize_se').XhasClass('window_resize_se')) {
+                            that.css({
+                                width: width + (e.pageX - xd),
+                                height: height + (e.pageY - yd)
+                            });
+                        } else if (_X('.ico_submenu_resize_sw').XhasClass('window_resize_sw')) {
+                            that.css({
+                                width: width + (xd - e.pageX),
+                                height: height + (e.pageY - yd),
+                                left: left + (e.pageX - xd)
+                            });
+                        } else {}
+                    };
+                    var mouseup = function() {
+                        _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
+                    };
+                    _X(window).Xon({mousemove: mousemove, mouseup: mouseup});
+                } else {}
+            };
+            this.WindowSelect = function(options) {
+                var defaults = {
+                    zIndex: 1501,
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                if (_X(WIN.full[WIN.key].winElem).XhasClass('remove_on_mousedown') === false) {
+                    _X('.thiswindow').css({'z-index': settings.zIndex - 2});
+                    _X('.xui_overlay').css({'z-index': settings.zIndex - 3});
+                    _X('.thiswindow_statusbar').XremoveClass('xui_highlight, xui_hover');
+                } else {}
+                if (SETTINGS.autorefresh.sel == 'true') {
+                    _X(WIN.full[WIN.key].winElem).XappendTo(_X('.active_screen').Xfind('.desktop_website')).css({'z-index': settings.zIndex});
+                    _X(WIN.full[WIN.key].winOverlay).XappendTo(_X('.active_screen').Xfind('.desktop_website')).css({'z-index': settings.zIndex - 1});
+                } else {
+                    _X(WIN.full[WIN.key].winElem).css({'z-index': settings.zIndex});
+                    _X(WIN.full[WIN.key].winOverlay).css({'z-index': settings.zIndex - 1});
+                }
+                _X(WIN.full[WIN.key].winBar).XaddClass('xui_highlight');
+            };
+            this.WindowMoveToSide = function() {
+                var amount_move = 5;
+                var pos = {
+                    lefT:   {left: 0, right: '', top: 50, bottom: '', width: amount_move, height: _X.FHeight(3)},
+                    lefB:   {left: 0, right: '', top: '', bottom: 50, width: amount_move, height: _X.FHeight(3)},
+                    rightT: {left: '', right: 0, top: 50, bottom: '', width: amount_move, height: _X.FHeight(3)},
+                    rightB: {left: '', right: 0, top: '', bottom: 50, width: amount_move, height: _X.FHeight(3)},
+                    topL:   {left: 20, right: '', top: 0, bottom: '', width: _X.FWidth(5), height: amount_move},
+                    topR:   {left: '', right: 20, top: 0, bottom: '', width: _X.FWidth(5), height: amount_move},
+                    topC:   {left: _X.FWidth(3), right: '', top: 0, bottom: '', width: _X.FWidth(3), height: amount_move},
+                    center: {left: _X.FWidth(9) * 4, right: '', top: _X.FHeight(7) * 3, bottom: '', width: _X.FWidth(9), height: _X.FHeight(7)},
+                };
+                var that = _X(WIN.full[WIN.key].winElem);
+                var store = WIN.full[WIN.key].winData;
+                var elL = that.Xleft('offset');
+                var elT = that.Xtop('offset');
+                var elW = that.Xwidth('offset');
+                var elH = that.Xheight('offset');
+                var winW = _X('.screen_faces').Xwidth('offset');
+                function ResizeMoveToSide(width, height, left, top) {
+                    _X(WIN.full[WIN.key].winElem).css({left: left, top: top, width: width, height: height});
+                    _X(window).Xoff({mouseup: mouseup});
+                }
+                if (elH > 39) {
+                    if (elW < winW) {
+                        store.left = elL;
+                        store.top = elT;
+                        store.width = elW;
+                        store.height = elH;
+                        //console.log(store);
+                    } else {}
+                    _X.Xeach(pos, function(k, v) {
+                        _X('<div')
+                            .XappendTo('body')
+                            .XaddClass('remove_on_mouseup, xui_disabled, xui_corner_all')
+                            .css({
+                                position: 'absolute',
+                                margin: 3,
+                                'background-color': 'red',
+                                'z-index': 2000,
+                                left: v.left,
+                                right: v.right,
+                                top: v.top,
+                                bottom: v.bottom,
+                                width: v.width,
+                                height: v.height,
+                            });
+                    });
+                    var mouseup = function(e) {
+                        //left top
+                        if (e.pageX < amount_move && e.pageY < _X.FHeight(2)) {
+                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), 0, 0);
+                        }
+                        //right top
+                        else if (e.pageX > (_X.FWidth(1) - amount_move) && e.pageY < _X.FHeight(2)) {
+                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), _X.FWidth(2), 0);
+                        }
+                        //left bottom
+                        else if (e.pageX < amount_move && e.pageY > _X.FHeight(2)) {
+                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), 0, _X.FHeight(2));
+                        }
+                        //right bottom
+                        else if (e.pageX > (_X.FWidth(1) - amount_move) && e.pageY > _X.FHeight(2) ) {
+                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), _X.FWidth(2), _X.FHeight(2));
+                        }
+                        //Left
+                        else if (e.pageX < _X.FWidth(3) && e.pageY < amount_move) {
+                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(1), 0, 0);
+                        }
+                        //Right
+                        else if (e.pageX > (_X.FWidth(1) - _X.FWidth(3)) && e.pageY < amount_move) {
+                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(1), _X.FWidth(2), 0);
+                        }
+                        //Full
+                        else if (e.pageX > _X.FWidth(3) && e.pageX < (_X.FWidth(1) - _X.FWidth(3)) && e.pageY < amount_move) {
+                            ResizeMoveToSide(_X.FWidth(1), _X.FHeight(1), 0, 0);
+                        }
+                        //Center
+                        else if (e.pageX > (_X.FWidth(7) * 3) && e.pageX < (_X.FWidth(1) - _X.FWidth(7) * 3) && e.pageY > (_X.FHeight(7) * 3) && e.pageY < (_X.FHeight(1) - _X.FHeight(7) * 3)) {
+                            ResizeMoveToSide(_X.FWidth(3), _X.FHeight(2), _X.FWidth(3), _X.FHeight(5));
+                        }
+                        else {
+                           _X(window).Xoff({mouseup: mouseup});
+                        }
+                    };
+                    _X(window).Xon({mouseup: mouseup});
+                } else {}
+            };
+
+            this.ResizeStatusBar = function() {
+                var status_width = _X('.active_screen').Xfind('.container_bara_stare').Xwidth('offset') - 7;
+                var selecteditems = _X('.active_screen').Xfind('.thiswindow_statusbar').length;
+                var resultat = (status_width / selecteditems) - 8;
+                _X('.active_screen').Xfind('.thiswindow_statusbar').css({width: resultat});
+                //console.log(status_width, selecteditems, resultat);
+            };
+            
+            this.init = function(options) {
+                var obj = SELECTED.obj;
+                var defaults = {
+                    to: _X('.active_screen').Xfind('.desktop_website'),
+                    statusBarTo: _X('.active_screen').Xfind('.container_bara_stare'),
+                    windowType: self.type[1], // 1 => default window, 2 => small fixed, 3 => right click menu
+                    zIndex: 1501,
+                    width: 300,
+                    height: 300,
+                    fontSize: 15,
+                    topBar: 0, // 0 => no searchbar, 1 => one searchbars, 2 => two searchbars
+                    scroll: 'auto',
+                    open: true,
+                    clasa: '',
+                    name: '',
+                    leftSize: 0,
+                    middlebodywidth: 0,
+                    imageshow: true,
+                    menuTitle: true,
+                    dragArea: _X('.active_screen').Xfind('.desktop_website'),
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                //
+                _X.prototype.WindowLoad = function() {
+                    var that = this;
+                    _X.Xeach(WIN.full, function(k, v) {
+                        if (v.winElem === undefined) {
+                            v.winElem = that;
+                        } else {}
+                    });
+                    return that;
+                };
+            
+                _X.prototype.WindowStatusBar = function() {
+                    var that = this;
+                    _X.Xeach(WIN.full, function(k, v) {
+                        if (v.winBar === undefined) {
+                            v.winBar = that;
+                        } else {}
+                    });
+                    return that;
+                };
+            
+                _X.prototype.WindowOverlay = function() {
+                    var that = this;
+                    _X.Xeach(WIN.full, function(k, v) {
+                        if (v.winOverlay === undefined) {
+                            v.winOverlay = that;
+                        } else {}
+                    });
+                    return that;
+                };
+            
+                _X.prototype.FindWindowKey = function() {
+                    var that = this;
+                    _X.Xeach(WIN.full, function(k, v) {
+                        if (_X(v.winElem)[0] == _X(that)[0] || _X(v.winBar)[0] == _X(that)[0]) {
+                            WIN.key = k;
+                        } else {}
+                    });
+                    return that;
+                };
+                
+                //Window Body
+                _X.prototype.AppendBody = function() {
+                    var $this = this;
+                    var LeftSizePosition = function() {
+                        if (settings.height == 'auto') {return 'relative'}
+                        else {return 'absolute'}
+                    };
+                    var FooterCalc = function() {
+                        if (settings.windowType == self.type[1]) {return 'calc(100% - 52px)'}
+                        else if (settings.windowType == self.type[2]) {return 'calc(100% - 35px)'}
+                        else {return '100%'}
+                    };
+                    var TopBar = function() {
+                        if (settings.windowType == self.type[1]) {
+                            if (settings.topBar === 0) {return 0}
+                            else if (settings.topBar === 1) {return 40}
+                            else if (settings.topBar === 2) {return 75}
+                        } else if (settings.windowType == self.type[2]) {
+                            if (settings.topBar === 0) {return 0}
+                            else if (settings.topBar === 1) {return 40}
+                        } else {return 0}
+                    };                
+                    var DisableHeader = function() {
+                        if (SETTINGS.header.sel == 'true') {return 'xui_header';}
+                        else {return  '';}
+                    };
+                    var WindowLogo = function(options) {
+                        var defaults = {
+                            item: '',
+                            show: true,
+                        };
+                        var settings = _X.XJoinObj(defaults, options);
+                        var item = _X(settings.item);
+                        if (settings.show === true) {
+                            setTimeout(function() {
+                                var width = item.Xparent().Xwidth('offset');
+                                var height = item.Xparent().Xheight('offset');
+                                if (width < height) {
+                                    _X('<img')
+                                        .XappendTo(item)
+                                        .XaddClass('xui_disabled')
+                                        .css({
+                                            position: 'absolute',
+                                            opacity: '0.15'
+                                        })
+                                        .Xattr({
+                                            src: 'images/catiadesign_logo_004.png',
+                                            width: '100%',
+                                            align: 'middle',
+                                        });
+                                }
+                            }, 30);
+                        }
+                    };
+                    _X.CreateTagElements({
+                        t: $this,
+                        a: [
+                            {
+                                clasa: 'thiswindow_header',
+                                init: function(that) {
+                                    if (settings.windowType == self.type[1]) {
+                                        _X(that)
+                                            .XaddClass('xui_corner_all')
+                                            .XaddClass(DisableHeader())
+                                            .css({
+                                                position: 'relative',
+                                                height: 33,
+                                                cursor: 'pointer',
+                                                overflow: 'hidden',
+                                                margin: 2
+                                            })
+                                            .Xon({
+                                                mousedown: function(e) {
+                                                    if (settings.windowType == self.type[1]) {
+                                                        self.WindowMoveToSide();
+                                                    }
+                                                    if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
+                                                        _X.XDraggable({item: $this, mouse: e, dragArea: settings.dragArea});
+                                                    } else {}
+                                                },
+                                                dblclick: function(e) {
+                                                    e.preventDefault();
+                                                    e.stopImmediatePropagation();
+                                                    self.buttons.WindowMinMax.init();
+                                                },
+                                            });
+                                        //Title -- Left Side Header
+                                        _X('<div')
+                                            .XappendTo(that)
+                                            .XaddClass('format_text')
+                                            .css({
+                                                display: 'block',
+                                                float: 'left',
+                                                padding: 3,
+                                                width: '47%',
+                                            })
+                                            .XAddIcon({ico: obj.ico, color: obj.color, size: 27})
+                                            .Xappend(' ' + obj.title);
+                                        //Buttons -- Right Side Header
+                                        _X('<div')
+                                            .XappendTo(that)
+                                            .css({
+                                                display: 'block',
+                                                float: 'right',
+                                                width: '47%',
+                                            })
+                                            .MenuElements({
+                                                array: _X.Xsearch({a: self.buttons, s: 'rc1'}),
+                                                pushObj: false,
+                                                pushItem: false,
+                                                css: {float: 'right'},
+                                                title: false,
+                                                color: false,
+                                                menuRC: false,
+                                            });
+                                    } else if (settings.windowType == self.type[2]) {
+                                        _X(that).css({height: 24});
+                                        WindowLogo({item: that, show: settings.imageshow});
+                                        if (settings.menuTitle === true) {
+                                            _X('<div')
+                                                .XappendTo(that)
+                                                .XaddClass('xui_disabled, format_text')
+                                                .css({'text-align': 'center'})
+                                                .Xappend(obj.title);
+                                        }
+                                        _X('<div')
+                                            .XappendTo(that)
+                                            .css({
+                                                position: 'absolute',
+                                                cursor: 'pointer',
+                                                top: -13,
+                                                left: -13,
+                                            })
+                                            .XAddIcon({ico: obj.ico, color: obj.color, size: 35});
+                                        var temp = [
+                                            {ico: 'toll', right: 20, init: self.buttons.WindowHideShow.init},
+                                            {ico: 'cancel', right: -10, init: self.buttons.WindowClose.init},
+                                        ];
+                                        _X.Xeach(temp, function(k, v) {
+                                            _X('<div')
+                                                .XappendTo(that)
+                                                .XAddIcon({ico: v.ico, size: 30})
+                                                .css({
+                                                    position: 'absolute',
+                                                    cursor: 'pointer',
+                                                    top: -10,
+                                                    right: v.right,
+                                                })
+                                                .Xon({
+                                                    mouseenter: function() {
+                                                        _X(this).Xfind('i').css({color: 'red'});
+                                                    },
+                                                    mouseleave: function() {
+                                                        _X(this).Xfind('i').css({color: ''});
+                                                    },
+                                                    click: function() {
+                                                        v.init();
+                                                    },
+                                                });
+                                        });
+                                    } else if (settings.windowType == self.type[3]) {
+                                        WindowLogo({item: that, show: settings.imageshow});
+                                        if (settings.menuTitle === true) {
+                                            _X('<div')
+                                                .XappendTo(that)
+                                                .XaddClass('format_text')
+                                                .css({
+                                                    padding: 2,
+                                                    'margin-left': 10,
+                                                    'margin-right': 10,
+                                                    'text-align': 'center',
+                                                    'font-size': 10,
+                                                    color: '#636363',
+                                                })
+                                                .XAddIcon({ico: obj.ico, color: obj.color, size: 20})
+                                                .Xappend(_X.AddSpace(1) + obj.title);
+                                        }
+                                    } else {}
+                                },
+                            }, {
+                                clasa: 'thiswindow_body',
+                                css: {
+                                    position: 'relative',
+                                    height: FooterCalc(),
+                                    overflow: 'hidden',
+                                },
+                                items: [
+                                    {
+                                        clasa: 'body_top1',
+                                        init: function(that) {
+                                            if (settings.topBar === 1 || settings.topBar === 2) {
+                                                _X(that)
+                                                    .css({
+                                                        position: 'relative',
+                                                        padding: 2,
+                                                        height: 35,
+                                                    });
+                                            } else {}
+                                        },
+                                    }, {
+                                        clasa: 'body_top2',
+                                        init: function(that) {
+                                            if (settings.topBar === 2) {
+                                                _X(that)
+                                                    .css({
+                                                        position: 'relative',
+                                                        padding: 2,
+                                                        height: 35,
+                                                    });
+                                            } else {}
+                                        }
+                                    }, {
+                                        clasa: 'body_left',
+                                        css: {
+                                            position: 'absolute',
+                                            width: parseInt(settings.leftSize),
+                                            top: TopBar(),
+                                            left: 0,
+                                            bottom: 0,
+                                            padding: 2,
+                                            'user-select': 'text',
+                                        },
+                                    }, {
+                                        clasa: 'body_middle',
+                                        css: {
+                                            position: 'absolute',
+                                            left: settings.leftSize,
+                                            width: settings.middlebodywidth ,
+                                            top: TopBar(),
+                                            bottom: 0,
+                                            padding: 2,
+                                        },
+                                    }, {
+                                        clasa: 'body_right',
+                                        css: {
+                                            position: LeftSizePosition(),
+                                            left: settings.middlebodywidth + parseInt(settings.leftSize),
+                                            top: TopBar(),
+                                            right: 0,
+                                            bottom: 0,
+                                            padding: 2,
+                                            'overflow-x': 'hidden',
+                                            'overflow-y': settings.scroll,
+                                        },
+                                        items: [
+                                            {
+                                                clasa: 'body_right_top',
+                                            }, {
+                                                clasa: 'body_right_bottom',
+                                            },
+                                        ],
+                                    },
+                                ],
+                            }, {
+                                clasa: 'thiswindow_footer',
+                                init: function(that) {
+                                    if (settings.windowType == self.type[1]) {
+                                        _X(that)
+                                            .css({
+                                                position: 'relative',
+                                                height: 15,                                             
+                                            });
+                                        //div for text
+                                        _X('<div')
+                                            .XappendTo(that)
+                                            .XaddClass('footer_text')
+                                            .css({
+                                                'padding-left': 35,
+                                                'padding-top': 1,
+                                                'font-size': 10,
+                                            });
+                                        //divs for actual resize
+                                        var temp = [
+                                            {clasa: 'ico_submenu_resize_sw', left: 1, right: '', moveClass: 'window_resize_sw'},
+                                            {clasa: 'ico_submenu_resize_se', left: '', right: 1, moveClass: 'window_resize_se'},
+                                        ];
+                                        _X.Xeach(temp, function(k, v) {
+                                            _X('<div')
+                                                .XappendTo(that)
+                                                .XaddClass(v.clasa)
+                                                .css({
+                                                    position: 'absolute',
+                                                    cursor: 'pointer',
+                                                    bottom: 1,
+                                                    left: v.left,
+                                                    right: v.right,
+                                                })
+                                                .XAddIcon({ico: 'adjust', size: 12})
+                                                .Xon({
+                                                    mousedown: function(e) {
+                                                        _X(this).XremoveClass(v.moveClass);
+                                                        if (SETTINGS.resize.sel == 'true') {
+                                                            _X(this).Xfind('i').css({color: 'red'});
+                                                            _X(this).XaddClass(v.moveClass);
+                                                            self.ResizableFn({item: _X(this).Xparent('.thiswindow'), mouse: e});
+                                                        } else {}
+                                                    },
+                                                    mouseup: function() {
+                                                        _X(this).Xfind('i').css({color: ''});
+                                                        _X(this).XremoveClass(v.moveClass);
+                                                    },
+                                                });
+                                        });
+                                    } else {}
+                                },
+                            },
+                        ],
+                    });
+                    return $this;
+                };
+                //Modal Overlay
+                if ( (SETTINGS.modal.sel == 'true') && (settings.windowType.modal === true) ) {
+                    _X('<div')
+                        .XappendTo(settings.to)
+                        .XaddClass('xui_overlay')
+                        .XaddClass(settings.name + '_overlay')
+                        .css({'z-index': settings.zIndex - 1})
+                        .WindowOverlay();
+                } else {}
+                //Full Window
+                _X('<div')
+                    .XappendTo(settings.to)
+                    .XaddClass('thiswindow, shadow_border, xui_corner_all, xui_content')
+                    .XaddClass(settings.name + '_window')
+                    .XaddClass(settings.clasa)
+                    .css({
+                        visibility: 'hidden',
+                        width: settings.width,
+                        height: settings.height,
+                        //'box-sizing': 'border-box',
+                        border: 0,
+                        'font-size': settings.fontSize,
+                        'z-index': settings.zIndex,
+                        overflow: settings.windowType.overflow,
+                    })
+                    .WindowLoad()
+                    .AppendBody()
+                    .Xon({
+                        mouseenter: function() {
+                            if (_X('body').XhasClass('mousedown_true') === false) {
+                                _X(this).FindWindowKey();
+                            } else {}
+                        },
+                        mousedown: function(e) {
+                            _X('body').XaddClass('mousedown_true');
+                            if (_X(this).css('z-Index') !== 1501) {
+                                self.WindowSelect({zIndex: settings.zIndex});
+                            } else {}
+                            //console.log(WIN.full);
+                            if (settings.windowType !== self.type[1]) {
+                                if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
+                                    _X.XDraggable({item: this, mouse: e, dragArea: settings.dragArea});
+                                } else {}
+                            } else {}
+                        },
+                        contextmenu: function(e) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                        },
+                        dblclick: function(e) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                        },
+                    })
+                    .OpenWindow({
+                        maxSize: settings.windowType.maxSize,
+                        open: settings.open,
+                    })
+                    .FindWindowKey();
+                //Add to Status Bar
+                if (settings.windowType.statusbar === true) {
+                    _X('<div')
+                        .XappendTo(settings.statusBarTo)
+                        .XaddClass('thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text')
+                        .XaddClass(settings.name + '_bara_stare')
+                        .css({
+                            float: 'left',
+                            padding: 2,
+                            margin: 1,
+                            'max-width': 200,
+                            cursor: 'pointer',
+                            'z-index': settings.zIndex,
+                        })
+                        .XAddIcon({ico: obj.ico, color: obj.color, size: 25})
+                        .Xappend(' ' + obj.title)
+                        .WindowStatusBar()
+                        .Xon({
+                            mouseenter: function() {
+                                _X.ReturnElements({item: this, obj: obj});
+                                _X(this).FindWindowKey();
+                                _X(this).XaddClass('xui_hover');
+                                _X.AddTooltip({title: _X(this)[0].innerHTML});
+                                _X(WIN.full[WIN.key].winElem).XaddClass('xui_hover');
+                            },
+                            mouseleave: function() {
+                                _X(this).XremoveClass('xui_hover');
+                                _X('.tooltip_class').Xremove();
+                                _X(WIN.full[WIN.key].winElem).XremoveClass('xui_hover');
+                            },
+                            mousedown: function() {
+                                _X('body').XaddClass('mousedown_true');
+                                if (_X(WIN.full[WIN.key].winElem).css('z-Index') !== 1501) {
+                                    self.WindowSelect({zIndex: settings.zIndex});
+                                } else {}
+                            },
+                            dblclick: function(e) {
+                                self.buttons.WindowHideShow.init();
+                            },
+                            contextmenu: function(e) {
+                                e.preventDefault();
+                                e.stopImmediatePropagation();
+                                var x = new _X.Window();
+                                x.init({
+                                    windowType: x.type[3],
+                                    fontSize: 13,
+                                    width: 115,
+                                    height: 'auto',
+                                    open: false,
+                                    clasa: 'remove_on_mousedown',
+                                });
+                                x.right.MenuElements({
+                                    array: settings.windowType.menuRC,
+                                    pushObj: false,
+                                    pushItem: false,
+                                    icoSize: 25,
+                                    click: 'mousedown',
+                                    color: false,
+                                });
+                                x.win.OpenWindow();
+                                WIN.full.splice(WIN.key, 1);
+                                _X(this).FindWindowKey();
+                            },
+                        });
+                } else {}
+                self.ResizeStatusBar();
+                self.WindowSelect({zIndex: settings.zIndex});
+                self.GetElements();
+                WIN.full.push(NULLWIN());
+            };
         };
 
         /*Create elements from object
@@ -396,7 +1522,7 @@
                         .XappendTo(appendto)
                         .XaddClass(v.clasa)
                         .Xattr(v.attr)
-                        .Xcss(v.css)
+                        .css(v.css)
                         .XAddIcon(v.icon)
                         .Xon(v.on)
                         ._init(v.init)
@@ -437,8 +1563,8 @@
                                 src: settings.ico,
                             })
                             .XaddClass('xui_corner_all')
-                            .Xcss(settings.css)
-                            .Xcss({
+                            .css(settings.css)
+                            .css({
                                 color: settings.color,
                                 'pointer-events': 'none',
                                 'vertical-align': 'middle',
@@ -450,8 +1576,8 @@
                             .XaddClass('material-icons')
                             .XaddClass(settings.clasa)
                             .Xappend(settings.ico)
-                            .Xcss(settings.css)
-                            .Xcss({
+                            .css(settings.css)
+                            .css({
                                 'text-shadow': '1px 1px 1px #636363',
                                 //'text-shadow': '1px 1px 1px black, -1px -1px 1px white', //other way of display
                                 color: settings.color,
@@ -693,9 +1819,9 @@
                 }
             },
 
-            //_X(?).Xcss('? element key')               => GET element css value
-            //_X(?).Xcss({'? element key': ? value})    => SET element css
-            Xcss: function(e) {
+            //_X(?).css('? element key')               => GET element css value
+            //_X(?).css({'? element key': ? value})    => SET element css
+            css: function(e) {
                 var that = this;
                 var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'max-width', 'min-width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
                 if (e !== undefined) {    
@@ -800,7 +1926,8 @@
                                 temp.push(v2);
                             });
                         });
-                    } else {
+                    }
+                    else {
                         elem = e.replace(/\s/g, '').split(',');
                         _X.Xeach(elem, function(k, v) {
                             _X.Xeach(_X.XSearchChildren({a: that, s: v}), function(k2, v2) {
@@ -946,18 +2073,202 @@
                 //xhr.getAllResponseHeaders();
                 //xhr.getResponseHeader('Content-Type')
             },
+            
+            CheckBox: function(options) {
+                var defaults = {
+                    check: true,
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                var that = this;
+                if (settings.check === true) {
+                    _X('<div')
+                        .XappendTo(that)
+                        .XaddClass('input_checkbox')
+                        .XInput({id: 'checkbox_input', type: 'checkbox', width: 'auto'})
+                        .Xon({'click': function(e) {
+                            e.stopImmediatePropagation();
+                        }});
+                } else {}
+            },
+
+            XButton: function(options) {
+                var defaults = {
+                    text: 'Button:',
+                    width: 'auto',
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                var that = this;
+                this
+                    .XaddClass('xui_content, xui_corner_all')
+                    .css({
+                        cursor: 'pointer',
+                        margin: 1,
+                        width: settings.width,
+                        'text-align': 'center',
+                        'box-sizing': 'border-box',
+                    })
+                    .Xappend(settings.text)
+                    .Xon({
+                        mouseenter: function() {
+                            that.XaddClass('xui_hover')
+                                .css({color: 'red'});
+                        },
+                        mouseleave: function() {
+                            that.XremoveClass('xui_hover')
+                                .css({color: ''});
+                        },
+                    });
+                return this;
+            },
+
+            MenuElements: function(options) {
+                var defaults = {
+                    array: [],
+                    pushObj: true,
+                    pushItem: true,
+                    menuRC: _X.Xsearch({s: 'rc2'}),
+                    icoSize: 25,
+                    click: 'click',
+                    title: true,
+                    color: true,
+                    clasa: '',
+                    css: {},
+                };
+                var s = _X.XJoinObj(defaults, options);
+                var that = this;
+                var TitleLoad = function(elem) { 
+                    if (s.title === true) {return _X.AddSpace(1) + elem.title;} else {return ''}
+                };
+                var ColorLoad = function(elem) { 
+                    if (s.color === true) {return elem.color;} else {return ''}
+                };
+                _X.Xeach(s.array, function(k, v) {
+                    _X('<div')
+                        .XappendTo(that)
+                        .XaddClass('ico_full_body, xui_corner_all, format_text')
+                        .XaddClass(s.clasa)
+                        .css({
+                            padding: 3,
+                            border: '1px solid transparent',
+                        })
+                        .css(s.css)
+                        .XAddIcon({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
+                        .Xappend(_X('<div')
+                            .Xappend(TitleLoad(v))
+                            .css({display: 'inline'})
+                            .XaddClass('edit_title')
+                        )
+                        .Xon({
+                            mouseenter: function() {
+                                _X(this).XaddClass('xui_hover');
+                            },
+                            mouseleave: function() {
+                                _X(this).XremoveClass('xui_hover');
+                            },
+                            mousedown: function() {
+                                _X.ReturnElements({item: this, obj: v, pushItem: s.pushItem, pushObj: s.pushObj});
+                                _X('.ico_full_body').XremoveClass('xui_active');
+                                _X(this).XaddClass('xui_active');
+                            },
+                            contextmenu: function(e) {
+                                e.preventDefault();
+                                e.stopImmediatePropagation();
+                                if (s.menuRC !== false) {
+                                    var x = new _X.Window();
+                                    x.init({
+                                        windowType: x.type[3],
+                                        fontSize: 13,
+                                        width: 115,
+                                        height: 'auto',
+                                        open: false,
+                                        clasa: 'remove_on_mousedown',
+                                    });
+                                    x.right.MenuElements({
+                                        array: s.menuRC,
+                                        pushObj: false,
+                                        pushItem: false,
+                                        icoSize: 25,
+                                        click: 'mousedown',
+                                        color: false,
+                                    });
+                                    x.win.OpenWindow();
+                                    WIN.full.splice(WIN.key, 1);
+                                } else {}
+                            }
+                        })
+                        .Xon([s.click, function() {
+                            v.init();
+                        }]);
+                });
+            },
+
+            OpenWindow: function(options) {
+                var defaults = {
+                    maxSize: false,
+                    open: true,
+                    effect: '',
+                };
+                var settings = _X.XJoinObj(defaults, options);
+                var that = this;
+                var width = that.Xwidth('offset');
+                var height = that.Xheight('offset');
+                //console.log(width, height);
+                function Effect() {
+                    if (settings.effect !== null) {return SETTINGS.effect.sel;}
+                    else {return null;}
+                }
+                function Left() {
+                    if (MOUSE.X > _X.FWidth(1) - width) {
+                        return MOUSE.X - width;
+                    } else {
+                        return MOUSE.X;
+                    }
+                }
+                function Top() {
+                    if (MOUSE.Y > _X.FHeight(1) - height && MOUSE.Y < _X.FHeight(1)) {
+                        //console.log('1');
+                        return MOUSE.Y - height;
+                    } else if (MOUSE.Y > _X.FHeight(1)) {
+                        //console.log('2');
+                        var value = window.innerHeight - MOUSE.Y;
+                        //Valoare 36 corectare inaltime statusbar
+                        return MOUSE.Y - height - (36 - value);
+                    } else {
+                        //console.log('3');
+                        return MOUSE.Y;
+                    }
+                }
+                if (settings.open === true) {
+                    that.css({position: 'absolute'});
+                    if (_X.FWidth(1) < 700 && settings.maxSize === true) { 
+                        that.css({
+                                left: 0,
+                                top: 0,
+                                width: _X.FWidth(1),
+                                height: _X.FHeight(1),
+                            });
+                    } else {
+                        that.css({
+                                left: Left(),
+                                top: Top(),
+                            });
+                    }
+                    that.Xshow(Effect());
+                } else {}
+                return this;
+            },           
         };
 
         //Effects for Hide / Show prototype function
         _X.EFFECT = {
             type: [
-                {name: 'swipe',         format: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
-                {name: 'reverse',       format: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
-                {name: 'unfold_big',    format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
-                {name: 'unfold_small',  format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5'},
-                {name: 'drop_left',     format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
-                {name: 'drop_top',      format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
-                {name: 'drop_left_top', format: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},
+                {name: 'swipe',         matrix: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
+                {name: 'reverse',       matrix: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'unfold_big',    matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
+                {name: 'unfold_small',  matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1.5'},
+                {name: 'drop_left',     matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
+                {name: 'drop_top',      matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
+                {name: 'drop_left_top', matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},
             ],
             elemCss: function(effectname) {
                 return {
@@ -981,9 +2292,9 @@
             loadEffect: function(effect, elem, hideshow) {
                 var that = this;
                 if (hideshow == 'show') {
-                    _X(elem).Xshow().Xcss(that.elemCss(effect + '_motion_show'));
+                    _X(elem).Xshow().css(that.elemCss(effect + '_motion_show'));
                 } else if (hideshow == 'hide') {
-                    _X(elem).Xcss(that.elemCss(effect + '_motion_hide'));
+                    _X(elem).css(that.elemCss(effect + '_motion_hide'));
                     setTimeout(function() {
                         _X(elem).Xhide();
                     }, 150); 
@@ -992,7 +2303,7 @@
             init: function() {
                 var that = this;
                 _X.Xeach(that.type, function(k, v) {
-                    that.AddAnimation(v.name, v.format);
+                    that.AddAnimation(v.name, v.matrix);
                 });
             },
         };
@@ -1101,6 +2412,13 @@
                 }
                 return inputMatrix;
             },
+            xyz: function(x, y, z) {
+                return _X.MATRIX.Multiply([
+                    this.RotateZAxis(_X.Xradians(z)),
+                    this.RotateYAxis(_X.Xradians(y)),
+                    this.RotateXAxis(_X.Xradians(x)),
+                ]).join(', ');
+            }            
         };
         
         _X.XGetClasa = function(elem) {
@@ -1194,3 +2512,17 @@
         window._X = xquery();
     }
 })(window);
+
+_X(document).Xon({
+    mousemove: function(e) {
+        //Mouse Move
+        MOUSE.X = e.pageX;
+        MOUSE.Y = e.pageY;
+    },
+    mousedown: function(e) {
+        if (e.which === 1) {
+            MOUSE.XD = e.pageX;
+            MOUSE.YD = e.pageY;
+        }
+    },
+});
