@@ -95,8 +95,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
             name:       'Xquery JavaScript Library',
             version:    '1.0.0',
             author:     'Adrian & Open Source',
-            created:    '17-10-2019',
-            updated:     '26.09.2020',
+            created:    '17.10.2019',
+            updated:     '30.10.2020',
         };
         
         var xs = 0;
@@ -379,7 +379,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var mousemove = function(e) {
                     var x = e.pageX;
                     var y = e.pageY;
-                    that.XaddClass(settings.clasa)
+                    that.classAdd(settings.clasa)
                         .css({position: 'absolute'});
                     // Center without borders
                     if ( (x > L) && (y > T) && (x < L + W) && (y < T + H) ) {
@@ -402,14 +402,89 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                 };
                 var mouseup = function() {
-                    _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
-                    that.XremoveClass(settings.clasa);
+                    _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                    that.classRemove(settings.clasa);
                 };
-                _X(window).Xon({
+                _X(window).on({
                     mousemove: mousemove,
                     mouseup: mouseup
                 });
             }
+        };
+
+        _X.AdSenseVertical = function() {
+            if (window.innerWidth > 700) {
+                return 'pages/adsense_vertical_120x600.html';
+                //return 'pages/null.html';
+            } else {
+                return 'pages/null.html';
+            }
+        };   
+
+        _X.OpenHtml = function() {
+            var obj = SELECTED.obj;
+            var x = new _X.Window();
+            x.init({
+                leftSize: x.AutoLeftResize(),
+            });
+            _X('<iframe')
+                .XappendTo(x.left)
+                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .css({width: '100%', height: '100%'});
+            x.right.Xload({url: obj.loc});
+        };
+        
+        _X.OpenIframe = function() {
+            var obj = SELECTED.obj;
+            var x = new _X.Window();
+            x.init({
+                leftSize: x.AutoLeftResize(),
+                scroll: 'hidden',
+            });
+            _X('<iframe')
+                .XappendTo(x.left)
+                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .css({width: '100%', height: '100%'});
+            _X('<iframe')
+                .XappendTo(x.right)
+                .attr({src: obj.loc})
+                .css({width: '100%', height: '100%'});
+        };
+    
+        _X.OpenPhoto = function() {
+            var obj = SELECTED.obj;
+            var x = new _X.Window();        
+            x.init({
+                leftSize: x.AutoLeftResize(),
+            });
+            _X('<iframe')
+                .XappendTo(x.left)
+                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .css({width: '100%', height: '100%'});        
+            _X('<img')
+                .XappendTo(x.right)
+                .attr({src: obj.loc})
+                .css({width: '100%'});
+        };
+        
+        _X.OpenVideo = function() {
+            var obj = SELECTED.obj;
+            var cls = _X.ClassVirtual();        
+            var x = new _X.Window();
+            x.init({
+                leftSize: x.AutoLeftResize(),
+            });
+            _X('<iframe')
+                .XappendTo(x.left)
+                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .css({width: '100%', height: '100%'});        
+            _X('<video')
+                .XappendTo(x.right)
+                .classAdd(cls.replace('.', ''))
+                .attr({width: '100%', height: 'auto', controls:''})
+                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
+                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
+                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/webm; codecs="vp8.0, vorbis"'}) );
         };
 
         _X.AddTooltip = function(options) {
@@ -418,10 +493,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 title: '',
             };
             var settings = _X.XJoinObj(defaults, options);
-            if (settings.tooltip === true && _X('body').XhasClass('mousedown_true') === false) {
+            if (settings.tooltip === true && _X('body').classBool('mousedown_true') === false) {
                 _X('<div')
                     .XappendTo('body')
-                    .XaddClass('tooltip_class, xui_content, xui_corner_all, shadow_border')
+                    .classAdd('tooltip_class, xui_content, xui_corner_all, shadow_border')
                     .css({
                         position: 'absolute',
                         'white-space': 'nowrap',
@@ -447,6 +522,135 @@ var WIN = { key: 0, full: [NULLWIN()] };
             if (s.pushObj2 === true) {SELECTED.obj2 = s.obj;}
         };  
 
+        _X.CubeIconsControl = function(options) {
+            var defaults = {
+                elem: '',
+            };
+            var settings = _X.XJoinObj(defaults, options);
+            var item = SELECTED.item;
+            var ICONcontrols = [
+                {clasa: 'ico_rotate_X', ico: 'panorama_vertical'},
+                {clasa: 'ico_rotate_Y', ico: 'panorama_horizontal'},
+                {clasa: 'ico_rotate_Z', ico: 'panorama_fish_eye'},
+                {clasa: 'ico_perspective', ico: 'landscape'},
+                {clasa: 'ico_resize', ico: 'zoom_out_map'},
+                {clasa: 'ico_opacity', ico: 'beach_access'}
+            ];
+            function Transform3D(x) {
+                return _X(SELECTED.item).Xfind(x).css('transform').slice(9, -1).split(',');
+            }
+            var left = _X(settings.elem).Xleft('box');
+            var top = _X(settings.elem).Xtop('box');
+            _X('<div')
+                .XappendTo('body')
+                .classAdd('ico_controls')
+                .css({
+                    'z-index': 100,
+                    'border-left': '1px dotted',
+                    position: 'absolute',
+                    left: left - 20,
+                    top: top,
+                    width: 'auto',
+                    height: 'auto',
+                    'background-image': 'linear-gradient(-90deg, rgba(217, 217, 217, 0) 0%, rgba(217, 217, 217, 1) 100%)',
+                    'border-radius': 5,
+                });
+            _X.Xeach(ICONcontrols, function(k, v) {
+                _X('<div')
+                    .XappendTo('.ico_controls')
+                    .classAdd(v.clasa)
+                    .css({cursor: 'pointer'})
+                    .AddIcon({ico: v.ico, size: 20})
+                    .on({
+                        mouseenter: function() {
+                            _X(this).Xfind('i').css({color: 'red'});
+                        },
+                        mouseleave: function() {
+                            _X(this).Xfind('i').css({color: ''});
+                        },
+                        mousedown: function(e) {
+                            if (e.which === 1) {
+                                var xd = e.pageX;
+                                var perspective = _X(item).css('perspective');
+                                var cube_size = _X(item).css('width');
+                                var cube_opacity = _X(item).Xfind('.back').css('opacity');
+                                var cube = {
+                                    front: Transform3D('.front'),
+                                    back: Transform3D('.back'),
+                                    left: Transform3D('.left'),
+                                    right: Transform3D('.right'),
+                                    bottom: Transform3D('.bottom'),
+                                    top: Transform3D('.top'),
+                                };
+                                var cube2;
+                                var mousemove = function(e) {
+                                    var move = (e.pageX - xd);
+                                    var matVal = move * 1/50;
+                                    if (v.clasa == 'ico_rotate_X') {
+                                        cube2 = {
+                                            front:  _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.front]),
+                                            back:   _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(matVal), cube.back]),
+                                            left:   _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.left]),
+                                            right:  _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.right]),
+                                            top:    _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.top]),
+                                            bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.bottom]),
+                                        };
+                                        _X.Xeach(cube2, function(k, v) {
+                                            _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
+                                        });
+                                    } else if (v.clasa == 'ico_rotate_Y') {
+                                        cube2 = {
+                                            front:  _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.front]),
+                                            back:   _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.back]),
+                                            left:   _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.left]),
+                                            right:  _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.right]),
+                                            top:    _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.top]),
+                                            bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.bottom]),
+                                        };
+                                        _X.Xeach(cube2, function(k, v) {
+                                            _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
+                                        });
+                                    } else if (v.clasa == 'ico_rotate_Z') {
+                                        cube2 = {
+                                            front:  _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.front]),
+                                            back:   _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.back]),
+                                            left:   _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(matVal), cube.left]),
+                                            right:  _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.right]),
+                                            top:    _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.top]),
+                                            bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(-matVal), cube.bottom]),
+                                        };
+                                        _X.Xeach(cube2, function(k, v) {
+                                            _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
+                                        });
+                                    } else if (v.clasa == 'ico_perspective') {
+                                        _X(item).css({perspective: perspective + move});
+                                    } else if (v.clasa == 'ico_resize') {
+                                        var valcube = Math.abs(cube_size + move);
+                                        _X(item).css({width: valcube, height: valcube});
+                                        _X(item).Xfind('i').css({'font-size': valcube});
+                                        _X(item).Xfind('img').css({width: valcube, height: valcube});
+                                        //
+                                        _X.Xeach(['.front, .back, .left, .right, .top, .bottom'], function(k, v) {
+                                            _X(item).Xfind(v).css({'transform-origin': 'center center' + _X.AddSpace(1) + - valcube / 2 + 'px'});
+                                        });
+                                    } else if (v.clasa == 'ico_opacity') {
+                                        var cubeopacity = Math.abs(move / 300).toFixed(1);
+                                        //
+                                        _X.Xeach(['.back, .left, .right, .top, .bottom'], function(k, v) {
+                                            _X(item).Xfind(v).css({opacity: cubeopacity});
+                                        });
+                                    } else {}
+                                };
+                                var mouseup = function() {
+                                    _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                                };     
+                                _X(window).on({mousemove: mousemove, mouseup: mouseup});
+                            }
+                        }
+                    });
+            });
+        }
+
         _X.CubeIcon = function(options) {
             var defaults = {
                 to: _X('.active_screen').Xfind('.desktop_icons'),
@@ -471,6 +675,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 drag: true,
                 check: false,
                 dragArea: '.screen_faces',
+                on: {},
             };
             var s = _X.XJoinObj(defaults, options);
             var temp;
@@ -491,9 +696,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
             };
             _X.prototype.FrontSide = function(obj, size) {
                 var that = this;
-                if (that.XhasClass('front')) {
+                if (that.classBool('front')) {
                     that.css({'z-index': 1})
-                        .XAddIcon({
+                        .AddIcon({
                             ico: obj.ico,
                             color: obj.color,
                             size: size,
@@ -503,7 +708,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     if (s.title === true) {
                         _X('<div')
                             .XappendTo(that)
-                            .XaddClass('format_text, edit_title')
+                            .classAdd('format_text, edit_title')
                             .css({
                                 position: 'absolute',
                                 left: 0,
@@ -516,7 +721,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             .Xappend(obj.title);
                     } else {}
                 } else {} 
-                return this;
+                return that;
             };
             _X.prototype.Cubefaces = function(obj, size) { 
                 var that = this;
@@ -534,7 +739,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     _X.Xeach(cubeFaces, function(k, v) {
                         _X('<div')
                             .XappendTo(that)
-                            .XaddClass(v.clasa)
+                            .classAdd(v.clasa)
                             .css({
                                 position: 'absolute',
                                 left: 0,
@@ -558,8 +763,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     // One Face
                     _X('<div')
                         .XappendTo(that)
-                        .XaddClass(cubeFaces.front.clasa)
-                        .XaddClass('xui_corner_all')
+                        .classAdd(cubeFaces.front.clasa)
+                        .classAdd('xui_corner_all')
                         .css({
                             position: 'absolute',
                             left: 0,
@@ -572,23 +777,23 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             border: '1px solid transparent',
                         })
                         .FrontSide(obj, size)
-                        .Xon({
+                        .on({
                             mouseenter: function() {
-                                _X(this).XaddClass('shadow_border');
+                                _X(this).classAdd('shadow_border');
                             },
                             mouseleave: function() {
-                                _X(this).XremoveClass('shadow_border');
+                                _X(this).classRemove('shadow_border');
                             },
                         });
                 }
-                return this;
+                return that;
             };
             _X.Xeach(s.array, function(_k, _v) {
                 var size = RandomSize();
                 _X('<div')
                     .XappendTo(s.to)
-                    .XaddClass(s.clasa)
-                    .XaddClass('xcube')
+                    .classAdd(s.clasa)
+                    .classAdd('xcube')
                     .css(s.css)
                     .css({
                         position: 'relative',
@@ -599,26 +804,27 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         'transform-style': s.transform,
                         cursor: 'pointer'
                     })
-                    .Xon([s.click, function(e) {
+                    .on([s.click, function(e) {
                         _X('.ico_controls').Xremove();
                         e.preventDefault();
                         e.stopImmediatePropagation();
                         _v.init();
                     }])
-                    .Xon({
+                    .on(s.on)
+                    .on({
                         mouseenter: function() {
-                            _X(this).Xfind('children').XaddClass('xui_hover');
+                            _X(this).Xfind('children').classAdd('xui_hover');
                             _X.AddTooltip({tooltip: s.tooltip, title: _v.title});
                             _X(this).Xfind('children').CheckBox({check: s.check});
                         },
                         mouseleave: function() {
-                            _X(this).Xfind('children').XremoveClass('xui_hover');
+                            _X(this).Xfind('children').classRemove('xui_hover');
                             _X('.tooltip_class').Xremove();
                             _X('.input_checkbox').Xremove();
                         },
                         mousedown: function(e) {
                             _X('.ico_controls').Xremove();
-                            _X('.xcube').Xfind('children').XremoveClass('xui_focus');
+                            _X('.xcube').Xfind('children').classRemove('xui_focus');
                             _X('.xcube').css({'z-index': 1});
                             _X(this).css({'z-index': 2});
                             //
@@ -629,46 +835,35 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         },
                         click: function(e) {
                             var that = this;
-                            _X(that).Xfind('children').XaddClass('xui_focus');
-                            if (_X('.thiswindow').XhasClass('console_window')) {
-                                var x = new _X.Window();
-                                var readyObjectConsole = JSON.stringify(_v, null, 2);
-                                x.GetElements('.console_window');
-                                x.right
-                                    .css({'user-select': 'text'})
-                                    .Xappend(_X('<br'))
-                                    .Xappend(_X('<div').Xappend('Object:').css({color: 'red'}))
-                                    .Xappend(readyObjectConsole)
-                                    .Xappend(_X('<hr'));
-                                var height = x.right[0].scrollHeight;
-                                x.right[0].scrollTop = height;
-                            } else {}
+                            _X(that).Xfind('children').classAdd('xui_focus');
                             if (s.icoControls === true) {
-                                CubeIconsControl({elem: that});
+                                _X.CubeIconsControl({elem: that});
                             } else {}
                         },
                         contextmenu: function(e) {
                             e.preventDefault();
                             e.stopImmediatePropagation();
-                            var x = new _X.Window();
-                            x.init({
-                                windowType: x.type[3],
-                                fontSize: 13,
-                                width: 115,
-                                height: 'auto',
-                                open: false,
-                                clasa: 'remove_on_mousedown',
-                            });
-                            x.right.MenuElements({
-                                array: s.menuRC,
-                                pushObj: false,
-                                pushItem: false,
-                                icoSize: 25,
-                                click: 'mousedown',
-                                color: false,
-                            });
-                            x.win.OpenWindow();
-                            WIN.full.splice(WIN.key, 1);
+                            if (s.menuRC !== false) {
+                                var x = new _X.Window();
+                                x.init({
+                                    windowType: x.type[3],
+                                    fontSize: 13,
+                                    width: 115,
+                                    height: 'auto',
+                                    open: false,
+                                    clasa: 'remove_on_mousedown',
+                                });
+                                x.right.MenuElements({
+                                    array: s.menuRC,
+                                    pushObj: false,
+                                    pushItem: false,
+                                    icoSize: 25,
+                                    click: 'mousedown',
+                                    color: false,
+                                });
+                                x.win.OpenWindow();
+                                WIN.full.splice(WIN.key, 1);
+                            }
                         },
                     })
                     .Cubefaces(_v, size);
@@ -689,7 +884,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         WIN.full.splice(WIN.key, 1);
                         _X('.thiswindow').Xlast().css({'z-index': 1501});
                         _X('.xui_overlay').Xlast().css({'z-index': 1500});
-                        _X('.thiswindow_statusbar').Xlast().XaddClass('xui_highlight');
+                        _X('.thiswindow_statusbar').Xlast().classAdd('xui_highlight');
                         self.ResizeStatusBar();
                     },
                 },
@@ -737,7 +932,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     init: function() {
                         var that = _X(WIN.full[WIN.key].winElem);
                         var overlay = _X(WIN.full[WIN.key].winOverlay);
-                        if ( that.Xis(['display', 'none']) ) {
+                        if ( that.cssBool(['display', 'none']) ) {
                             that.Xshow(SETTINGS.effect.sel);
                             overlay.Xshow(SETTINGS.effect.sel);
                         } else {
@@ -788,7 +983,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 this.footer =         x().Xfind('.footer_text');
             };
             this.AutoLeftResize = function() {
-                if (_X('.screen_faces').Xwidth('offset') < 700) {return 0}
+                if (window.innerWidth < 700) {return 0}
                 else {return 130}
             };
             this.ResizableFn = function(options) {
@@ -806,12 +1001,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     var width = that.css('width');
                     var height = that.css('height');
                     var mousemove = function(e) {
-                        if (_X('.ico_submenu_resize_se').XhasClass('window_resize_se')) {
+                        if (_X('.ico_submenu_resize_se').classBool('window_resize_se')) {
                             that.css({
                                 width: width + (e.pageX - xd),
                                 height: height + (e.pageY - yd)
                             });
-                        } else if (_X('.ico_submenu_resize_sw').XhasClass('window_resize_sw')) {
+                        } else if (_X('.ico_submenu_resize_sw').classBool('window_resize_sw')) {
                             that.css({
                                 width: width + (xd - e.pageX),
                                 height: height + (e.pageY - yd),
@@ -820,9 +1015,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         } else {}
                     };
                     var mouseup = function() {
-                        _X(window).Xoff({mouseup: mouseup, mousemove: mousemove});
+                        _X(window).off({mouseup: mouseup, mousemove: mousemove});
                     };
-                    _X(window).Xon({mousemove: mousemove, mouseup: mouseup});
+                    _X(window).on({mousemove: mousemove, mouseup: mouseup});
                 } else {}
             };
             this.WindowSelect = function(options) {
@@ -830,10 +1025,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     zIndex: 1501,
                 };
                 var settings = _X.XJoinObj(defaults, options);
-                if (_X(WIN.full[WIN.key].winElem).XhasClass('remove_on_mousedown') === false) {
+                if (_X(WIN.full[WIN.key].winElem).classBool('remove_on_mousedown') === false) {
                     _X('.thiswindow').css({'z-index': settings.zIndex - 2});
                     _X('.xui_overlay').css({'z-index': settings.zIndex - 3});
-                    _X('.thiswindow_statusbar').XremoveClass('xui_highlight, xui_hover');
+                    _X('.thiswindow_statusbar').classRemove('xui_highlight, xui_hover');
                 } else {}
                 if (SETTINGS.autorefresh.sel == 'true') {
                     _X(WIN.full[WIN.key].winElem).XappendTo(_X('.active_screen').Xfind('.desktop_website')).css({'z-index': settings.zIndex});
@@ -842,7 +1037,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     _X(WIN.full[WIN.key].winElem).css({'z-index': settings.zIndex});
                     _X(WIN.full[WIN.key].winOverlay).css({'z-index': settings.zIndex - 1});
                 }
-                _X(WIN.full[WIN.key].winBar).XaddClass('xui_highlight');
+                _X(WIN.full[WIN.key].winBar).classAdd('xui_highlight');
             };
             this.WindowMoveToSide = function() {
                 var amount_move = 5;
@@ -865,7 +1060,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var winW = _X('.screen_faces').Xwidth('offset');
                 function ResizeMoveToSide(width, height, left, top) {
                     _X(WIN.full[WIN.key].winElem).css({left: left, top: top, width: width, height: height});
-                    _X(window).Xoff({mouseup: mouseup});
+                    _X(window).off({mouseup: mouseup});
                 }
                 if (elH > 39) {
                     if (elW < winW) {
@@ -878,7 +1073,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     _X.Xeach(pos, function(k, v) {
                         _X('<div')
                             .XappendTo('body')
-                            .XaddClass('remove_on_mouseup, xui_disabled, xui_corner_all')
+                            .classAdd('remove_on_mouseup, xui_disabled, xui_corner_all')
                             .css({
                                 position: 'absolute',
                                 margin: 3,
@@ -926,10 +1121,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             ResizeMoveToSide(_X.FWidth(3), _X.FHeight(2), _X.FWidth(3), _X.FHeight(5));
                         }
                         else {
-                           _X(window).Xoff({mouseup: mouseup});
+                           _X(window).off({mouseup: mouseup});
                         }
                     };
-                    _X(window).Xon({mouseup: mouseup});
+                    _X(window).on({mouseup: mouseup});
                 } else {}
             };
 
@@ -1044,12 +1239,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                 if (width < height) {
                                     _X('<img')
                                         .XappendTo(item)
-                                        .XaddClass('xui_disabled')
+                                        .classAdd('xui_disabled')
                                         .css({
                                             position: 'absolute',
                                             opacity: '0.15'
                                         })
-                                        .Xattr({
+                                        .attr({
                                             src: 'images/catiadesign_logo_004.png',
                                             width: '100%',
                                             align: 'middle',
@@ -1066,8 +1261,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                 init: function(that) {
                                     if (settings.windowType == self.type[1]) {
                                         _X(that)
-                                            .XaddClass('xui_corner_all')
-                                            .XaddClass(DisableHeader())
+                                            .classAdd('xui_corner_all')
+                                            .classAdd(DisableHeader())
                                             .css({
                                                 position: 'relative',
                                                 height: 33,
@@ -1075,7 +1270,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                                 overflow: 'hidden',
                                                 margin: 2
                                             })
-                                            .Xon({
+                                            .on({
                                                 mousedown: function(e) {
                                                     if (settings.windowType == self.type[1]) {
                                                         self.WindowMoveToSide();
@@ -1093,14 +1288,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                         //Title -- Left Side Header
                                         _X('<div')
                                             .XappendTo(that)
-                                            .XaddClass('format_text')
+                                            .classAdd('format_text')
                                             .css({
                                                 display: 'block',
                                                 float: 'left',
                                                 padding: 3,
                                                 width: '47%',
                                             })
-                                            .XAddIcon({ico: obj.ico, color: obj.color, size: 27})
+                                            .AddIcon({ico: obj.ico, color: obj.color, size: 27})
                                             .Xappend(' ' + obj.title);
                                         //Buttons -- Right Side Header
                                         _X('<div')
@@ -1125,7 +1320,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                         if (settings.menuTitle === true) {
                                             _X('<div')
                                                 .XappendTo(that)
-                                                .XaddClass('xui_disabled, format_text')
+                                                .classAdd('xui_disabled, format_text')
                                                 .css({'text-align': 'center'})
                                                 .Xappend(obj.title);
                                         }
@@ -1137,7 +1332,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                                 top: -13,
                                                 left: -13,
                                             })
-                                            .XAddIcon({ico: obj.ico, color: obj.color, size: 35});
+                                            .AddIcon({ico: obj.ico, color: obj.color, size: 35});
                                         var temp = [
                                             {ico: 'toll', right: 20, init: self.buttons.WindowHideShow.init},
                                             {ico: 'cancel', right: -10, init: self.buttons.WindowClose.init},
@@ -1145,14 +1340,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                         _X.Xeach(temp, function(k, v) {
                                             _X('<div')
                                                 .XappendTo(that)
-                                                .XAddIcon({ico: v.ico, size: 30})
+                                                .AddIcon({ico: v.ico, size: 30})
                                                 .css({
                                                     position: 'absolute',
                                                     cursor: 'pointer',
                                                     top: -10,
                                                     right: v.right,
                                                 })
-                                                .Xon({
+                                                .on({
                                                     mouseenter: function() {
                                                         _X(this).Xfind('i').css({color: 'red'});
                                                     },
@@ -1169,7 +1364,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                         if (settings.menuTitle === true) {
                                             _X('<div')
                                                 .XappendTo(that)
-                                                .XaddClass('format_text')
+                                                .classAdd('format_text')
                                                 .css({
                                                     padding: 2,
                                                     'margin-left': 10,
@@ -1178,7 +1373,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                                     'font-size': 10,
                                                     color: '#636363',
                                                 })
-                                                .XAddIcon({ico: obj.ico, color: obj.color, size: 20})
+                                                .AddIcon({ico: obj.ico, color: obj.color, size: 20})
                                                 .Xappend(_X.AddSpace(1) + obj.title);
                                         }
                                     } else {}
@@ -1269,7 +1464,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                         //div for text
                                         _X('<div')
                                             .XappendTo(that)
-                                            .XaddClass('footer_text')
+                                            .classAdd('footer_text')
                                             .css({
                                                 'padding-left': 35,
                                                 'padding-top': 1,
@@ -1283,7 +1478,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                         _X.Xeach(temp, function(k, v) {
                                             _X('<div')
                                                 .XappendTo(that)
-                                                .XaddClass(v.clasa)
+                                                .classAdd(v.clasa)
                                                 .css({
                                                     position: 'absolute',
                                                     cursor: 'pointer',
@@ -1291,19 +1486,19 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                                     left: v.left,
                                                     right: v.right,
                                                 })
-                                                .XAddIcon({ico: 'adjust', size: 12})
-                                                .Xon({
+                                                .AddIcon({ico: 'adjust', size: 12})
+                                                .on({
                                                     mousedown: function(e) {
-                                                        _X(this).XremoveClass(v.moveClass);
+                                                        _X(this).classRemove(v.moveClass);
                                                         if (SETTINGS.resize.sel == 'true') {
                                                             _X(this).Xfind('i').css({color: 'red'});
-                                                            _X(this).XaddClass(v.moveClass);
+                                                            _X(this).classAdd(v.moveClass);
                                                             self.ResizableFn({item: _X(this).Xparent('.thiswindow'), mouse: e});
                                                         } else {}
                                                     },
                                                     mouseup: function() {
                                                         _X(this).Xfind('i').css({color: ''});
-                                                        _X(this).XremoveClass(v.moveClass);
+                                                        _X(this).classRemove(v.moveClass);
                                                     },
                                                 });
                                         });
@@ -1318,17 +1513,17 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 if ( (SETTINGS.modal.sel == 'true') && (settings.windowType.modal === true) ) {
                     _X('<div')
                         .XappendTo(settings.to)
-                        .XaddClass('xui_overlay')
-                        .XaddClass(settings.name + '_overlay')
+                        .classAdd('xui_overlay')
+                        .classAdd(settings.name + '_overlay')
                         .css({'z-index': settings.zIndex - 1})
                         .WindowOverlay();
                 } else {}
                 //Full Window
                 _X('<div')
                     .XappendTo(settings.to)
-                    .XaddClass('thiswindow, shadow_border, xui_corner_all, xui_content')
-                    .XaddClass(settings.name + '_window')
-                    .XaddClass(settings.clasa)
+                    .classAdd('thiswindow, shadow_border, xui_corner_all, xui_content')
+                    .classAdd(settings.name + '_window')
+                    .classAdd(settings.clasa)
                     .css({
                         visibility: 'hidden',
                         width: settings.width,
@@ -1341,14 +1536,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     })
                     .WindowLoad()
                     .AppendBody()
-                    .Xon({
+                    .on({
                         mouseenter: function() {
-                            if (_X('body').XhasClass('mousedown_true') === false) {
+                            if (_X('body').classBool('mousedown_true') === false) {
                                 _X(this).FindWindowKey();
                             } else {}
                         },
                         mousedown: function(e) {
-                            _X('body').XaddClass('mousedown_true');
+                            _X('body').classAdd('mousedown_true');
                             if (_X(this).css('z-Index') !== 1501) {
                                 self.WindowSelect({zIndex: settings.zIndex});
                             } else {}
@@ -1377,8 +1572,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 if (settings.windowType.statusbar === true) {
                     _X('<div')
                         .XappendTo(settings.statusBarTo)
-                        .XaddClass('thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text')
-                        .XaddClass(settings.name + '_bara_stare')
+                        .classAdd('thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text')
+                        .classAdd(settings.name + '_bara_stare')
                         .css({
                             float: 'left',
                             padding: 2,
@@ -1387,24 +1582,24 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             cursor: 'pointer',
                             'z-index': settings.zIndex,
                         })
-                        .XAddIcon({ico: obj.ico, color: obj.color, size: 25})
+                        .AddIcon({ico: obj.ico, color: obj.color, size: 25})
                         .Xappend(' ' + obj.title)
                         .WindowStatusBar()
-                        .Xon({
+                        .on({
                             mouseenter: function() {
                                 _X.ReturnElements({item: this, obj: obj});
                                 _X(this).FindWindowKey();
-                                _X(this).XaddClass('xui_hover');
+                                _X(this).classAdd('xui_hover');
                                 _X.AddTooltip({title: _X(this)[0].innerHTML});
-                                _X(WIN.full[WIN.key].winElem).XaddClass('xui_hover');
+                                _X(WIN.full[WIN.key].winElem).classAdd('xui_hover');
                             },
                             mouseleave: function() {
-                                _X(this).XremoveClass('xui_hover');
+                                _X(this).classRemove('xui_hover');
                                 _X('.tooltip_class').Xremove();
-                                _X(WIN.full[WIN.key].winElem).XremoveClass('xui_hover');
+                                _X(WIN.full[WIN.key].winElem).classRemove('xui_hover');
                             },
                             mousedown: function() {
-                                _X('body').XaddClass('mousedown_true');
+                                _X('body').classAdd('mousedown_true');
                                 if (_X(WIN.full[WIN.key].winElem).css('z-Index') !== 1501) {
                                     self.WindowSelect({zIndex: settings.zIndex});
                                 } else {}
@@ -1520,11 +1715,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                     _X(v.elem)
                         .XappendTo(appendto)
-                        .XaddClass(v.clasa)
-                        .Xattr(v.attr)
+                        .classAdd(v.clasa)
+                        .attr(v.attr)
                         .css(v.css)
-                        .XAddIcon(v.icon)
-                        .Xon(v.on)
+                        .AddIcon(v.icon)
+                        .on(v.on)
                         ._init(v.init)
                         ._items(v);
                 });
@@ -1542,7 +1737,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             length:         0,
 
             //Add Icon || Image
-            XAddIcon: function(options) {
+            AddIcon: function(options) {
                 var defaults = {
                     ico: '',
                     color: '',
@@ -1557,24 +1752,24 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     if (settings.ico.indexOf('/') > -1) {
                         _X('<img')
                             .XappendTo(that)
-                            .Xattr({
+                            .attr({
                                 width: settings.size,
                                 height: settings.size,
                                 src: settings.ico,
                             })
-                            .XaddClass('xui_corner_all')
+                            .classAdd('xui_corner_all')
                             .css(settings.css)
                             .css({
                                 color: settings.color,
                                 'pointer-events': 'none',
                                 'vertical-align': 'middle',
                             })
-                            .Xon(settings.on);
+                            .on(settings.on);
                     } else {
                         _X('<i')
                             .XappendTo(that)
-                            .XaddClass('material-icons')
-                            .XaddClass(settings.clasa)
+                            .classAdd('material-icons')
+                            .classAdd(settings.clasa)
                             .Xappend(settings.ico)
                             .css(settings.css)
                             .css({
@@ -1583,7 +1778,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                 color: settings.color,
                                 'font-size': settings.size,
                             })
-                            .Xon(settings.on);
+                            .on(settings.on);
                     }
                 }
                 return that;
@@ -1627,8 +1822,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 return self;
             },
             
-            //_X(?).XaddClass('?, ?') => SET element class
-            XaddClass: function(e) {
+            //_X(?).classAdd('?, ?') => SET element class
+            classAdd: function(e) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
                     if (e !== undefined) {
@@ -1640,8 +1835,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 return that;
             },
             
-            //_X(?).XremoveClass('?, ?') => SET element class
-            XremoveClass: function(e) {
+            //_X(?).classRemove('?, ?') => SET element class
+            classRemove: function(e) {
                 var that = this;
                 _X.Xeach(that, function(k, v) {
                     var elemA = _X.XGetClasa(v);
@@ -1650,50 +1845,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 });
                 return that;
             },
-            
-            //_X(?).XappendTo('?') => SET element to parent
-            XappendTo: function(e) {
-                var that = this;
-                var getEl = _X(e);
-                if (getEl.length > 0 && that.length > 0) {
-                    getEl[0].appendChild(that[0]);
-                }
-                return that;
-            },
-            
-            //_X(?).Xis([? css element: ? css value])   => return TRUE / FALSE on a css element check
-            //_X(?).Xis('checked')                      => return TRUE / FALSE
-            Xis: function(e) {
-                var that = this;
-                if (that[0] !== undefined) {
-                    if (typeof e == 'object') {
-                        var getA = that[0].style[e[0]] || '';
-                        return (getA === e[1]) ? true : false;
-                    } else if (e.indexOf('checked') > -1) {
-                        return (that[0].checked === true) ? true : false;
-                    }
-                }
-            },
 
-            //_X(?).Xcontains('?') => GET a selection of elements based on internal text search (+ length)
-            Xcontains: function(e) {
-                var that = this;
-                var self = new _X();
-                var temp = [];
-                _X.Xeach(that, function(k, v) {
-                    if (v.innerText === e) {
-                        temp.push(v);
-                    }
-                });
-                _X.Xeach(temp, function(k, v) {
-                    self[k] = v;
-                });
-                self.length = _X.GetObjectLength(self);
-                return self;
-            },
-
-            //_X(?).XcontainsClass('?') => GET a selection of elements based on class (+ length)
-            XcontainsClass: function(e) {
+            //_X(?).classHave('?') => GET a selection of elements based on class (+ length)
+            classHave: function(e) {
                 var that = this;
                 var self = new _X();
                 var temp = [];
@@ -1709,19 +1863,58 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 self.length = _X.GetObjectLength(self);
                 return self;
             },
-        
-            //_X(?).Xhave([? 'css element', ? 'css value']) => Check elements CSS based on a CSS element (+ length) 
-            Xhave: function(e) {
+
+            //_X(?).classBool('?, ?') => return TRUE / FALSE on class check, bis 3 elementen check
+            classBool: function(e) {
+                var elem;
+                var i = 0;
+                var s = e.replace(/\s/g, '').split(',');
+                while ( (elem = this[i++]) ) {
+                    if (elem.nodeType === 1) {
+                        if (s.length === 1 && _X.XGetClasa(elem).indexOf(s[0]) > -1) {
+                            return true;
+                        } else if (s.length === 2 && _X.XGetClasa(elem).indexOf(s[0]) > -1 && _X.XGetClasa(elem).indexOf(s[1]) > -1) {
+                            return true;
+                        } else if (s.length === 3 && _X.XGetClasa(elem).indexOf(s[0]) > -1 && _X.XGetClasa(elem).indexOf(s[1]) && _X.XGetClasa(elem).indexOf(s[2]) > -1) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
+            
+            //_X(?).XappendTo('?') => SET element to parent
+            XappendTo: function(e) {
+                var that = this;
+                var getEl = _X(e);
+                if (getEl.length > 0 && that.length > 0) {
+                    getEl[0].appendChild(that[0]);
+                }
+                return that;
+            },
+
+            //_X(?).txt()     => GET current element TEXT
+            //_X(?).txt('?')  => SET the TEXT to element
+            txt: function(e) {
+                var that = this;
+                if (e !== undefined) {
+                    that[0].innerText += e;
+                        return that;
+                } else {
+                    if (that[0].innerText.length > 0) {
+                        return that[0].innerText;
+                    }
+                }
+            },
+
+            //_X(?).txtHave('?') => GET a selection of elements based on internal text search (+ length)
+            txtHave: function(e) {
                 var that = this;
                 var self = new _X();
                 var temp = [];
-                var getS;
                 _X.Xeach(that, function(k, v) {
-                    if (v !== undefined) {
-                        getS = v.style[e[0]];
-                        if (getS === e[1]) {
-                            temp.push(v);
-                        }
+                    if (v.innerText === e) {
+                        temp.push(v);
                     }
                 });
                 _X.Xeach(temp, function(k, v) {
@@ -1786,24 +1979,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 });
                 return that;
             },
-
-            //_X(?).Xtext()     => GET current element TEXT
-            //_X(?).Xtext('?')  => SET the TEXT to element
-            Xtext: function(e) {
-                var that = this;
-                if (e !== undefined) {
-                    that[0].innerText += e;
-                        return that;
-                } else {
-                    if (that[0].innerText.length > 0) {
-                        return that[0].innerText;
-                    }
-                }
-            },
             
-            //_X(?).Xattr('? element')              => GET element attribute
-            //_X(?).Xattr({'? element': ? value})   => SET element attribute
-            Xattr: function(e) {
+            //_X(?).attr('? element')              => GET element attribute
+            //_X(?).attr({'? element': ? value})   => SET element attribute
+            attr: function(e) {
                 var that = this;
                 if (e !== undefined) {
                     if (typeof e == 'object') {
@@ -1816,6 +1995,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                 } else {
                     return that;
+                }
+            },
+            
+            //_X(?).checkBool()                     => return TRUE / FALSE
+            checkBool: function() {
+                var that = this;
+                if (that[0] !== undefined) {
+                    return (that[0].checked === true) ? true : false;
                 }
             },
 
@@ -1845,6 +2032,40 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 }
             },
 
+            //_X(?).cssHave([? 'css element', ? 'css value']) => Check elements CSS based on a CSS element (+ length) 
+            cssHave: function(e) {
+                var that = this;
+                var self = new _X();
+                var temp = [];
+                var getS;
+                _X.Xeach(that, function(k, v) {
+                    if (v !== undefined) {
+                        getS = v.style[e[0]];
+                        if (getS === e[1]) {
+                            temp.push(v);
+                        }
+                    }
+                });
+                _X.Xeach(temp, function(k, v) {
+                    self[k] = v;
+                });
+                self.length = _X.GetObjectLength(self);
+                return self;
+            },
+
+            //_X(?).cssBool([? css element, ? css value])   => return TRUE / FALSE on a css element check
+            cssBool: function(e) {
+                var that = this;
+                var elem;
+                var i = 0;
+                while ( (elem = that[i++]) ) {
+                    if (elem.nodeType === 1 && elem.style[e[0]] === e[1]) {
+                        return true;
+                    }
+                }
+                return false;                
+            },
+
             //_X(?).Xremove() => DELETE current element
             Xremove: function() {
                 var that = this;
@@ -1855,9 +2076,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 });
             },
             
-            //_X(?).Xon( ['? ? ?', function(){}] )      => SET event like an array syntax
-            //_X(?).Xon( {'?': function(){}} )          => SET event like an object syntax
-            Xon: function(e) {
+            //_X(?).on( ['? ? ?', function(){}] )      => SET event like an array syntax
+            //_X(?).on( {'?': function(){}} )          => SET event like an object syntax
+            on: function(e) {
                 var that = this;
                 if (e !== undefined) {
                     if (e.length > 0 && e[0] !== null) {
@@ -1876,8 +2097,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 return that;
             },
 
-            //_X(?).Xoff( {'? function name': ? function name} ) => REMOVE event from element
-            Xoff: function(e) {
+            //_X(?).off( {'? function name': ? function name} ) => REMOVE event from element
+            off: function(e) {
                 var that = this;
                 _X.Xeach(e, function(k, v) {
                     that[0].removeEventListener(k, v);
@@ -1894,19 +2115,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     });
                     return that;
                 }
-            },
-            
-            //_X(?).XhasClass('?, ?') => return TRUE / FALSE on class check
-            XhasClass: function(e) {
-                var elem;
-                var i = 0;
-                var s = e.replace(/\s/g, '').split(',');
-                while ( ( elem = this[ i++ ] ) ) {
-                    if ( elem.nodeType === 1 && ( " " + elem.getAttribute('class') + " " ).indexOf( " " + s.join(' ') + " " ) > -1 ) {
-                        return true;
-                    }
-                }
-                return false;
             },
 
             //_X(?).Xfind('children')   => return all children on first level from element
@@ -2073,6 +2281,38 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 //xhr.getAllResponseHeaders();
                 //xhr.getResponseHeader('Content-Type')
             },
+
+            XInput: function(options) {
+                var defaults = {
+                    id: '',
+                    name: 'Search',
+                    width: '100%',
+                    type: 'text',
+                };
+                var s = _X.XJoinObj(defaults, options);
+                var that = this;
+                function InsertClass() {
+                    if (s.id.indexOf('.') > -1) {
+                        return s.id.replace('.', '');
+                    } else {
+                        return s.id;
+                    }
+                }
+                _X('<input')
+                    .XappendTo(that)
+                    .classAdd(InsertClass())
+                    .attr({
+                        placeholder: s.name,
+                        type: s.type,
+                        value: '',
+                        maxlength: '50'
+                    })
+                    .css({
+                        'box-sizing': 'border-box',
+                        width: s.width,
+                    });
+                return this;
+            },
             
             CheckBox: function(options) {
                 var defaults = {
@@ -2083,9 +2323,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 if (settings.check === true) {
                     _X('<div')
                         .XappendTo(that)
-                        .XaddClass('input_checkbox')
+                        .classAdd('input_checkbox')
                         .XInput({id: 'checkbox_input', type: 'checkbox', width: 'auto'})
-                        .Xon({'click': function(e) {
+                        .on({click: function(e) {
                             e.stopImmediatePropagation();
                         }});
                 } else {}
@@ -2099,7 +2339,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var settings = _X.XJoinObj(defaults, options);
                 var that = this;
                 this
-                    .XaddClass('xui_content, xui_corner_all')
+                    .classAdd('xui_content, xui_corner_all')
                     .css({
                         cursor: 'pointer',
                         margin: 1,
@@ -2108,13 +2348,13 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         'box-sizing': 'border-box',
                     })
                     .Xappend(settings.text)
-                    .Xon({
+                    .on({
                         mouseenter: function() {
-                            that.XaddClass('xui_hover')
+                            that.classAdd('xui_hover')
                                 .css({color: 'red'});
                         },
                         mouseleave: function() {
-                            that.XremoveClass('xui_hover')
+                            that.classRemove('xui_hover')
                                 .css({color: ''});
                         },
                     });
@@ -2133,6 +2373,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     color: true,
                     clasa: '',
                     css: {},
+                    on: {},
                 };
                 var s = _X.XJoinObj(defaults, options);
                 var that = this;
@@ -2145,30 +2386,31 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 _X.Xeach(s.array, function(k, v) {
                     _X('<div')
                         .XappendTo(that)
-                        .XaddClass('ico_full_body, xui_corner_all, format_text')
-                        .XaddClass(s.clasa)
+                        .classAdd('ico_full_body, xui_corner_all, format_text')
+                        .classAdd(s.clasa)
                         .css({
                             padding: 3,
                             border: '1px solid transparent',
                         })
                         .css(s.css)
-                        .XAddIcon({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
+                        .AddIcon({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
                         .Xappend(_X('<div')
                             .Xappend(TitleLoad(v))
                             .css({display: 'inline'})
-                            .XaddClass('edit_title')
+                            .classAdd('edit_title')
                         )
-                        .Xon({
+                        .on(s.on)
+                        .on({
                             mouseenter: function() {
-                                _X(this).XaddClass('xui_hover');
+                                _X(this).classAdd('xui_hover');
                             },
                             mouseleave: function() {
-                                _X(this).XremoveClass('xui_hover');
+                                _X(this).classRemove('xui_hover');
                             },
                             mousedown: function() {
                                 _X.ReturnElements({item: this, obj: v, pushItem: s.pushItem, pushObj: s.pushObj});
-                                _X('.ico_full_body').XremoveClass('xui_active');
-                                _X(this).XaddClass('xui_active');
+                                _X('.ico_full_body').classRemove('xui_active');
+                                _X(this).classAdd('xui_active');
                             },
                             contextmenu: function(e) {
                                 e.preventDefault();
@@ -2196,7 +2438,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                 } else {}
                             }
                         })
-                        .Xon([s.click, function() {
+                        .on([s.click, function() {
                             v.init();
                         }]);
                 });
@@ -2478,7 +2720,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         temp.push(v);
                     } else if (v.tagName === s.toUpperCase()) {
                         temp.push(v);
-                    } else if (v.children.length > 0 && (' ' + getA + ' ').indexOf(' ' + repstr + ' ') < 0) {
+                    }
+                    if (v.children.length > 0) {
                         XSearchChildrenTemp({a: v.children, s: s});
                     }
                 });
@@ -2513,7 +2756,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
     }
 })(window);
 
-_X(document).Xon({
+_X(document).on({
     mousemove: function(e) {
         //Mouse Move
         MOUSE.X = e.pageX;
