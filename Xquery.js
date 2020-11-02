@@ -105,8 +105,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
         var _X = function(id) {
             var that;
             var elem;
-            var k = 0;
-            var temp = [];
+            var i = 0;
+            var arr = [];
             if (id !== undefined) {
                 if (window === this) {
                     that = new _X();
@@ -122,15 +122,15 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         //Clasa
                         else if (id.indexOf('.') > -1) {
                             elem = document.getElementsByClassName(repstr);
-                            for (; k < elem.length; k++) {
-                                that[k] = elem[k];
+                            for (; i < elem.length; i++) {
+                                that[i] = elem[i];
                             }
                         }
                         //Tag
                         else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
                             elem = document.getElementsByTagName(id);
-                            for (; k < elem.length; k++) {
-                                that[k] = elem[k];
+                            for (; i < elem.length; i++) {
+                                that[i] = elem[i];
                             }
                         }
                         //Create Element
@@ -148,21 +148,18 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                     else if (id.indexOf(',') > -1) {
                         elem = id.replace(/\s/g, '').split(',');
-                        _X.Xeach(elem, function(k1, v1) {
-                            var q = _X(v1);
-                            _X.Xeach(q, function(k2, v2) {
-                                temp.push(v2);
-                            });
-                        });
-                        _X.Xeach(temp, function(k, v) {
-                            that[k] = v;
-                        });
+                        for (; i < elem.length; i++) {
+                            for (var j = 0; j < _X(elem[i]).length; j++) {
+                                arr.push(_X(elem[i])[j]);
+                            }
+                        }
+                        ArrayToObject(arr, that);
                     }
-                    that.length = _X.GetObjectLength(that);
+                    that.length = GetObjectLength(that);
                 }
             } else {
                 that = new _X({});
-                that.length = _X.GetObjectLength(that);
+                that.length = GetObjectLength(that);
             }
             return that;
         };
@@ -174,9 +171,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
         _X.AddSpace = function(noOfSpaces) {
             var space = " ";
             var returnValue = "";
-            _X.Xeach(noOfSpaces, function(k, v) {
+            for (i = 0; i < noOfSpaces; i++) {
                 returnValue += space;
-            });
+            }
             return returnValue;
         };
     
@@ -188,7 +185,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 d: 'min',       //deep      => min || med || max
                 e: '999',       //exclude   => based on search keyword
             };
-            var settings = _X.XJoinObj(defaults, options);
+            var settings = _X.JoinObj(defaults, options);
             var a = settings.a;
             var s = settings.s;
             var l = settings.l;
@@ -204,7 +201,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     d: '',
                     e: '',
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 var a = settings.a;
                 var s = settings.s;
                 var l = settings.l;
@@ -298,7 +295,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             return temp;
         };
         
-        _X.XJoinObj = function(defaults, options){
+        _X.JoinObj = function(defaults, options){
             var s = {};
             for (var k in defaults) {
                 s[k] = defaults[k];
@@ -310,10 +307,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
         };
 
         _X.FWidth = function(width) {
-            return _X('.active_screen').Xfind('.desktop_website').Xwidth('offset') / width;
+            return _X('.active_screen').Xfind('.desktop_website').position('width', 'offset') / width;
         };
         _X.FHeight = function(height) {
-            return _X('.active_screen').Xfind('.desktop_website').Xheight('offset') / height;
+            return _X('.active_screen').Xfind('.desktop_website').position('height', 'offset') / height;
         };
         
         _X.XAddNull = function(val) {
@@ -341,7 +338,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     'json'          => get as JSON (parsed automatically)
                 */
             };
-            var s = _X.XJoinObj(defaults, options);
+            var s = _X.JoinObj(defaults, options);
             var xhr = new XMLHttpRequest();
             xhr.open('GET', s.url, s.syncron);
             xhr.responseType = s.dataType;
@@ -362,19 +359,19 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 mouse: '',
                 clasa: 'xui_disabled',
             };
-            var settings = _X.XJoinObj(defaults, options);
+            var settings = _X.JoinObj(defaults, options);
             var that = _X(settings.item);
             var e = settings.mouse;
             if (e.which === 1) {
                 var xd = e.pageX;
                 var yd = e.pageY;
-                var left = that.Xleft('offset');
-                var top = that.Xtop('offset');
+                var left = that.position('left', 'offset');
+                var top = that.position('top', 'offset');
                 var A = _X(settings.dragArea);
-                var L = A.Xleft('box');
-                var T = A.Xtop('box');
-                var W = A.Xwidth('offset');
-                var H = A.Xheight('offset');
+                var L = A.position('left','box');
+                var T = A.position('top', 'box');
+                var W = A.position('width', 'offset');
+                var H = A.position('height', 'offset');
                 //console.log(left, top, A, L, T, W, H);
                 var mousemove = function(e) {
                     var x = e.pageX;
@@ -405,10 +402,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     _X(window).off({mouseup: mouseup, mousemove: mousemove});
                     that.classRemove(settings.clasa);
                 };
-                _X(window).on({
-                    mousemove: mousemove,
-                    mouseup: mouseup
-                });
+                _X(window).on({mousemove: mousemove, mouseup: mouseup});
             }
         };
 
@@ -469,7 +463,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
         
         _X.OpenVideo = function() {
             var obj = SELECTED.obj;
-            var cls = _X.ClassVirtual();        
             var x = new _X.Window();
             x.init({
                 leftSize: x.AutoLeftResize(),
@@ -480,7 +473,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 .css({width: '100%', height: '100%'});        
             _X('<video')
                 .XappendTo(x.right)
-                .classAdd(cls.replace('.', ''))
                 .attr({width: '100%', height: 'auto', controls:''})
                 .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
                 .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
@@ -492,7 +484,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 tooltip: true,
                 title: '',
             };
-            var settings = _X.XJoinObj(defaults, options);
+            var settings = _X.JoinObj(defaults, options);
             if (settings.tooltip === true && _X('body').classBool('mousedown_true') === false) {
                 _X('<div')
                     .XappendTo('body')
@@ -516,7 +508,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 pushObj: true,
                 pushObj2: true,
             };
-            var s = _X.XJoinObj(defaults, options);
+            var s = _X.JoinObj(defaults, options);
             if (s.pushItem === true) {SELECTED.item = s.item;}
             if (s.pushObj === true) {SELECTED.obj = s.obj;}
             if (s.pushObj2 === true) {SELECTED.obj2 = s.obj;}
@@ -526,7 +518,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             var defaults = {
                 elem: '',
             };
-            var settings = _X.XJoinObj(defaults, options);
+            var settings = _X.JoinObj(defaults, options);
             var item = SELECTED.item;
             var ICONcontrols = [
                 {clasa: 'ico_rotate_X', ico: 'panorama_vertical'},
@@ -539,8 +531,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
             function Transform3D(x) {
                 return _X(SELECTED.item).Xfind(x).css('transform').slice(9, -1).split(',');
             }
-            var left = _X(settings.elem).Xleft('box');
-            var top = _X(settings.elem).Xtop('box');
+            var left = _X(settings.elem).position('left','box');
+            var top = _X(settings.elem).position('top', 'box');
             _X('<div')
                 .XappendTo('body')
                 .classAdd('ico_controls')
@@ -677,7 +669,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 dragArea: '.screen_faces',
                 on: {},
             };
-            var s = _X.XJoinObj(defaults, options);
+            var s = _X.JoinObj(defaults, options);
             var temp;
             var opacity = s.opacity;
             var RandomAngle = function() {
@@ -882,9 +874,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         _X(WIN.full[WIN.key].winBar).Xremove();
                         _X(WIN.full[WIN.key].winOverlay).Xremove();
                         WIN.full.splice(WIN.key, 1);
-                        _X('.thiswindow').Xlast().css({'z-index': 1501});
-                        _X('.xui_overlay').Xlast().css({'z-index': 1500});
-                        _X('.thiswindow_statusbar').Xlast().classAdd('xui_highlight');
+                        _X('.thiswindow').getElem('last').css({'z-index': 1501});
+                        _X('.xui_overlay').getElem('last').css({'z-index': 1500});
+                        _X('.thiswindow_statusbar').getElem('last').classAdd('xui_highlight');
                         self.ResizeStatusBar();
                     },
                 },
@@ -895,12 +887,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     init: function() {
                         var that = _X(WIN.full[WIN.key].winElem);
                         var store = WIN.full[WIN.key].winData;
-                        var elL = that.Xleft('offset');
-                        var elT = that.Xtop('offset');
-                        var elW = that.Xwidth('offset');
-                        var elH = that.Xheight('offset');
-                        var winW = _X('.active_screen').Xfind('.desktop_website').Xwidth('offset');
-                        var winH = _X('.active_screen').Xfind('.desktop_website').Xheight('offset');
+                        var elL = that.position('left', 'offset');
+                        var elT = that.position('top', 'offset');
+                        var elW = that.position('width', 'offset');
+                        var elH = that.position('height', 'offset');
+                        var winW = _X('.active_screen').Xfind('.desktop_website').position('width', 'offset');
+                        var winH = _X('.active_screen').Xfind('.desktop_website').position('height', 'offset');
                         if (elW < winW && elH > 39) {
                             store.left = elL;
                             store.top = elT;
@@ -948,7 +940,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     init: function() {
                         var that = _X(WIN.full[WIN.key].winElem);
                         var store = WIN.full[WIN.key].winData;
-                        var elH = that.Xheight('offset');
+                        var elH = that.position('height', 'offset');
                         //console.log(elH);
                         if (elH > 39) {
                             store.tophide = elH;
@@ -991,13 +983,13 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     item: '',
                     mouse: '',
                 };
-                var s = _X.XJoinObj(defaults, options);
+                var s = _X.JoinObj(defaults, options);
                 var that = _X(s.item);
                 var e = s.mouse;
                 if (e.which === 1) {
                     var xd = e.pageX;
                     var yd = e.pageY;
-                    var left = that.Xleft('offset');
+                    var left = that.position('left', 'offset');
                     var width = that.css('width');
                     var height = that.css('height');
                     var mousemove = function(e) {
@@ -1024,7 +1016,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var defaults = {
                     zIndex: 1501,
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 if (_X(WIN.full[WIN.key].winElem).classBool('remove_on_mousedown') === false) {
                     _X('.thiswindow').css({'z-index': settings.zIndex - 2});
                     _X('.xui_overlay').css({'z-index': settings.zIndex - 3});
@@ -1053,11 +1045,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 };
                 var that = _X(WIN.full[WIN.key].winElem);
                 var store = WIN.full[WIN.key].winData;
-                var elL = that.Xleft('offset');
-                var elT = that.Xtop('offset');
-                var elW = that.Xwidth('offset');
-                var elH = that.Xheight('offset');
-                var winW = _X('.screen_faces').Xwidth('offset');
+                var elL = that.position('left', 'offset');
+                var elT = that.position('top', 'offset');
+                var elW = that.position('width', 'offset');
+                var elH = that.position('height', 'offset');                
+                var winW = _X('.screen_faces').position('width', 'offset');
                 function ResizeMoveToSide(width, height, left, top) {
                     _X(WIN.full[WIN.key].winElem).css({left: left, top: top, width: width, height: height});
                     _X(window).off({mouseup: mouseup});
@@ -1129,7 +1121,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             };
 
             this.ResizeStatusBar = function() {
-                var status_width = _X('.active_screen').Xfind('.container_bara_stare').Xwidth('offset') - 7;
+                var status_width = _X('.active_screen').Xfind('.container_bara_stare').position('width', 'offset') - 7;
                 var selecteditems = _X('.active_screen').Xfind('.thiswindow_statusbar').length;
                 var resultat = (status_width / selecteditems) - 8;
                 _X('.active_screen').Xfind('.thiswindow_statusbar').css({width: resultat});
@@ -1157,7 +1149,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     menuTitle: true,
                     dragArea: _X('.active_screen').Xfind('.desktop_website'),
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 //
                 _X.prototype.WindowLoad = function() {
                     var that = this;
@@ -1230,12 +1222,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             item: '',
                             show: true,
                         };
-                        var settings = _X.XJoinObj(defaults, options);
+                        var settings = _X.JoinObj(defaults, options);
                         var item = _X(settings.item);
                         if (settings.show === true) {
                             setTimeout(function() {
-                                var width = item.Xparent().Xwidth('offset');
-                                var height = item.Xparent().Xheight('offset');
+                                var width = item.Xparent().position('width', 'offset');
+                                var height = item.Xparent().position('height', 'offset');
                                 if (width < height) {
                                     _X('<img')
                                         .XappendTo(item)
@@ -1690,7 +1682,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 a: '', //array
                 t: '', //append to
             };
-            var s = _X.XJoinObj(defaults, options);
+            var s = _X.JoinObj(defaults, options);
             _X.prototype._init = function(elem) {
                 var that = this;
                 if (elem !== undefined) {
@@ -1746,7 +1738,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     css: {},
                     on: {},
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 var that = this;
                 if (options !== undefined && settings.ico !== '') {
                     if (settings.ico.indexOf('/') > -1) {
@@ -1796,86 +1788,89 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 }
             },
 
-            //_X(?).Xfirst() => GET first element (+ length)
-            Xfirst: function() {
+            //_X(?).getElem('?') => GET first || last element (+ length)
+            getElem: function(e) {
                 var that = this;
-                var self = new _X();
-                _X.Xeach(that, function(k, v) {
-                    if (k === 0) {
-                        self[0] = v;
+                var x = new _X();
+                var i = 0;
+                if (e.toLowerCase().indexOf('help') > -1) {
+                    console.log("Options for getElem() function are: 'first', 'last'");
+                    console.log("Example: _X(?).getElem('first');");
+                    console.log("'?' - is a parameter like ID, CLASS, TAG");
+                } else if (e == 'first') {
+                    for (; i < that.length; i++) {
+                        if (i === 0) {
+                            x[0] = that[i];
+                        }
                     }
-                });
-                self.length = _X.GetObjectLength(self);
-                return self;
-            },
-            
-            //_X(?).Xlast() => GET last element (+ length)
-            Xlast: function() {
-                var that = this;
-                var self = new _X();
-                _X.Xeach(that, function(k, v) {
-                    if (k == that.length - 1) {
-                        self[0] = v;
-                    }
-                });
-                self.length = _X.GetObjectLength(self);
-                return self;
+                } else if (e == 'last') {
+                    for (; i < that.length; i++) {
+                        if (i == that.length - 1) {
+                            x[0] = that[i];
+                        }
+                    }                    
+                }
+                x.length = GetObjectLength(x);
+                return x;
             },
             
             //_X(?).classAdd('?, ?') => SET element class
             classAdd: function(e) {
                 var that = this;
-                _X.Xeach(that, function(k, v) {
+                var oldClass;
+                var addClass;
+                for (var i = 0; i < that.length; i++) {
                     if (e !== undefined) {
-                        var elemA = _X.XGetClasa(v);
-                        var selA = e.replace(/\s/g, '').split(',');
-                        v.className = _X.XDifferenceArray({type: 'join', arr1: elemA, arr2: selA});
+                        oldClass = GetClasa(that[i]);
+                        addClass = e.replace(/\s/g, '').split(',');
+                        that[i].className = ClassAddRemove({type: 'add', arr1: oldClass, arr2: addClass});
                     }
-                });
+                }
                 return that;
             },
             
             //_X(?).classRemove('?, ?') => SET element class
             classRemove: function(e) {
                 var that = this;
-                _X.Xeach(that, function(k, v) {
-                    var elemA = _X.XGetClasa(v);
-                    var selA = e.replace(/\s/g, '').split(',');
-                    v.className = _X.XDifferenceArray({type: 'diff', arr1: elemA, arr2: selA});
-                });
+                var oldClass;
+                var removeClass;
+                for (var i = 0; i < that.length; i++) {
+                    oldClass = GetClasa(that[i]);
+                    removeClass = e.replace(/\s/g, '').split(',');
+                    that[i].className = ClassAddRemove({type: 'remove', arr1: oldClass, arr2: removeClass});
+                }
                 return that;
             },
 
             //_X(?).classHave('?') => GET a selection of elements based on class (+ length)
             classHave: function(e) {
                 var that = this;
-                var self = new _X();
-                var temp = [];
-                _X.Xeach(that, function(k, v) {
-                    var elemA = _X.XGetClasa(v);
-                    if (elemA.indexOf(e) > -1) {
-                        temp.push(v);
+                var x = new _X();
+                var a = [];
+                var classRead;
+                for (var i = 0; i < that.length; i++) {
+                    classRead = GetClasa(that[i]);
+                    if (classRead.indexOf(e) > -1) {
+                        a.push(that[i]);
                     }
-                });
-                _X.Xeach(temp, function(k, v) {
-                    self[k] = v;
-                });
-                self.length = _X.GetObjectLength(self);
-                return self;
+                }
+                ArrayToObject(a, x);
+                x.length = GetObjectLength(x);
+                return x;
             },
 
             //_X(?).classBool('?, ?') => return TRUE / FALSE on class check, bis 3 elementen check
             classBool: function(e) {
-                var elem;
+                var that;
                 var i = 0;
-                var s = e.replace(/\s/g, '').split(',');
-                while ( (elem = this[i++]) ) {
-                    if (elem.nodeType === 1) {
-                        if (s.length === 1 && _X.XGetClasa(elem).indexOf(s[0]) > -1) {
+                var arr = e.replace(/\s/g, '').split(',');
+                while ( (that = this[i++]) ) {
+                    if (that.nodeType === 1) {
+                        if (arr.length === 1 && GetClasa(that).indexOf(arr[0]) > -1) {
                             return true;
-                        } else if (s.length === 2 && _X.XGetClasa(elem).indexOf(s[0]) > -1 && _X.XGetClasa(elem).indexOf(s[1]) > -1) {
+                        } else if (arr.length === 2 && GetClasa(that).indexOf(arr[0]) > -1 && GetClasa(that).indexOf(arr[1]) > -1) {
                             return true;
-                        } else if (s.length === 3 && _X.XGetClasa(elem).indexOf(s[0]) > -1 && _X.XGetClasa(elem).indexOf(s[1]) && _X.XGetClasa(elem).indexOf(s[2]) > -1) {
+                        } else if (arr.length === 3 && GetClasa(that).indexOf(arr[0]) > -1 && GetClasa(that).indexOf(arr[1]) && GetClasa(that).indexOf(arr[2]) > -1) {
                             return true;
                         }
                     }
@@ -1910,31 +1905,30 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).txtHave('?') => GET a selection of elements based on internal text search (+ length)
             txtHave: function(e) {
                 var that = this;
-                var self = new _X();
-                var temp = [];
-                _X.Xeach(that, function(k, v) {
-                    if (v.innerText === e) {
-                        temp.push(v);
+                var x = new _X();
+                var a = [];
+                for (var i = 0; i < that.length; i++) {
+                    if (that[i].innerText === e) {
+                        a.push(that[i]);
                     }
-                });
-                _X.Xeach(temp, function(k, v) {
-                    self[k] = v;
-                });
-                self.length = _X.GetObjectLength(self);
-                return self;
+                }
+                ArrayToObject(a, x);
+                x.length = GetObjectLength(x);
+                return x;
             },
             
             //_X(?).Xappend('?') => append OBJECT or HTML other object
             Xappend: function(e) {
                 var that = this;
+                var i = 0;
                 if (e !== undefined && typeof e == 'object') {
-                    _X.Xeach(that, function(k, v) {
-                        v.appendChild(e[0]);
-                    });
+                    for (; i < that.length; i++) {
+                        that[i].appendChild(e[0]);
+                    }
                 } else {
-                    _X.Xeach(that, function(k, v) {
-                        v.innerHTML += e;
-                    });
+                    for (; i < that.length; i++) {
+                        that[i].innerHTML += e;
+                    }
                 }
                 return that;
             },
@@ -1954,14 +1948,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
             Xshow: function(effect) {
                 var that = this;
-                _X.Xeach(that, function(k, v) {
+                for (var i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
-                        _X.EFFECT.loadEffect(effect, v, 'show');
+                        _X.EFFECT.loadEffect(effect, that[i], 'show');
                     } else {
-                        v.style.display = '';
-                        v.style.visibility = 'visible';
+                        that[i].style.display = '';
+                        that[i].style.visibility = 'visible';
                     }
-                });
+                }
                 return that;
             },
 
@@ -1969,14 +1963,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xhide('?')  => hide the current element with buildin EFFECTS
             Xhide: function(effect) {
                 var that = this;
-                _X.Xeach(that, function(k, v) {
+                for (var i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
-                        _X.EFFECT.loadEffect(effect, v, 'hide');
+                        _X.EFFECT.loadEffect(effect, that[i], 'hide');
                     } else {
-                        v.style.display = 'none';
-                        v.style.visibility = 'hidden';
+                        that[i].style.display = 'none';
+                        that[i].style.visibility = 'hidden';
                     }
-                });
+                }
                 return that;
             },
             
@@ -1986,9 +1980,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 if (e !== undefined) {
                     if (typeof e == 'object') {
-                        _X.Xeach(e, function(k, v) {
-                            that[0].setAttribute(k, v);
-                        });
+                        for (var i = 0; i < that.length; i++) {
+                            for (var j in e) {
+                                that[i].setAttribute(j, e[j]);
+                            }
+                        }
                         return that;
                     } else {
                         return that[0].getAttribute(e);
@@ -2013,13 +2009,17 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'max-width', 'min-width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
                 if (e !== undefined) {    
                     if (typeof e == 'object') {
-                        _X.Xeach(that, function(k1, v1) {
-                            _X.Xeach(e, function(k2, v2) {
-                                if (v1.style !== undefined) {
-                                    return (cssElements.indexOf(k2) > -1 && typeof v2 == 'number' && v2 !== 0) ? v1.style[k2] = v2 + 'px' : v1.style[k2] = v2;
+                        for (var i = 0; i < that.length; i++) {
+                            for (var j in e) {
+                                if (that[i].style !== undefined) {
+                                    if (cssElements.indexOf(j) > -1 && typeof e[j] == 'number' && e[j] !== 0) {
+                                        that[i].style[j] = e[j] + 'px';
+                                    } else {    
+                                        that[i].style[j] = e[j];
+                                    }
                                 }
-                            });
-                        });
+                            }
+                        }                        
                         return that;
                     } else if (typeof e == 'string') {
                         if (that[0] !== undefined && that[0].style[e] !== undefined) {
@@ -2035,31 +2035,24 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).cssHave([? 'css element', ? 'css value']) => Check elements CSS based on a CSS element (+ length) 
             cssHave: function(e) {
                 var that = this;
-                var self = new _X();
-                var temp = [];
-                var getS;
-                _X.Xeach(that, function(k, v) {
-                    if (v !== undefined) {
-                        getS = v.style[e[0]];
-                        if (getS === e[1]) {
-                            temp.push(v);
-                        }
+                var x = new _X();
+                var a = [];
+                for (var i = 0; i < that.length; i++) {
+                    if (that[i] !== undefined && that[i].style[e[0]] === e[1]) {
+                        a.push(that[i]);
                     }
-                });
-                _X.Xeach(temp, function(k, v) {
-                    self[k] = v;
-                });
-                self.length = _X.GetObjectLength(self);
-                return self;
+                }
+                ArrayToObject(a, x);
+                x.length = GetObjectLength(x);
+                return x;
             },
 
             //_X(?).cssBool([? css element, ? css value])   => return TRUE / FALSE on a css element check
             cssBool: function(e) {
-                var that = this;
-                var elem;
+                var that;
                 var i = 0;
-                while ( (elem = that[i++]) ) {
-                    if (elem.nodeType === 1 && elem.style[e[0]] === e[1]) {
+                while ( (that = this[i++]) ) {
+                    if (that.nodeType === 1 && that.style[e[0]] === e[1]) {
                         return true;
                     }
                 }
@@ -2069,29 +2062,30 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xremove() => DELETE current element
             Xremove: function() {
                 var that = this;
-                _X.Xeach(that, function(k, v) {
-                    if (v !== undefined) {
-                        v.parentNode.removeChild(v);
+                for (var i = 0; i < that.length; i++) {
+                    if (that[i] !== undefined) {
+                        that[i].parentNode.removeChild(that[i]);
                     }
-                });
+                }
             },
             
             //_X(?).on( ['? ? ?', function(){}] )      => SET event like an array syntax
             //_X(?).on( {'?': function(){}} )          => SET event like an object syntax
             on: function(e) {
                 var that = this;
+                var i = 0;
                 if (e !== undefined) {
                     if (e.length > 0 && e[0] !== null) {
-                        var sel = e[0].split(/[ ]+/);
-                        _X.Xeach(sel, function(k, v) {
-                            that[0].addEventListener(v, e[1]);
-                        });
+                        //var sel = e[0].split(/[ ]+/);
+                        for (; i < that.length; i++) {
+                            that[i].addEventListener(e[0], e[1]);
+                        }
                     } else {
-                        _X.Xeach(that, function(k1, v1) {
-                            _X.Xeach(e, function(k2, v2) {
-                                v1.addEventListener(k2, v2);
-                            });
-                        });
+                        for (; i < that.length; i++) {
+                            for (var j in e) {
+                                that[i].addEventListener(j, e[j]);
+                            }
+                        }
                     }
                 }
                 return that;
@@ -2100,9 +2094,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).off( {'? function name': ? function name} ) => REMOVE event from element
             off: function(e) {
                 var that = this;
-                _X.Xeach(e, function(k, v) {
-                    that[0].removeEventListener(k, v);
-                });
+                for (var i = 0; i < that.length; i++) {
+                    for (var j in e) {
+                        that[i].removeEventListener(j, e[j]);
+                    }
+                }
                 return that;
             },
             
@@ -2110,9 +2106,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
             Xempty: function() {
                 var that = this;
                 if (that[0] !== undefined) {
-                    _X.Xeach(that, function(k, v) {
-                        v.innerHTML = '';
-                    });
+                    for (var i = 0; i < that.length; i++) {
+                        that[i].innerHTML = '';
+                    }
                     return that;
                 }
             },
@@ -2123,32 +2119,31 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xfind('?')          => search for tag elements
             Xfind: function(e) {
                 var that = this;
-                var self = new _X();
-                var temp = [];
+                var x = new _X();
+                var a = [];
                 var elem;
+                var i = 0;
                 if (that[0] !== undefined || that[0] !== null) {
                     //children
                     if (e == 'children') {
-                        _X.Xeach(that, function(k1, v1) {
-                            _X.Xeach(v1.children, function(k2, v2) {
-                                temp.push(v2);
-                            });
-                        });
+                        for (; i < that.length; i++) {
+                            for (var j = 0; j < that[i].children.length; j++) {
+                                a.push(that[i].children[j]);
+                            }
+                        }
                     }
                     else {
                         elem = e.replace(/\s/g, '').split(',');
                         _X.Xeach(elem, function(k, v) {
-                            _X.Xeach(_X.XSearchChildren({a: that, s: v}), function(k2, v2) {
-                                temp.push(v2);
+                            _X.Xeach(SearchChildren({a: that, s: v}), function(k2, v2) {
+                                a.push(v2);
                             });
                         });
                     }
-                    _X.Xeach(temp, function(k, v) {
-                        self[k] = v;
-                    });
+                    ArrayToObject(a, x);
                 }
-                self.length = _X.GetObjectLength(self);
-                return self;
+                x.length = GetObjectLength(x);
+                return x;
             },
 
             //_X(?).Xparent()       => return first parent from element
@@ -2156,73 +2151,44 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xparent('#?')   => search for id parent element
             Xparent: function(e) {
                 var that = this;
-                var self = new _X();
+                var x = new _X();
                 var parent;
                 var getAttr;
                 var replaceString;
                 if (that[0] !== undefined || that[0] !== null) {
                     parent = that[0].parentNode;
                     if (e === undefined) {
-                        self[0] = parent;
+                        x[0] = parent;
                     } else {
-                        getAttr = parent.getAttribute(_X.XReturnClassOrId(e));
+                        getAttr = parent.getAttribute(ReturnClassOrId(e));
                         replaceString = e.replace(/[.#]/g, '');
                         while ((' ' + getAttr + ' ').indexOf(' ' + replaceString + ' ') < 0 && parent !== _X('html')[0]) {
                             parent = parent.parentNode;
-                            getAttr = parent.getAttribute(_X.XReturnClassOrId(e));
-                            self[0] = parent;
+                            getAttr = parent.getAttribute(ReturnClassOrId(e));
+                            x[0] = parent;
                         }
                     }
                 }
-                self.length = _X.GetObjectLength(self);
-                return self;
+                x.length = GetObjectLength(x);
+                return x;
             },
             
-            //_X(?).Xwidth('? offset || client || inner || outer || box || scroll || screen || natural') 
-            Xwidth: function(e) {
+            //_X(?).position('width || height || left || top',  'offset || client || inner || outer || box || scroll || screen || natural');
+            position: function(type, e) {
                 var that = this[0];
                 var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
-                if (that !== undefined) {
-                    return (elem.indexOf(e) > -1) ? that[e + 'Width']
-                        : (e == 'box') ? that.getBoundingClientRect().width
-                        : (e == 'screen') ? that.screen.width
-                        : null;
-                }
-            },
-            
-            //_X(?).Xheight('? offset || client || inner || outer || box || scroll || screen || natural') 
-            Xheight: function(e) {
-                var that = this[0];
-                var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
-                if (that !== undefined) {
-                    return (elem.indexOf(e) > -1) ? that[e + 'Height']
-                        : (e == 'box') ? that.getBoundingClientRect().height
-                        : (e == 'screen') ? that.screen.height
-                        : null;
-                }
-            },
-            
-            //_X(?).Xleft('? offset || client || box || scroll || screen') 
-            Xleft: function(e) {
-                var that = this[0];
-                var elem = ['offset' ,'client', 'scroll'];
-                if (that !== undefined) {
-                    return (elem.indexOf(e) > -1) ? that[e + 'Left']
-                        : (e == 'box') ? that.getBoundingClientRect().left
-                        : (e == 'screen') ? that.screen.left
-                        : null;
-                }
-            },
-            
-            //_X(?).Xtop('? offset || client || box || scroll || screen')
-            Xtop: function(e) {
-                var that = this[0];
-                var elem = ['offset' ,'client', 'scroll'];
-                if (that !== undefined) {
-                    return (elem.indexOf(e) > -1) ? that[e + 'Top']
-                        : (e == 'box') ? that.getBoundingClientRect().top
-                        : (e == 'screen') ? that.screen.top
-                        : null;
+                if (type.toLowerCase().indexOf('help') > -1) {
+                    console.log("First parameter from POSITION function have to be: 'width || height || left || top'");
+                    console.log("Second parameter from Position function have to be: 'offset || client || inner || outer || box || scroll || screen || natural'");
+                    console.log("Example: _X(?).position('width', 'offset')");
+                    console.log("'?' - is a parameter like ID, CLASS, TAG");
+                } else if (that !== undefined && type !== undefined && e !== undefined) {
+                    var str = type.charAt(0).toUpperCase() + type.slice(1); 
+                    return (elem.indexOf(e) > -1) ? that[e + str]
+                        : (e == 'box') ? that.getBoundingClientRect()[type]
+                        : (e == 'screen') ? window.screen[type]
+                        : (e == 'window') ? window['inner' + str]
+                        : null;                        
                 }
             },
         
@@ -2243,7 +2209,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         'json'          => get as JSON (parsed automatically)
                     */
                 };
-                var s = _X.XJoinObj(defaults, options);
+                var s = _X.JoinObj(defaults, options);
                 var newUrl;
                 var xhr = new XMLHttpRequest();
                 function ReturnUrl(url) {
@@ -2289,7 +2255,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     width: '100%',
                     type: 'text',
                 };
-                var s = _X.XJoinObj(defaults, options);
+                var s = _X.JoinObj(defaults, options);
                 var that = this;
                 function InsertClass() {
                     if (s.id.indexOf('.') > -1) {
@@ -2318,7 +2284,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var defaults = {
                     check: true,
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 var that = this;
                 if (settings.check === true) {
                     _X('<div')
@@ -2336,7 +2302,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     text: 'Button:',
                     width: 'auto',
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 var that = this;
                 this
                     .classAdd('xui_content, xui_corner_all')
@@ -2375,7 +2341,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     css: {},
                     on: {},
                 };
-                var s = _X.XJoinObj(defaults, options);
+                var s = _X.JoinObj(defaults, options);
                 var that = this;
                 var TitleLoad = function(elem) { 
                     if (s.title === true) {return _X.AddSpace(1) + elem.title;} else {return ''}
@@ -2450,10 +2416,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     open: true,
                     effect: '',
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 var that = this;
-                var width = that.Xwidth('offset');
-                var height = that.Xheight('offset');
+                var width = that.position('width', 'offset');
+                var height = that.position('height', 'offset');
                 //console.log(width, height);
                 function Effect() {
                     if (settings.effect !== null) {return SETTINGS.effect.sel;}
@@ -2663,29 +2629,29 @@ var WIN = { key: 0, full: [NULLWIN()] };
             }            
         };
         
-        _X.XGetClasa = function(elem) {
+        function GetClasa(elem) {
             var clasa = elem.getAttribute('class') || '';
             if (clasa.length > 0) {
                 return clasa.split(' ');
             } else {return []}
-        };
+        }
         
-        _X.XDifferenceArray = function(options){
+        function ClassAddRemove(options) {
             var defaults = {
-                type: '', //diff => arr1 - arr2 || join => arr1 + arr2
+                type: '', //remove => arr1 - arr2 || add => arr1 + arr2
                 arr1: [], //first array
                 arr2: [], //second array
             };
-            var s = _X.XJoinObj(defaults, options);
+            var s = _X.JoinObj(defaults, options);
             var result = [];
-            if (s.type == 'diff') {
+            if (s.type == 'remove') {
                 _X.Xeach(s.arr1, function(k, v) {
                     if (s.arr2.join(' ').indexOf(v) < 0) {
                         result.push(v);
                     }
                 });
                 return result.join(' ');
-            } else if (s.type =='join') {
+            } else if (s.type =='add') {
                 var temp = [];
                 _X.Xeach(s.arr2, function(k, v) {
                     if (s.arr1.join(' ').indexOf(v) < 0) {
@@ -2694,51 +2660,58 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 });
                 return result.concat(s.arr1, temp).join(' ');
             }
-        };
+        }
         
-        _X.XSearchChildren = function(options) {
+        function SearchChildren(options) {
             var defaults = {
                 a: '', 
                 s: '',
             };
-            var settings = _X.XJoinObj(defaults, options);
+            var settings = _X.JoinObj(defaults, options);
             var a = settings.a;
             var s = settings.s;
             var temp = [];
-            function XSearchChildrenTemp(options) {
+            function Local(options) {
                 var defaults = {
                     a: '', 
                     s: '',
                 };
-                var settings = _X.XJoinObj(defaults, options);
+                var settings = _X.JoinObj(defaults, options);
                 var a = settings.a;
                 var s = settings.s;
                 var repstr = s.replace(/[.#]/g, '');
                 _X.Xeach(a, function(k, v) {
-                    var getA = v.getAttribute(_X.XReturnClassOrId(s)) || '';
+                    var getA = v.getAttribute(ReturnClassOrId(s)) || '';
                     if ((' ' + getA + ' ').indexOf(' ' + repstr + ' ') > -1) {
                         temp.push(v);
                     } else if (v.tagName === s.toUpperCase()) {
                         temp.push(v);
                     }
                     if (v.children.length > 0) {
-                        XSearchChildrenTemp({a: v.children, s: s});
+                        Local({a: v.children, s: s});
                     }
                 });
             }
-            XSearchChildrenTemp({a: a, s: s});
+            Local({a: a, s: s});
             return temp;
-        };
+        }
         
-        _X.XReturnClassOrId = function(el) {
+        function ReturnClassOrId(el) {
             if (el.indexOf('.') > -1) {
                 return 'class';
             } else if (el.indexOf('#') > -1) {
                 return 'id';
             }
-        };
+        }
         
-        _X.GetObjectLength = function(obj) {
+        function ArrayToObject(arr, obj) {
+            for (var i = 0; i < arr.length; i++) {
+                obj[i] = arr[i];
+            }
+            return obj;
+        }
+                
+        function GetObjectLength(obj) {
             var pushkey = [];
             for (var k in obj) {
                 if (obj.hasOwnProperty(k) && k != 'length' && obj[k] !== undefined) {
@@ -2746,8 +2719,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 }
             }
             return pushkey.length;
-        };
-        
+        }
+
         return _X;
     }
     
