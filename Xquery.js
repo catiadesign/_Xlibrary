@@ -101,6 +101,32 @@ var WIN = { key: 0, full: [NULLWIN()] };
         
         var xs = 0;
         var effectStyles = null;
+        
+        var help = function() {
+            var that = this;
+            this.name = undefined;
+            this.param1 = undefined;
+            this.param2 = undefined;
+            this.usage = undefined;
+            this.constructor = '_X()';
+            this.tip = "'?' - is a parameter like ID, CLASS, TAG";
+            this.init = function() {
+                var x = {
+                    'Function Name:': that.name,
+                    'Parameter 1:': that.param1,
+                    'Parameter 2:': that.param2,
+                    'Usage Example:': that.usage,
+                    'Constructor:': that.constructor,
+                    'Tip:': that.tip,                       
+                };
+                for(var i in x) {
+                    if (x[i] === undefined) {
+                        delete x[i];
+                    }
+                }
+                return x;
+            };
+        };
        
         var _X = function(id) {
             var that;
@@ -1794,16 +1820,19 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var x = new _X();
                 var i = 0;
                 if (e.toLowerCase().indexOf('help') > -1) {
-                    console.log("Options for getElem() function are: 'first', 'last'");
-                    console.log("Example: _X(?).getElem('first');");
-                    console.log("'?' - is a parameter like ID, CLASS, TAG");
-                } else if (e == 'first') {
+                    var h = new help();
+                    h.name = '.getElem("Param 1")';
+                    h.param1 = "'first', 'last'";
+                    h.usage = "_X(?).getElem('first');";
+                    console.log('*** Function Help ***');
+                    console.table(h.init());
+                } else if (e.toLowerCase().indexOf('first') > -1) {
                     for (; i < that.length; i++) {
                         if (i === 0) {
                             x[0] = that[i];
                         }
                     }
-                } else if (e == 'last') {
+                } else if (e.toLowerCase().indexOf('last') > -1) {
                     for (; i < that.length; i++) {
                         if (i == that.length - 1) {
                             x[0] = that[i];
@@ -2178,10 +2207,13 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this[0];
                 var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
                 if (type.toLowerCase().indexOf('help') > -1) {
-                    console.log("First parameter from POSITION function have to be: 'width || height || left || top'");
-                    console.log("Second parameter from Position function have to be: 'offset || client || inner || outer || box || scroll || screen || natural'");
-                    console.log("Example: _X(?).position('width', 'offset')");
-                    console.log("'?' - is a parameter like ID, CLASS, TAG");
+                    var h = new help();
+                    h.name = '.position("Param 1", "Param 2")';
+                    h.param1 = "First parameter from POSITION function have to be: 'width || height || left || top'";
+                    h.param2 = "Second parameter from Position function have to be: 'offset || client || inner || outer || box || scroll || screen || natural'";
+                    h.usage = "_X(?).position('width', 'offset');";
+                    console.log('*** Function Help ***');
+                    console.table(h.init());
                 } else if (that !== undefined && type !== undefined && e !== undefined) {
                     var str = type.charAt(0).toUpperCase() + type.slice(1); 
                     return (elem.indexOf(e) > -1) ? that[e + str]
