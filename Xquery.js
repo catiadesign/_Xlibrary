@@ -101,37 +101,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
         
         var xs = 0;
         var effectStyles = null;
-        
-        var help = function() {
-            var that = this;
-            this.name = undefined;
-            this.param1 = undefined;
-            this.param2 = undefined;
-            this.usage = undefined;
-            this.constructor = '_X()';
-            this.tip = "'?' - is a parameter like ID, CLASS, TAG";
-            this.init = function() {
-                var x = {
-                    'Function Name:': that.name,
-                    'Parameter 1:': that.param1,
-                    'Parameter 2:': that.param2,
-                    'Usage Example:': that.usage,
-                    'Constructor:': that.constructor,
-                    'Tip:': that.tip,                       
-                };
-                for(var i in x) {
-                    if (x[i] === undefined) {
-                        delete x[i];
-                    }
-                }
-                return x;
-            };
-        };
        
-        var _X = function(id) {
+        function _X(id) {
             var that;
             var elem;
-            var i = 0;
+            var i, j;
             var arr = [];
             if (id !== undefined) {
                 if (window === this) {
@@ -148,14 +122,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         //Clasa
                         else if (id.indexOf('.') > -1) {
                             elem = document.getElementsByClassName(repstr);
-                            for (; i < elem.length; i++) {
+                            for (i = 0; i < elem.length; i++) {
                                 that[i] = elem[i];
                             }
                         }
                         //Tag
                         else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
                             elem = document.getElementsByTagName(id);
-                            for (; i < elem.length; i++) {
+                            for (i = 0; i < elem.length; i++) {
                                 that[i] = elem[i];
                             }
                         }
@@ -174,8 +148,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                     else if (id.indexOf(',') > -1) {
                         elem = id.replace(/\s/g, '').split(',');
-                        for (; i < elem.length; i++) {
-                            for (var j = 0; j < _X(elem[i]).length; j++) {
+                        for (i = 0; i < elem.length; i++) {
+                            for (j = 0; j < _X(elem[i]).length; j++) {
                                 arr.push(_X(elem[i])[j]);
                             }
                         }
@@ -188,7 +162,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 that.length = GetObjectLength(that);
             }
             return that;
-        };
+        }
 
         //Generate Random Class
         _X.ClassVirtual = function() {return '.' + 'VirtualClass' + 9 + xs++};    
@@ -197,6 +171,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
         _X.AddSpace = function(noOfSpaces) {
             var space = " ";
             var returnValue = "";
+            var i;
             for (i = 0; i < noOfSpaces; i++) {
                 returnValue += space;
             }
@@ -219,6 +194,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             var e = settings.e;
             var temp = [];
             var search;
+            var i, j;
             function SearchTemp(options) {
                 var defaults = {
                     a: '',
@@ -270,9 +246,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
             }
             if (typeof s == 'string' && s.indexOf(',') > -1) {
                 search = s.replace(/\s/g, '').split(',');
-                _X.Xeach(search, function(k, _v) {
-                    SearchTemp({a: a, s: _v, l: l, d: d, e: e});
-                });
+                for (i = 0; i < search.length; i++) {
+                    SearchTemp({a: a, s: search[i], l: l, d: d, e: e});
+                }
             } else {
                 search = s || '';
                 SearchTemp({a: a, s: search, l: l, d: d, e: e});
@@ -281,16 +257,16 @@ var WIN = { key: 0, full: [NULLWIN()] };
         };
         
         _X.Xeach = function(obj, callback) {
-            var i = 0;
+            var i;
             if (obj.length > 0) {
-                for (; i < obj.length; i++) {
+                for (i = 0; i < obj.length; i++) {
                     if (callback.call( obj[i], i, obj[i] ) === false) {
                         break;
                     }
                 }
             }
             else if (typeof obj == 'number') {
-                for (; i < obj; i++) {
+                for (i = 0; i < obj; i++) {
                     if (callback.call( obj[i], i, obj[i] ) === false) {
                         break;
                     }
@@ -311,7 +287,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
         _X.Xgrep = function(obj, callback) {
             var temp = [];
             var invertValue;
-            for (var i = 0; i < obj.length; i++) {
+            var i;
+            for (i = 0; i < obj.length; i++) {
                 invertValue = !callback(obj[i]);
                 //console.log(invertValue, callback());
                 if (invertValue !== callback()) {
@@ -323,11 +300,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
         
         _X.JoinObj = function(defaults, options){
             var s = {};
-            for (var k in defaults) {
-                s[k] = defaults[k];
+            var i, j;
+            for (i in defaults) {
+                s[i] = defaults[i];
             }
-            for (var m in options) {
-                s[m] = options[m];
+            for (j in options) {
+                s[j] = options[j];
             }
             return s;
         };
@@ -979,10 +957,38 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     },
                 },
             };
+           
             this.type = {
-                1: {maxSize: true, drag: true, resize: true, modal: true, statusbar: true, overflow: 'hidden', menuRC: _X.Xsearch({a: this.buttons, s: 'rc1'})},
-                2: {maxSize: false, drag: true, resize: false, modal: true, statusbar: true, overflow: 'visible', menuRC: _X.Xsearch({a: this.buttons, s: 'rc2'})},
-                3: {maxSize: false, drag: false, resize: false, modal: false, statusbar: false, overflow: 'hidden', menuRC: []},
+                1: {
+                    maxSize: true,
+                    drag: true,
+                    resize: true,
+                    modal: true,
+                    statusbar: true,
+                    overflow: 'hidden',
+                    menuRC: _X.Xsearch({a: this.buttons, s: 'rc1'}),
+                    bodyHeightCalc: 52,
+                },
+                2: {
+                    maxSize: false,
+                    drag: true,
+                    resize: false,
+                    modal: true,
+                    statusbar: true,
+                    overflow: 'visible',
+                    menuRC: _X.Xsearch({a: this.buttons, s: 'rc2'}),
+                    bodyHeightCalc: 35,
+                },
+                3: {
+                    maxSize: false,
+                    drag: false,
+                    resize: false,
+                    modal: false,
+                    statusbar: false,
+                    overflow: 'hidden',
+                    menuRC: [],
+                    bodyHeightCalc: '',
+                },
             };
             this.GetElements = function(val) {
                 var x = function() {
@@ -1224,19 +1230,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         if (settings.height == 'auto') {return 'relative'}
                         else {return 'absolute'}
                     };
-                    var FooterCalc = function() {
-                        if (settings.windowType == self.type[1]) {return 'calc(100% - 52px)'}
-                        else if (settings.windowType == self.type[2]) {return 'calc(100% - 35px)'}
-                        else {return '100%'}
-                    };
                     var TopBar = function() {
-                        if (settings.windowType == self.type[1]) {
+                        if (settings.windowType == self.type[1] || settings.windowType == self.type[2]) {
                             if (settings.topBar === 0) {return 0}
                             else if (settings.topBar === 1) {return 40}
                             else if (settings.topBar === 2) {return 75}
-                        } else if (settings.windowType == self.type[2]) {
-                            if (settings.topBar === 0) {return 0}
-                            else if (settings.topBar === 1) {return 40}
                         } else {return 0}
                     };                
                     var DisableHeader = function() {
@@ -1400,7 +1398,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                 clasa: 'thiswindow_body',
                                 css: {
                                     position: 'relative',
-                                    height: FooterCalc(),
+                                    height: 'calc(100% - ' + settings.windowType.bodyHeightCalc + 'px)',
                                     overflow: 'hidden',
                                 },
                                 items: [
@@ -1543,6 +1541,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     .classAdd(settings.name + '_window')
                     .classAdd(settings.clasa)
                     .css({
+                        position: 'absolute',
                         visibility: 'hidden',
                         width: settings.width,
                         height: settings.height,
@@ -1818,22 +1817,21 @@ var WIN = { key: 0, full: [NULLWIN()] };
             getElem: function(e) {
                 var that = this;
                 var x = new _X();
-                var i = 0;
+                var i;
                 if (e.toLowerCase().indexOf('help') > -1) {
-                    var h = new help();
-                    h.name = '.getElem("Param 1")';
-                    h.param1 = "'first', 'last'";
-                    h.usage = "_X(?).getElem('first');";
-                    console.log('*** Function Help ***');
-                    console.table(h.init());
+                    new Help({
+                        name: '.getElem("Param 1")',
+                        param1: "'first', 'last'",
+                        usage: "_X(?).getElem('first');",
+                    });
                 } else if (e.toLowerCase().indexOf('first') > -1) {
-                    for (; i < that.length; i++) {
+                    for (i = 0; i < that.length; i++) {
                         if (i === 0) {
                             x[0] = that[i];
                         }
                     }
                 } else if (e.toLowerCase().indexOf('last') > -1) {
-                    for (; i < that.length; i++) {
+                    for (i = 0; i < that.length; i++) {
                         if (i == that.length - 1) {
                             x[0] = that[i];
                         }
@@ -1848,7 +1846,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 var oldClass;
                 var addClass;
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     if (e !== undefined) {
                         oldClass = GetClasa(that[i]);
                         addClass = e.replace(/\s/g, '').split(',');
@@ -1863,7 +1862,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 var oldClass;
                 var removeClass;
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     oldClass = GetClasa(that[i]);
                     removeClass = e.replace(/\s/g, '').split(',');
                     that[i].className = ClassAddRemove({type: 'remove', arr1: oldClass, arr2: removeClass});
@@ -1876,8 +1876,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 var x = new _X();
                 var a = [];
+                var i;
                 var classRead;
-                for (var i = 0; i < that.length; i++) {
+                for (i = 0; i < that.length; i++) {
                     classRead = GetClasa(that[i]);
                     if (classRead.indexOf(e) > -1) {
                         a.push(that[i]);
@@ -1936,7 +1937,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 var x = new _X();
                 var a = [];
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     if (that[i].innerText === e) {
                         a.push(that[i]);
                     }
@@ -1949,13 +1951,13 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xappend('?') => append OBJECT or HTML other object
             Xappend: function(e) {
                 var that = this;
-                var i = 0;
+                var i;
                 if (e !== undefined && typeof e == 'object') {
-                    for (; i < that.length; i++) {
+                    for (i = 0; i < that.length; i++) {
                         that[i].appendChild(e[0]);
                     }
                 } else {
-                    for (; i < that.length; i++) {
+                    for (i = 0; i < that.length; i++) {
                         that[i].innerHTML += e;
                     }
                 }
@@ -1977,7 +1979,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
             Xshow: function(effect) {
                 var that = this;
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
                         _X.EFFECT.loadEffect(effect, that[i], 'show');
                     } else {
@@ -1992,7 +1995,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xhide('?')  => hide the current element with buildin EFFECTS
             Xhide: function(effect) {
                 var that = this;
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
                         _X.EFFECT.loadEffect(effect, that[i], 'hide');
                     } else {
@@ -2007,10 +2011,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).attr({'? element': ? value})   => SET element attribute
             attr: function(e) {
                 var that = this;
+                var i, j;
                 if (e !== undefined) {
                     if (typeof e == 'object') {
-                        for (var i = 0; i < that.length; i++) {
-                            for (var j in e) {
+                        for (i = 0; i < that.length; i++) {
+                            for (j in e) {
                                 that[i].setAttribute(j, e[j]);
                             }
                         }
@@ -2035,11 +2040,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).css({'? element key': ? value})    => SET element css
             css: function(e) {
                 var that = this;
+                var i, j;
                 var cssElements = ['left', 'right', 'top', 'bottom', 'width', 'max-width', 'min-width', 'height', 'margin', 'padding', 'perspective', 'font-size', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom', 'border-radius'];
                 if (e !== undefined) {    
                     if (typeof e == 'object') {
-                        for (var i = 0; i < that.length; i++) {
-                            for (var j in e) {
+                        for (i = 0; i < that.length; i++) {
+                            for (j in e) {
                                 if (that[i].style !== undefined) {
                                     if (cssElements.indexOf(j) > -1 && typeof e[j] == 'number' && e[j] !== 0) {
                                         that[i].style[j] = e[j] + 'px';
@@ -2066,7 +2072,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 var x = new _X();
                 var a = [];
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     if (that[i] !== undefined && that[i].style[e[0]] === e[1]) {
                         a.push(that[i]);
                     }
@@ -2091,7 +2098,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xremove() => DELETE current element
             Xremove: function() {
                 var that = this;
-                for (var i = 0; i < that.length; i++) {
+                var i;
+                for (i = 0; i < that.length; i++) {
                     if (that[i] !== undefined) {
                         that[i].parentNode.removeChild(that[i]);
                     }
@@ -2102,16 +2110,16 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).on( {'?': function(){}} )          => SET event like an object syntax
             on: function(e) {
                 var that = this;
-                var i = 0;
+                var i, j;
                 if (e !== undefined) {
                     if (e.length > 0 && e[0] !== null) {
                         //var sel = e[0].split(/[ ]+/);
-                        for (; i < that.length; i++) {
+                        for (i = 0; i < that.length; i++) {
                             that[i].addEventListener(e[0], e[1]);
                         }
                     } else {
-                        for (; i < that.length; i++) {
-                            for (var j in e) {
+                        for (i = 0; i < that.length; i++) {
+                            for (j in e) {
                                 that[i].addEventListener(j, e[j]);
                             }
                         }
@@ -2123,8 +2131,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).off( {'? function name': ? function name} ) => REMOVE event from element
             off: function(e) {
                 var that = this;
-                for (var i = 0; i < that.length; i++) {
-                    for (var j in e) {
+                var i, j;
+                for (i = 0; i < that.length; i++) {
+                    for (j in e) {
                         that[i].removeEventListener(j, e[j]);
                     }
                 }
@@ -2134,8 +2143,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
             //_X(?).Xempty() => DELETE element contains
             Xempty: function() {
                 var that = this;
+                var i;
                 if (that[0] !== undefined) {
-                    for (var i = 0; i < that.length; i++) {
+                    for (i = 0; i < that.length; i++) {
                         that[i].innerHTML = '';
                     }
                     return that;
@@ -2151,12 +2161,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var x = new _X();
                 var a = [];
                 var elem;
-                var i = 0;
+                var i, j;
                 if (that[0] !== undefined || that[0] !== null) {
                     //children
                     if (e == 'children') {
-                        for (; i < that.length; i++) {
-                            for (var j = 0; j < that[i].children.length; j++) {
+                        for (i = 0; i < that.length; i++) {
+                            for (j = 0; j < that[i].children.length; j++) {
                                 a.push(that[i].children[j]);
                             }
                         }
@@ -2207,13 +2217,13 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this[0];
                 var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
                 if (type.toLowerCase().indexOf('help') > -1) {
-                    var h = new help();
-                    h.name = '.position("Param 1", "Param 2")';
-                    h.param1 = "First parameter from POSITION function have to be: 'width || height || left || top'";
-                    h.param2 = "Second parameter from Position function have to be: 'offset || client || inner || outer || box || scroll || screen || natural'";
-                    h.usage = "_X(?).position('width', 'offset');";
-                    console.log('*** Function Help ***');
-                    console.table(h.init());
+                    new Help({
+                        name: '.position("Param 1", "Param 2")',
+                        param1: "First parameter from '.position' function have to be: 'width || height || left || top'",
+                        param2: "Second parameter from Position function have to be: 'offset || client || inner || outer || box || scroll || screen || natural'",
+                        usage: "_X(?).position('width', 'offset');",
+                    });
+                    return this;
                 } else if (that !== undefined && type !== undefined && e !== undefined) {
                     var str = type.charAt(0).toUpperCase() + type.slice(1); 
                     return (elem.indexOf(e) > -1) ? that[e + str]
@@ -2551,11 +2561,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
         _X.EFFECT.init();
         //console.log(effectStyles.sheet.cssRules);
 
-        _X.Xradians = function(degrees) {
+        _X.GetRadians = function(degrees) {
             return degrees * (Math.PI / 180);
         };
         
-        _X.Xdegrees = function(radians) {
+        _X.GetDegrees = function(radians) {
             return radians * (180 / Math.PI);
         };
         
@@ -2647,16 +2657,17 @@ var WIN = { key: 0, full: [NULLWIN()] };
         
             Multiply: function(matrices) {
                 var inputMatrix = matrices[0];
-                for (var i = 1; i < matrices.length; i++) {
+                var i;
+                for (i = 1; i < matrices.length; i++) {
                     inputMatrix = this.multiplyMatrices(inputMatrix, matrices[i]);
                 }
                 return inputMatrix;
             },
             xyz: function(x, y, z) {
                 return _X.MATRIX.Multiply([
-                    this.RotateZAxis(_X.Xradians(z)),
-                    this.RotateYAxis(_X.Xradians(y)),
-                    this.RotateXAxis(_X.Xradians(x)),
+                    this.RotateZAxis(_X.GetRadians(z)),
+                    this.RotateYAxis(_X.GetRadians(y)),
+                    this.RotateXAxis(_X.GetRadians(x)),
                 ]).join(', ');
             }            
         };
@@ -2737,7 +2748,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
         }
         
         function ArrayToObject(arr, obj) {
-            for (var i = 0; i < arr.length; i++) {
+            var i;
+            for (i = 0; i < arr.length; i++) {
                 obj[i] = arr[i];
             }
             return obj;
@@ -2745,12 +2757,44 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 
         function GetObjectLength(obj) {
             var pushkey = [];
-            for (var k in obj) {
-                if (obj.hasOwnProperty(k) && k != 'length' && obj[k] !== undefined) {
-                    pushkey.push(k);
+            var i;
+            for (i in obj) {
+                if (obj.hasOwnProperty(i) && i != 'length' && obj[i] !== undefined) {
+                    pushkey.push(i);
                 }
             }
             return pushkey.length;
+        }
+
+        function Help(options) {
+            var defaults = {
+                name: undefined,
+                param1: undefined,
+                param2: undefined,
+                usage: undefined,
+                tip: "'?' - parameter like ID, CLASS, TAG",
+                constructor: '_X()',
+            };
+            var s = _X.JoinObj(defaults, options);
+            var i;
+            var init = function() {
+                var x = {
+                    'Function Name:': s.name,
+                    'Parameter 1:': s.param1,
+                    'Parameter 2:': s.param2,
+                    'Usage Example:': s.usage,
+                    'Tip:': s.tip,
+                    'Constructor:': s.constructor,
+                };
+                for(i in x) {
+                    if (x[i] === undefined) {
+                        delete x[i];
+                    }
+                }
+                console.log('*** Help Info for Function ' + s.name +' ***');
+                return x;
+            };
+            console.table(init());
         }
 
         return _X;
