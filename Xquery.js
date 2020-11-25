@@ -66,7 +66,7 @@ var SETTINGS = {
     }, backimage: {
         def: 'bodyback001.jpg',
         sel: 'bodyback001.jpg',
-        array: ['bodyback001.jpg', 'bodyback002.jpg', 'bodyback003.jpg', 'bodyback004.jpg', 'bodyback005.jpg', 'bodyback006.jpg', 'none'],
+        array: ['bodyback001.jpg', 'bodyback002.jpg', 'bodyback003.jpg', 'bodyback004.jpg', 'bodyback005.jpg', 'bodyback006.jpg', ''],
         title: 'Background:',
         tooltip: '',
     },
@@ -96,7 +96,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17.10.2019',
-            updated:     '30.10.2020',
+            updated:     '25.11.2020',
         };
         
         var xs = 0;
@@ -167,9 +167,48 @@ var WIN = { key: 0, full: [NULLWIN()] };
         //Generate Random Class
         _X.ClassVirtual = function() {return '.' + 'VirtualClass' + 9 + xs++};    
 
+        //3D Website Rotate
+        //rotation in deg
+        _X.Web3D = function(elem, rotateForce) {
+            _X(document).on({
+                mousemove: function(e) {
+                    var rotateY = (e.pageX / window.innerWidth * rotateForce * 2) - rotateForce;
+                    var rotateX = -((e.pageY / window.innerHeight * rotateForce * 2) - rotateForce);
+                    _X(elem).css({
+                        transform: 'rotateX('+ rotateX +'deg) rotateY('+ rotateY +'deg)'
+                    });
+                }
+            });
+        };
+        
+        //movement in pixels
+        _X.Relief3D = function(elem, moveForce) {
+            _X(document).on({
+                mousemove: function(e) {
+                    var moveX = (e.pageX - window.innerWidth / 2) / (window.innerWidth / 2) * moveForce;
+                    var moveY = (e.pageY - window.innerHeight / 2) / (window.innerHeight / 2) * moveForce;
+                    _X(elem).css({
+                        position: 'relative',
+                        left: moveX,
+                        top: moveY
+                    });
+                }
+            });
+        };
+
         //Add Free Space
         _X.AddSpace = function(noOfSpaces) {
             var space = " ";
+            var returnValue = "";
+            var i;
+            for (i = 0; i < noOfSpaces; i++) {
+                returnValue += space;
+            }
+            return returnValue;
+        };
+
+        _X.CreateSpace = function(noOfSpaces) {
+            var space = "&nbsp;";
             var returnValue = "";
             var i;
             for (i = 0; i < noOfSpaces; i++) {
@@ -645,7 +684,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         }
                     });
             });
-        }
+        };
 
         _X.CubeIcon = function(options) {
             var defaults = {
@@ -674,7 +713,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 on: {},
             };
             var s = _X.JoinObj(defaults, options);
-            var temp;
             var opacity = s.opacity;
             var RandomAngle = function() {
                 if (typeof s.rotationAngle == 'object') {
@@ -2111,11 +2149,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
             on: function(e) {
                 var that = this;
                 var i, j;
+                var event;
                 if (e !== undefined) {
                     if (e.length > 0 && e[0] !== null) {
-                        //var sel = e[0].split(/[ ]+/);
+                        event = e[0].split(/[ ]+/);
                         for (i = 0; i < that.length; i++) {
-                            that[i].addEventListener(e[0], e[1]);
+                            for (j = 0; j < event.length; j++) {
+                                that[i].addEventListener(event[j], e[1]);
+                            }
                         }
                     } else {
                         for (i = 0; i < that.length; i++) {
@@ -2150,6 +2191,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                     return that;
                 }
+                return that;
             },
 
             //_X(?).Xfind('children')   => return all children on first level from element
@@ -2571,8 +2613,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
         
         _X.MATRIX = {
             round: function(val) {
-                var min = 0.000001;
-                var max = 0.999999;
+                var min = 0.000005;
+                var max = 0.999995;
                 var rnd = 1000000;
                 return val < -max ? -1
                     : val < min && val > -min ? 0
@@ -2796,7 +2838,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
             };
             console.table(init());
         }
-
         return _X;
     }
     
