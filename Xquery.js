@@ -249,24 +249,35 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var d = settings.d;
                 var e = settings.e;
                 function ReturnSearch(glob) {
-                    function Exclude() {
+                    var Exclude = function() {
                         if (glob.search !== undefined) {
                             return glob.search.indexOf(e) > -1 ? false : true;
                         }
+                    };
+                    //Search
+                    if (l == 'search' && glob.search !== undefined && Exclude() === true) {
+                        return glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1;
                     }
-                        //Search
-                    return (l == 'search' && glob.search !== undefined && Exclude() === true) ? glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1
-                        //Location
-                        : (l == 'loc' && glob.loc !== undefined && Exclude() === true) ? glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1
-                        //Title
-                        : (l == 'title' && glob.title !== undefined && Exclude() === true) ? glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1
-                        //Keyboard Key
-                        : (l == 'key' && glob.key !== undefined && Exclude() === true) ? glob.key
-                        //Icon
-                        : (l == 'ico' && glob.ico !== undefined && Exclude() === true) ? glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1
-                        //Search by the Name of the Key not Value    
-                        : (l == 'keyname' && Exclude() === true) ? key.toLowerCase().indexOf(s.toLowerCase()) > -1
-                        : '';
+                    //Location
+                    else if (l == 'loc' && glob.loc !== undefined && Exclude() === true) {
+                        return glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                    }
+                    //Title
+                    else if (l == 'title' && glob.title !== undefined && Exclude() === true) {
+                        return glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                    }
+                    //Keyboard Key
+                    else if (l == 'key' && glob.key !== undefined && Exclude() === true) {
+                        return glob.key;
+                    }
+                    //Icon
+                    else if (l == 'ico' && glob.ico !== undefined && Exclude() === true) {
+                        return glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                    }
+                    //Search by the Name of the Key not Value   
+                    else if (l == 'keyname' && Exclude() === true) {
+                        return key.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                    }
                 }
                 if (a !== undefined) {
                     _X.Xeach(a, function(k, _v) {
@@ -595,7 +606,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     .XappendTo('.ico_controls')
                     .classAdd(v.clasa)
                     .css({cursor: 'pointer'})
-                    .AddIcon({ico: v.ico, size: 20})
+                    .iconAdd({ico: v.ico, size: 20})
                     .on({
                         mouseenter: function() {
                             _X(this).Xfind('i').css({color: 'red'});
@@ -732,7 +743,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var that = this;
                 if (that.classBool('front')) {
                     that.css({'z-index': 1})
-                        .AddIcon({
+                        .iconAdd({
                             ico: obj.ico,
                             color: obj.color,
                             size: size,
@@ -1197,6 +1208,43 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 _X('.active_screen').Xfind('.thiswindow_statusbar').css({width: resultat});
                 //console.log(status_width, selecteditems, resultat);
             };
+
+            this.FindWindowKey = function(that) {
+                _X.Xeach(WIN.full, function(k, v) {
+                    if (_X(v.winElem)[0] == _X(that)[0] || _X(v.winBar)[0] == _X(that)[0]) {
+                        WIN.key = k;
+                    } else {}
+                });
+            };
+
+            this.WindowLogo = function(options) {
+                var defaults = {
+                    item: '',
+                    show: true,
+                };
+                var settings = _X.JoinObj(defaults, options);
+                var item = _X(settings.item);
+                if (settings.show === true) {
+                    setTimeout(function() {
+                        var width = item.Xparent().position('width', 'offset');
+                        var height = item.Xparent().position('height', 'offset');
+                        if (width < height) {
+                            _X('<img')
+                                .XappendTo(item)
+                                .classAdd('xui_disabled')
+                                .css({
+                                    position: 'absolute',
+                                    opacity: '0.15'
+                                })
+                                .attr({
+                                    src: 'images/catiadesign_logo_004.png',
+                                    width: '100%',
+                                    align: 'middle',
+                                });
+                        }
+                    }, 30);
+                }
+            };
             
             this.init = function(options) {
                 var obj = SELECTED.obj;
@@ -1220,474 +1268,427 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     dragArea: _X('.active_screen').Xfind('.desktop_website'),
                 };
                 var settings = _X.JoinObj(defaults, options);
-                //
-                _X.prototype.WindowLoad = function() {
-                    var that = this;
-                    _X.Xeach(WIN.full, function(k, v) {
-                        if (v.winElem === undefined) {
-                            v.winElem = that;
-                        } else {}
-                    });
-                    return that;
-                };
-            
-                _X.prototype.WindowStatusBar = function() {
-                    var that = this;
-                    _X.Xeach(WIN.full, function(k, v) {
-                        if (v.winBar === undefined) {
-                            v.winBar = that;
-                        } else {}
-                    });
-                    return that;
-                };
-            
-                _X.prototype.WindowOverlay = function() {
-                    var that = this;
-                    _X.Xeach(WIN.full, function(k, v) {
-                        if (v.winOverlay === undefined) {
-                            v.winOverlay = that;
-                        } else {}
-                    });
-                    return that;
-                };
-            
-                _X.prototype.FindWindowKey = function() {
-                    var that = this;
-                    _X.Xeach(WIN.full, function(k, v) {
-                        if (_X(v.winElem)[0] == _X(that)[0] || _X(v.winBar)[0] == _X(that)[0]) {
-                            WIN.key = k;
-                        } else {}
-                    });
-                    return that;
-                };
-                
-                //Window Body
-                _X.prototype.AppendBody = function() {
-                    var $this = this;
-                    var LeftSizePosition = function() {
-                        if (settings.height == 'auto') {return 'relative'}
-                        else {return 'absolute'}
-                    };
-                    var TopBar = function() {
-                        if (settings.windowType == self.type[1] || settings.windowType == self.type[2]) {
-                            if (settings.topBar === 0) {return 0}
-                            else if (settings.topBar === 1) {return 40}
-                            else if (settings.topBar === 2) {return 75}
-                        } else {return 0}
-                    };                
-                    var DisableHeader = function() {
-                        if (SETTINGS.header.sel == 'true') {return 'xui_header';}
-                        else {return  '';}
-                    };
-                    var WindowLogo = function(options) {
-                        var defaults = {
-                            item: '',
-                            show: true,
-                        };
-                        var settings = _X.JoinObj(defaults, options);
-                        var item = _X(settings.item);
-                        if (settings.show === true) {
-                            setTimeout(function() {
-                                var width = item.Xparent().position('width', 'offset');
-                                var height = item.Xparent().position('height', 'offset');
-                                if (width < height) {
-                                    _X('<img')
-                                        .XappendTo(item)
-                                        .classAdd('xui_disabled')
-                                        .css({
-                                            position: 'absolute',
-                                            opacity: '0.15'
-                                        })
-                                        .attr({
-                                            src: 'images/catiadesign_logo_004.png',
-                                            width: '100%',
-                                            align: 'middle',
-                                        });
-                                }
-                            }, 30);
-                        }
-                    };
+                //Modal Overlay
+                if ( (SETTINGS.modal.sel == 'true') && (settings.windowType.modal === true) ) {
                     _X.CreateTagElements({
-                        t: $this,
+                        t: settings.to, 
                         a: [
                             {
-                                clasa: 'thiswindow_header',
+                                classAdd: 'xui_overlay, ' + settings.name + '_overlay',
+                                css: {
+                                    'z-index': settings.zIndex - 1
+                                },
                                 init: function(that) {
-                                    if (settings.windowType == self.type[1]) {
-                                        _X(that)
-                                            .classAdd('xui_corner_all')
-                                            .classAdd(DisableHeader())
-                                            .css({
-                                                position: 'relative',
-                                                height: 33,
-                                                cursor: 'pointer',
-                                                overflow: 'hidden',
-                                                margin: 2
-                                            })
-                                            .on({
-                                                mousedown: function(e) {
-                                                    if (settings.windowType == self.type[1]) {
-                                                        self.WindowMoveToSide();
-                                                    }
-                                                    if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
-                                                        _X.XDraggable({item: $this, mouse: e, dragArea: settings.dragArea});
-                                                    } else {}
-                                                },
-                                                dblclick: function(e) {
-                                                    e.preventDefault();
-                                                    e.stopImmediatePropagation();
-                                                    self.buttons.WindowMinMax.init();
-                                                },
-                                            });
-                                        //Title -- Left Side Header
-                                        _X('<div')
-                                            .XappendTo(that)
-                                            .classAdd('format_text')
-                                            .css({
-                                                display: 'block',
-                                                float: 'left',
-                                                padding: 3,
-                                                width: '47%',
-                                            })
-                                            .AddIcon({ico: obj.ico, color: obj.color, size: 27})
-                                            .Xappend(' ' + obj.title);
-                                        //Buttons -- Right Side Header
-                                        _X('<div')
-                                            .XappendTo(that)
-                                            .css({
-                                                display: 'block',
-                                                float: 'right',
-                                                width: '47%',
-                                            })
-                                            .MenuElements({
-                                                array: _X.Xsearch({a: self.buttons, s: 'rc1'}),
-                                                pushObj: false,
-                                                pushItem: false,
-                                                css: {float: 'right'},
-                                                title: false,
-                                                color: false,
-                                                menuRC: false,
-                                            });
-                                    } else if (settings.windowType == self.type[2]) {
-                                        _X(that).css({height: 24});
-                                        WindowLogo({item: that, show: settings.imageshow});
-                                        if (settings.menuTitle === true) {
-                                            _X('<div')
-                                                .XappendTo(that)
-                                                .classAdd('xui_disabled, format_text')
-                                                .css({'text-align': 'center'})
-                                                .Xappend(obj.title);
+                                    _X.Xeach(WIN.full, function(k, v) {
+                                        if (v.winOverlay === undefined) {
+                                            v.winOverlay = that;
                                         }
-                                        _X('<div')
-                                            .XappendTo(that)
-                                            .css({
-                                                position: 'absolute',
-                                                cursor: 'pointer',
-                                                top: -13,
-                                                left: -13,
-                                            })
-                                            .AddIcon({ico: obj.ico, color: obj.color, size: 35});
-                                        var temp = [
-                                            {ico: 'toll', right: 20, init: self.buttons.WindowHideShow.init},
-                                            {ico: 'cancel', right: -10, init: self.buttons.WindowClose.init},
-                                        ];
-                                        _X.Xeach(temp, function(k, v) {
-                                            _X('<div')
-                                                .XappendTo(that)
-                                                .AddIcon({ico: v.ico, size: 30})
+                                    });
+                                },
+                            },
+                        ],
+                    }); 
+                }
+                //Full Window
+                var LeftSizePosition = function() {
+                    if (settings.height == 'auto') {return 'relative'}
+                    else {return 'absolute'}
+                };
+                var TopBar = function() {
+                    if (settings.windowType == self.type[1] || settings.windowType == self.type[2]) {
+                        if (settings.topBar === 0) {return 0}
+                        else if (settings.topBar === 1) {return 40}
+                        else if (settings.topBar === 2) {return 75}
+                    } else {return 0}
+                };                  
+                _X.CreateTagElements({
+                    t: settings.to,
+                    a: [
+                        {
+                            classAdd: 'thiswindow, shadow_border, xui_corner_all, xui_content, ' + settings.name + '_window, ' + settings.clasa,
+                            css: {
+                                position: 'absolute',
+                                visibility: 'hidden',
+                                width: settings.width,
+                                height: settings.height,
+                                //'box-sizing': 'border-box',
+                                border: 0,
+                                'font-size': settings.fontSize,
+                                'z-index': settings.zIndex,
+                                overflow: settings.windowType.overflow,
+                            },
+                            on: {
+                                mouseenter: function() {
+                                    if (_X('body').classBool('mousedown_true') === false) {
+                                        self.FindWindowKey(this);
+                                    } else {}
+                                },
+                                mousedown: function(e) {
+                                    _X('body').classAdd('mousedown_true');
+                                    if (_X(this).css('z-Index') !== 1501) {
+                                        self.WindowSelect({zIndex: settings.zIndex});
+                                    } else {}
+                                    //console.log(WIN.full);
+                                    if (settings.windowType !== self.type[1]) {
+                                        if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
+                                            _X.XDraggable({item: this, mouse: e, dragArea: settings.dragArea});
+                                        } else {}
+                                    } else {}
+                                },
+                                contextmenu: function(e) {
+                                    e.preventDefault();
+                                    e.stopImmediatePropagation();
+                                },
+                                dblclick: function(e) {
+                                    e.preventDefault();
+                                    e.stopImmediatePropagation();
+                                },
+                            },                                
+                            init: function(that) {
+                                _X.Xeach(WIN.full, function(k, v) {
+                                    if (v.winElem === undefined) {
+                                        v.winElem = that;
+                                    } else {}
+                                });
+                                _X(that).OpenWindow({
+                                    maxSize: settings.windowType.maxSize,
+                                    open: settings.open,
+                                });                               
+                                self.FindWindowKey(that);
+                            },
+                            items: [
+                                {
+                                    classAdd: 'thiswindow_header',
+                                    init: function(that) {
+                                        if (settings.windowType == self.type[1]) {
+                                            var DisableHeader = function() {
+                                                if (SETTINGS.header.sel == 'true') {return 'xui_header';}
+                                                else {return  '';}
+                                            };                                            
+                                            _X(that)
+                                                .classAdd('xui_corner_all')
+                                                .classAdd(DisableHeader())
                                                 .css({
-                                                    position: 'absolute',
+                                                    position: 'relative',
+                                                    height: 33,
                                                     cursor: 'pointer',
-                                                    top: -10,
-                                                    right: v.right,
+                                                    overflow: 'hidden',
+                                                    margin: 2
                                                 })
                                                 .on({
-                                                    mouseenter: function() {
-                                                        _X(this).Xfind('i').css({color: 'red'});
+                                                    mousedown: function(e) {
+                                                        if (settings.windowType == self.type[1]) {
+                                                            self.WindowMoveToSide();
+                                                        }
+                                                        if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
+                                                            _X.XDraggable({item: _X(this).Xparent(), mouse: e, dragArea: settings.dragArea});
+                                                        } else {}
                                                     },
-                                                    mouseleave: function() {
-                                                        _X(this).Xfind('i').css({color: ''});
-                                                    },
-                                                    click: function() {
-                                                        v.init();
+                                                    dblclick: function(e) {
+                                                        e.preventDefault();
+                                                        e.stopImmediatePropagation();
+                                                        self.buttons.WindowMinMax.init();
                                                     },
                                                 });
-                                        });
-                                    } else if (settings.windowType == self.type[3]) {
-                                        WindowLogo({item: that, show: settings.imageshow});
-                                        if (settings.menuTitle === true) {
+                                            //Title -- Left Side Header
                                             _X('<div')
                                                 .XappendTo(that)
                                                 .classAdd('format_text')
                                                 .css({
-                                                    padding: 2,
-                                                    'margin-left': 10,
-                                                    'margin-right': 10,
-                                                    'text-align': 'center',
-                                                    'font-size': 10,
-                                                    color: '#636363',
+                                                    display: 'block',
+                                                    float: 'left',
+                                                    padding: 3,
+                                                    width: '47%',
                                                 })
-                                                .AddIcon({ico: obj.ico, color: obj.color, size: 20})
-                                                .Xappend(_X.AddSpace(1) + obj.title);
-                                        }
-                                    } else {}
-                                },
-                            }, {
-                                clasa: 'thiswindow_body',
-                                css: {
-                                    position: 'relative',
-                                    height: 'calc(100% - ' + settings.windowType.bodyHeightCalc + 'px)',
-                                    overflow: 'hidden',
-                                },
-                                items: [
-                                    {
-                                        clasa: 'body_top1',
-                                        init: function(that) {
-                                            if (settings.topBar === 1 || settings.topBar === 2) {
-                                                _X(that)
-                                                    .css({
-                                                        position: 'relative',
-                                                        padding: 2,
-                                                        height: 35,
-                                                    });
-                                            } else {}
-                                        },
-                                    }, {
-                                        clasa: 'body_top2',
-                                        init: function(that) {
-                                            if (settings.topBar === 2) {
-                                                _X(that)
-                                                    .css({
-                                                        position: 'relative',
-                                                        padding: 2,
-                                                        height: 35,
-                                                    });
-                                            } else {}
-                                        }
-                                    }, {
-                                        clasa: 'body_left',
-                                        css: {
-                                            position: 'absolute',
-                                            width: parseInt(settings.leftSize),
-                                            top: TopBar(),
-                                            left: 0,
-                                            bottom: 0,
-                                            padding: 2,
-                                            'user-select': 'text',
-                                        },
-                                    }, {
-                                        clasa: 'body_middle',
-                                        css: {
-                                            position: 'absolute',
-                                            left: settings.leftSize,
-                                            width: settings.middlebodywidth ,
-                                            top: TopBar(),
-                                            bottom: 0,
-                                            padding: 2,
-                                        },
-                                    }, {
-                                        clasa: 'body_right',
-                                        css: {
-                                            position: LeftSizePosition(),
-                                            left: settings.middlebodywidth + parseInt(settings.leftSize),
-                                            top: TopBar(),
-                                            right: 0,
-                                            bottom: 0,
-                                            padding: 2,
-                                            'overflow-x': 'hidden',
-                                            'overflow-y': settings.scroll,
-                                        },
-                                        items: [
-                                            {
-                                                clasa: 'body_right_top',
-                                            }, {
-                                                clasa: 'body_right_bottom',
-                                            },
-                                        ],
-                                    },
-                                ],
-                            }, {
-                                clasa: 'thiswindow_footer',
-                                init: function(that) {
-                                    if (settings.windowType == self.type[1]) {
-                                        _X(that)
-                                            .css({
-                                                position: 'relative',
-                                                height: 15,                                             
-                                            });
-                                        //div for text
-                                        _X('<div')
-                                            .XappendTo(that)
-                                            .classAdd('footer_text')
-                                            .css({
-                                                'padding-left': 35,
-                                                'padding-top': 1,
-                                                'font-size': 10,
-                                            });
-                                        //divs for actual resize
-                                        var temp = [
-                                            {clasa: 'ico_submenu_resize_sw', left: 1, right: '', moveClass: 'window_resize_sw'},
-                                            {clasa: 'ico_submenu_resize_se', left: '', right: 1, moveClass: 'window_resize_se'},
-                                        ];
-                                        _X.Xeach(temp, function(k, v) {
+                                                .iconAdd({ico: obj.ico, color: obj.color, size: 27})
+                                                .Xappend(' ' + obj.title);
+                                            //Buttons -- Right Side Header
                                             _X('<div')
                                                 .XappendTo(that)
-                                                .classAdd(v.clasa)
+                                                .css({
+                                                    display: 'block',
+                                                    float: 'right',
+                                                    width: '47%',
+                                                })
+                                                .MenuElements({
+                                                    array: _X.Xsearch({a: self.buttons, s: 'rc1'}),
+                                                    pushObj: false,
+                                                    pushItem: false,
+                                                    css: {float: 'right'},
+                                                    title: false,
+                                                    color: false,
+                                                    menuRC: false,
+                                                });
+                                        } else if (settings.windowType == self.type[2]) {
+                                            _X(that).css({height: 24});
+                                            self.WindowLogo({item: that, show: settings.imageshow});
+                                            if (settings.menuTitle === true) {
+                                                _X('<div')
+                                                    .XappendTo(that)
+                                                    .classAdd('xui_disabled, format_text')
+                                                    .css({'text-align': 'center'})
+                                                    .Xappend(obj.title);
+                                            }
+                                            _X('<div')
+                                                .XappendTo(that)
                                                 .css({
                                                     position: 'absolute',
                                                     cursor: 'pointer',
-                                                    bottom: 1,
-                                                    left: v.left,
-                                                    right: v.right,
+                                                    top: -13,
+                                                    left: -13,
                                                 })
-                                                .AddIcon({ico: 'adjust', size: 12})
-                                                .on({
-                                                    mousedown: function(e) {
-                                                        _X(this).classRemove(v.moveClass);
-                                                        if (SETTINGS.resize.sel == 'true') {
+                                                .iconAdd({ico: obj.ico, color: obj.color, size: 35});
+                                            var temp = [
+                                                {ico: 'toll', right: 20, init: self.buttons.WindowHideShow.init},
+                                                {ico: 'cancel', right: -10, init: self.buttons.WindowClose.init},
+                                            ];
+                                            _X.Xeach(temp, function(k, v) {
+                                                _X('<div')
+                                                    .XappendTo(that)
+                                                    .iconAdd({ico: v.ico, size: 30})
+                                                    .css({
+                                                        position: 'absolute',
+                                                        cursor: 'pointer',
+                                                        top: -10,
+                                                        right: v.right,
+                                                    })
+                                                    .on({
+                                                        mouseenter: function() {
                                                             _X(this).Xfind('i').css({color: 'red'});
-                                                            _X(this).classAdd(v.moveClass);
-                                                            self.ResizableFn({item: _X(this).Xparent('.thiswindow'), mouse: e});
-                                                        } else {}
-                                                    },
-                                                    mouseup: function() {
-                                                        _X(this).Xfind('i').css({color: ''});
-                                                        _X(this).classRemove(v.moveClass);
-                                                    },
+                                                        },
+                                                        mouseleave: function() {
+                                                            _X(this).Xfind('i').css({color: ''});
+                                                        },
+                                                        click: function() {
+                                                            v.init();
+                                                        },
+                                                    });
+                                            });
+                                        } else if (settings.windowType == self.type[3]) {
+                                            self.WindowLogo({item: that, show: settings.imageshow});
+                                            if (settings.menuTitle === true) {
+                                                _X('<div')
+                                                    .XappendTo(that)
+                                                    .classAdd('format_text')
+                                                    .css({
+                                                        padding: 2,
+                                                        'margin-left': 10,
+                                                        'margin-right': 10,
+                                                        'text-align': 'center',
+                                                        'font-size': 10,
+                                                        color: '#636363',
+                                                    })
+                                                    .iconAdd({ico: obj.ico, color: obj.color, size: 20})
+                                                    .Xappend(_X.AddSpace(1) + obj.title);
+                                            }
+                                        } else {}
+                                    },
+                                }, {
+                                    classAdd: 'thiswindow_body',
+                                    css: {
+                                        position: 'relative',
+                                        height: 'calc(100% - ' + settings.windowType.bodyHeightCalc + 'px)',
+                                        overflow: 'hidden',
+                                    },
+                                    items: [
+                                        {
+                                            classAdd: 'body_top1',
+                                            init: function(that) {
+                                                if (settings.topBar === 1 || settings.topBar === 2) {
+                                                    _X(that)
+                                                        .css({
+                                                            position: 'relative',
+                                                            padding: 2,
+                                                            height: 35,
+                                                        });
+                                                } else {}
+                                            },
+                                        }, {
+                                            classAdd: 'body_top2',
+                                            init: function(that) {
+                                                if (settings.topBar === 2) {
+                                                    _X(that)
+                                                        .css({
+                                                            position: 'relative',
+                                                            padding: 2,
+                                                            height: 35,
+                                                        });
+                                                } else {}
+                                            }
+                                        }, {
+                                            classAdd: 'body_left',
+                                            css: {
+                                                position: 'absolute',
+                                                width: parseInt(settings.leftSize),
+                                                top: TopBar(),
+                                                left: 0,
+                                                bottom: 0,
+                                                padding: 2,
+                                                'user-select': 'text',
+                                            },
+                                        }, {
+                                            classAdd: 'body_middle',
+                                            css: {
+                                                position: 'absolute',
+                                                left: settings.leftSize,
+                                                width: settings.middlebodywidth ,
+                                                top: TopBar(),
+                                                bottom: 0,
+                                                padding: 2,
+                                            },
+                                        }, {
+                                            classAdd: 'body_right',
+                                            css: {
+                                                position: LeftSizePosition(),
+                                                left: settings.middlebodywidth + parseInt(settings.leftSize),
+                                                top: TopBar(),
+                                                right: 0,
+                                                bottom: 0,
+                                                padding: 2,
+                                                'overflow-x': 'hidden',
+                                                'overflow-y': settings.scroll,
+                                            },
+                                            items: [
+                                                {
+                                                    classAdd: 'body_right_top',
+                                                }, {
+                                                    classAdd: 'body_right_bottom',
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                }, {
+                                    classAdd: 'thiswindow_footer',
+                                    init: function(that) {
+                                        if (settings.windowType == self.type[1]) {
+                                            _X(that)
+                                                .css({
+                                                    position: 'relative',
+                                                    height: 15,                                             
                                                 });
+                                            //div for text
+                                            _X('<div')
+                                                .XappendTo(that)
+                                                .classAdd('footer_text')
+                                                .css({
+                                                    'padding-left': 35,
+                                                    'padding-top': 1,
+                                                    'font-size': 10,
+                                                });
+                                            //divs for actual resize
+                                            var temp = [
+                                                {clasa: 'ico_submenu_resize_sw', left: 1, right: '', moveClass: 'window_resize_sw'},
+                                                {clasa: 'ico_submenu_resize_se', left: '', right: 1, moveClass: 'window_resize_se'},
+                                            ];
+                                            _X.Xeach(temp, function(k, v) {
+                                                _X('<div')
+                                                    .XappendTo(that)
+                                                    .classAdd(v.clasa)
+                                                    .css({
+                                                        position: 'absolute',
+                                                        cursor: 'pointer',
+                                                        bottom: 1,
+                                                        left: v.left,
+                                                        right: v.right,
+                                                    })
+                                                    .iconAdd({ico: 'adjust', size: 12})
+                                                    .on({
+                                                        mousedown: function(e) {
+                                                            _X(this).classRemove(v.moveClass);
+                                                            if (SETTINGS.resize.sel == 'true') {
+                                                                _X(this).Xfind('i').css({color: 'red'});
+                                                                _X(this).classAdd(v.moveClass);
+                                                                self.ResizableFn({item: _X(this).Xparent('.thiswindow'), mouse: e});
+                                                            } else {}
+                                                        },
+                                                        mouseup: function() {
+                                                            _X(this).Xfind('i').css({color: ''});
+                                                            _X(this).classRemove(v.moveClass);
+                                                        },
+                                                    });
+                                            });
+                                        } else {}
+                                    },
+                                },                                    
+                            ],
+                        },              
+                    ],
+                });
+                //Add to Status Bar
+                if (settings.windowType.statusbar === true) {
+                    _X.CreateTagElements({
+                        t: settings.statusBarTo, 
+                        a: [
+                            {
+                                classAdd: 'thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text, ' + settings.name + '_bara_stare',
+                                css: {
+                                    float: 'left',
+                                    padding: 2,
+                                    margin: 1,
+                                    'max-width': 200,
+                                    cursor: 'pointer',
+                                    'z-index': settings.zIndex,
+                                },
+                                iconAdd: {ico: obj.ico, color: obj.color, size: 25},
+                                append: ' ' + obj.title,
+                                on: {
+                                    mouseenter: function() {
+                                        _X.ReturnElements({item: this, obj: obj});
+                                        self.FindWindowKey(this);
+                                        _X(this).classAdd('xui_hover');
+                                        _X.AddTooltip({title: _X(this)[0].innerHTML});
+                                        _X(WIN.full[WIN.key].winElem).classAdd('xui_hover');
+                                    },
+                                    mouseleave: function() {
+                                        _X(this).classRemove('xui_hover');
+                                        _X('.tooltip_class').Xremove();
+                                        _X(WIN.full[WIN.key].winElem).classRemove('xui_hover');
+                                    },
+                                    mousedown: function() {
+                                        _X('body').classAdd('mousedown_true');
+                                        if (_X(WIN.full[WIN.key].winElem).css('z-Index') !== 1501) {
+                                            self.WindowSelect({zIndex: settings.zIndex});
+                                        } else {}
+                                    },
+                                    dblclick: function(e) {
+                                        self.buttons.WindowHideShow.init();
+                                    },
+                                    contextmenu: function(e) {
+                                        e.preventDefault();
+                                        e.stopImmediatePropagation();
+                                        var x = new _X.Window();
+                                        x.init({
+                                            windowType: x.type[3],
+                                            fontSize: 13,
+                                            width: 115,
+                                            height: 'auto',
+                                            open: false,
+                                            clasa: 'remove_on_mousedown',
                                         });
-                                    } else {}
+                                        x.right.MenuElements({
+                                            array: settings.windowType.menuRC,
+                                            pushObj: false,
+                                            pushItem: false,
+                                            icoSize: 25,
+                                            click: 'mousedown',
+                                            color: false,
+                                        });
+                                        x.win.OpenWindow();
+                                        WIN.full.splice(WIN.key, 1);
+                                        self.FindWindowKey(this);
+                                    },
+                                },                             
+                                init: function(that) {
+                                    _X.Xeach(WIN.full, function(k, v) {
+                                        if (v.winBar === undefined) {
+                                            v.winBar = that;
+                                        } else {}
+                                    });
                                 },
                             },
                         ],
                     });
-                    return $this;
-                };
-                //Modal Overlay
-                if ( (SETTINGS.modal.sel == 'true') && (settings.windowType.modal === true) ) {
-                    _X('<div')
-                        .XappendTo(settings.to)
-                        .classAdd('xui_overlay')
-                        .classAdd(settings.name + '_overlay')
-                        .css({'z-index': settings.zIndex - 1})
-                        .WindowOverlay();
-                } else {}
-                //Full Window
-                _X('<div')
-                    .XappendTo(settings.to)
-                    .classAdd('thiswindow, shadow_border, xui_corner_all, xui_content')
-                    .classAdd(settings.name + '_window')
-                    .classAdd(settings.clasa)
-                    .css({
-                        position: 'absolute',
-                        visibility: 'hidden',
-                        width: settings.width,
-                        height: settings.height,
-                        //'box-sizing': 'border-box',
-                        border: 0,
-                        'font-size': settings.fontSize,
-                        'z-index': settings.zIndex,
-                        overflow: settings.windowType.overflow,
-                    })
-                    .WindowLoad()
-                    .AppendBody()
-                    .on({
-                        mouseenter: function() {
-                            if (_X('body').classBool('mousedown_true') === false) {
-                                _X(this).FindWindowKey();
-                            } else {}
-                        },
-                        mousedown: function(e) {
-                            _X('body').classAdd('mousedown_true');
-                            if (_X(this).css('z-Index') !== 1501) {
-                                self.WindowSelect({zIndex: settings.zIndex});
-                            } else {}
-                            //console.log(WIN.full);
-                            if (settings.windowType !== self.type[1]) {
-                                if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
-                                    _X.XDraggable({item: this, mouse: e, dragArea: settings.dragArea});
-                                } else {}
-                            } else {}
-                        },
-                        contextmenu: function(e) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                        },
-                        dblclick: function(e) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                        },
-                    })
-                    .OpenWindow({
-                        maxSize: settings.windowType.maxSize,
-                        open: settings.open,
-                    })
-                    .FindWindowKey();
-                //Add to Status Bar
-                if (settings.windowType.statusbar === true) {
-                    _X('<div')
-                        .XappendTo(settings.statusBarTo)
-                        .classAdd('thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text')
-                        .classAdd(settings.name + '_bara_stare')
-                        .css({
-                            float: 'left',
-                            padding: 2,
-                            margin: 1,
-                            'max-width': 200,
-                            cursor: 'pointer',
-                            'z-index': settings.zIndex,
-                        })
-                        .AddIcon({ico: obj.ico, color: obj.color, size: 25})
-                        .Xappend(' ' + obj.title)
-                        .WindowStatusBar()
-                        .on({
-                            mouseenter: function() {
-                                _X.ReturnElements({item: this, obj: obj});
-                                _X(this).FindWindowKey();
-                                _X(this).classAdd('xui_hover');
-                                _X.AddTooltip({title: _X(this)[0].innerHTML});
-                                _X(WIN.full[WIN.key].winElem).classAdd('xui_hover');
-                            },
-                            mouseleave: function() {
-                                _X(this).classRemove('xui_hover');
-                                _X('.tooltip_class').Xremove();
-                                _X(WIN.full[WIN.key].winElem).classRemove('xui_hover');
-                            },
-                            mousedown: function() {
-                                _X('body').classAdd('mousedown_true');
-                                if (_X(WIN.full[WIN.key].winElem).css('z-Index') !== 1501) {
-                                    self.WindowSelect({zIndex: settings.zIndex});
-                                } else {}
-                            },
-                            dblclick: function(e) {
-                                self.buttons.WindowHideShow.init();
-                            },
-                            contextmenu: function(e) {
-                                e.preventDefault();
-                                e.stopImmediatePropagation();
-                                var x = new _X.Window();
-                                x.init({
-                                    windowType: x.type[3],
-                                    fontSize: 13,
-                                    width: 115,
-                                    height: 'auto',
-                                    open: false,
-                                    clasa: 'remove_on_mousedown',
-                                });
-                                x.right.MenuElements({
-                                    array: settings.windowType.menuRC,
-                                    pushObj: false,
-                                    pushItem: false,
-                                    icoSize: 25,
-                                    click: 'mousedown',
-                                    color: false,
-                                });
-                                x.win.OpenWindow();
-                                WIN.full.splice(WIN.key, 1);
-                                _X(this).FindWindowKey();
-                            },
-                        });
-                } else {}
+                }
                 self.ResizeStatusBar();
                 self.WindowSelect({zIndex: settings.zIndex});
                 self.GetElements();
@@ -1695,55 +1696,60 @@ var WIN = { key: 0, full: [NULLWIN()] };
             };
         };
 
-        /*Create elements from object
-        Structure Example:
-        var x = [
-            {
-                create the element
-                elem: '<div' || '<img' || .. html tag
-                
-                //add class name
-                clasa: {},
-                
-                //add css
-                css: {},
-                
-                //add mouse events 
-                on: {},
-                
-                //add icon
-                icon: {},
-                
-                //add function
-                init: {},
-                
-                //add subelements
-                items: [
-                    {
-                        elem: ''
-                        clasa: {},
-                        css: {},
-                        on: {},
-                        icon: {},
-                        init: {},
-                        items: [
-                            ...
-                        ],
-                    },{
-                        ...
-                    }
-                ],
-            },{
-                ...
-            }
-        ];*/
-        
-        //a => array
-        //t => element where to append
+        /*Structure Example:
+        _X.CreateTagElements({
+            t: '', //element where to append
+            a: [
+                {
+                    //create the element '<div' || '<img' || html tag
+                    elem: '',
+                    
+                    //add class name
+                    classAdd: {},
+                    
+                    //add css
+                    css: {},
+                    
+                    //append to element
+                    append: '',
+                    
+                    //add mouse events 
+                    on: {},
+                    
+                    //add icon
+                    iconAdd: {},
+                    
+                    //add function
+                    init: {},
+                    
+                    //add subelements
+                    items: [
+                        {
+                            elem: '',
+                            classAdd: {},
+                            css: {},
+                            on: {},
+                            iconAdd: {},
+                            init: {},
+                            items: [
+                                //...
+                            ],
+                        },{
+                            //...
+                        }
+                    ],
+                },{
+                    //...
+                },
+            ],
+        });
+*/
+
+        //Create elements from object
         _X.CreateTagElements = function(options) {
             var defaults = {
-                a: '', //array
-                t: '', //append to
+                a: '', //a => array
+                t: '', //t => element where to append
             };
             var s = _X.JoinObj(defaults, options);
             _X.prototype._init = function(elem) {
@@ -1757,11 +1763,11 @@ var WIN = { key: 0, full: [NULLWIN()] };
             _X.prototype._items = function(elem) {
                 var that = this;
                 if (elem.hasOwnProperty('items')) {
-                    ReturnElements(elem.items, that);
+                    Start(elem.items, that);
                 }
                 return that;
             };
-            function ReturnElements(array, appendto) {
+            function Start(array, appendto) {
                 _X.Xeach(array, function(k, v) {
                     if (v.elem === undefined) {
                         v.elem = '<div';
@@ -1770,16 +1776,17 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                     _X(v.elem)
                         .XappendTo(appendto)
-                        .classAdd(v.clasa)
+                        .classAdd(v.classAdd)
                         .attr(v.attr)
                         .css(v.css)
-                        .AddIcon(v.icon)
+                        .iconAdd(v.iconAdd)
+                        .Xappend(v.append)
                         .on(v.on)
                         ._init(v.init)
                         ._items(v);
                 });
             }
-            ReturnElements(s.a, s.t);
+            Start(s.a, s.t);
         };
         
         //_X Object Prototype
@@ -1792,7 +1799,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             length:         0,
 
             //Add Icon || Image
-            AddIcon: function(options) {
+            iconAdd: function(options) {
                 var defaults = {
                     ico: '',
                     color: '',
@@ -1945,16 +1952,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 }
                 return false;
             },
-            
-            //_X(?).XappendTo('?') => SET element to parent
-            XappendTo: function(e) {
-                var that = this;
-                var getEl = _X(e);
-                if (getEl.length > 0 && that.length > 0) {
-                    getEl[0].appendChild(that[0]);
-                }
-                return that;
-            },
 
             //_X(?).txt()     => GET current element TEXT
             //_X(?).txt('?')  => SET the TEXT to element
@@ -1985,18 +1982,30 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 x.length = GetObjectLength(x);
                 return x;
             },
+
+            //_X(?).XappendTo('?') => SET element to parent
+            XappendTo: function(e) {
+                var that = this;
+                var getEl = _X(e);
+                if (getEl.length > 0 && that.length > 0) {
+                    getEl[0].appendChild(that[0]);
+                }
+                return that;
+            },
             
             //_X(?).Xappend('?') => append OBJECT or HTML other object
             Xappend: function(e) {
                 var that = this;
                 var i;
-                if (e !== undefined && typeof e == 'object') {
-                    for (i = 0; i < that.length; i++) {
-                        that[i].appendChild(e[0]);
-                    }
-                } else {
-                    for (i = 0; i < that.length; i++) {
-                        that[i].innerHTML += e;
+                if (e !== undefined) {
+                    if (typeof e == 'object') {
+                        for (i = 0; i < that.length; i++) {
+                            that[i].appendChild(e[0]);
+                        }
+                    } else {
+                        for (i = 0; i < that.length; i++) {
+                            that[i].innerHTML += e;
+                        }
                     }
                 }
                 return that;
@@ -2132,17 +2141,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 }
                 return false;                
             },
-
-            //_X(?).Xremove() => DELETE current element
-            Xremove: function() {
-                var that = this;
-                var i;
-                for (i = 0; i < that.length; i++) {
-                    if (that[i] !== undefined) {
-                        that[i].parentNode.removeChild(that[i]);
-                    }
-                }
-            },
             
             //_X(?).on( ['? ? ?', function(){}] )      => SET event like an array syntax
             //_X(?).on( {'?': function(){}} )          => SET event like an object syntax
@@ -2192,6 +2190,17 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     return that;
                 }
                 return that;
+            },
+
+            //_X(?).Xremove() => DELETE current element
+            Xremove: function() {
+                var that = this;
+                var i;
+                for (i = 0; i < that.length; i++) {
+                    if (that[i] !== undefined) {
+                        that[i].parentNode.removeChild(that[i]);
+                    }
+                }
             },
 
             //_X(?).Xfind('children')   => return all children on first level from element
@@ -2443,7 +2452,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             border: '1px solid transparent',
                         })
                         .css(s.css)
-                        .AddIcon({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
+                        .iconAdd({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
                         .Xappend(_X('<div')
                             .Xappend(TitleLoad(v))
                             .css({display: 'inline'})
