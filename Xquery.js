@@ -86,7 +86,14 @@ var NULLWIN = function() {
         winData:    {tophide: 0, left: 0, top: 0, width: 0, height: 0},
     };
 };
-var WIN = { key: 0, full: [NULLWIN()] };
+var WIN = {
+    key: 0,
+    full: [NULLWIN()],
+    globalDIV: '',
+    taskbar: '',
+    body: '',
+    adsense: '',
+};
 
 (function(window){
     //'use strict';
@@ -96,7 +103,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17.10.2019',
-            updated:     '25.11.2020',
+            updated:     '22.12.2020',
         };
         
         var xs = 0;
@@ -359,14 +366,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             }
             return s;
         };
-
-        _X.FWidth = function(width) {
-            return _X('.active_screen').Xfind('.desktop_website').position('width', 'offset') / width;
-        };
-        _X.FHeight = function(height) {
-            return _X('.active_screen').Xfind('.desktop_website').position('height', 'offset') / height;
-        };
-        
+            
         _X.XAddNull = function(val) {
             if (val.length === 1) { val = '0' + val; }
             return val;
@@ -460,15 +460,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
             }
         };
 
-        _X.AdSenseVertical = function() {
-            if (window.innerWidth > 700) {
-                return 'pages/adsense_vertical_120x600.html';
-                //return 'pages/null.html';
-            } else {
-                return 'pages/null.html';
-            }
-        };   
-
         _X.OpenHtml = function() {
             var obj = SELECTED.obj;
             var x = new _X.Window();
@@ -477,7 +468,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             });
             _X('<iframe')
                 .XappendTo(x.left)
-                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});
             x.right.Xload({url: obj.loc});
         };
@@ -491,7 +482,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             });
             _X('<iframe')
                 .XappendTo(x.left)
-                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});
             _X('<iframe')
                 .XappendTo(x.right)
@@ -507,7 +498,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             });
             _X('<iframe')
                 .XappendTo(x.left)
-                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});        
             _X('<img')
                 .XappendTo(x.right)
@@ -523,7 +514,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
             });
             _X('<iframe')
                 .XappendTo(x.left)
-                .attr({src: _X.AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});        
             _X('<video')
                 .XappendTo(x.right)
@@ -821,7 +812,6 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             cursor: 'pointer',
                             border: '1px solid transparent',
                         })
-                        .FrontSide(obj, size)
                         .on({
                             mouseenter: function() {
                                 _X(this).classAdd('shadow_border');
@@ -829,7 +819,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             mouseleave: function() {
                                 _X(this).classRemove('shadow_border');
                             },
-                        });
+                        })
+                        .FrontSide(obj, size);
                 }
                 return that;
             };
@@ -944,8 +935,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                         var elT = that.position('top', 'offset');
                         var elW = that.position('width', 'offset');
                         var elH = that.position('height', 'offset');
-                        var winW = _X('.active_screen').Xfind('.desktop_website').position('width', 'offset');
-                        var winH = _X('.active_screen').Xfind('.desktop_website').position('height', 'offset');
+                        var winW = _X(WIN.globalDIV).Xfind(WIN.body).position('width', 'offset');
+                        var winH = _X(WIN.globalDIV).Xfind(WIN.body).position('height', 'offset');
                         if (elW < winW && elH > 39) {
                             store.left = elL;
                             store.top = elT;
@@ -1104,8 +1095,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     _X('.thiswindow_statusbar').classRemove('xui_highlight, xui_hover');
                 } else {}
                 if (SETTINGS.autorefresh.sel == 'true') {
-                    _X(WIN.full[WIN.key].winElem).XappendTo(_X('.active_screen').Xfind('.desktop_website')).css({'z-index': settings.zIndex});
-                    _X(WIN.full[WIN.key].winOverlay).XappendTo(_X('.active_screen').Xfind('.desktop_website')).css({'z-index': settings.zIndex - 1});
+                    _X(WIN.full[WIN.key].winElem).XappendTo(_X(WIN.globalDIV).Xfind(WIN.body)).css({'z-index': settings.zIndex});
+                    _X(WIN.full[WIN.key].winOverlay).XappendTo(_X(WIN.globalDIV).Xfind(WIN.body)).css({'z-index': settings.zIndex - 1});
                 } else {
                     _X(WIN.full[WIN.key].winElem).css({'z-index': settings.zIndex});
                     _X(WIN.full[WIN.key].winOverlay).css({'z-index': settings.zIndex - 1});
@@ -1115,14 +1106,14 @@ var WIN = { key: 0, full: [NULLWIN()] };
             this.WindowMoveToSide = function() {
                 var amount_move = 5;
                 var pos = {
-                    lefT:   {left: 0, right: '', top: 50, bottom: '', width: amount_move, height: _X.FHeight(3)},
-                    lefB:   {left: 0, right: '', top: '', bottom: 50, width: amount_move, height: _X.FHeight(3)},
-                    rightT: {left: '', right: 0, top: 50, bottom: '', width: amount_move, height: _X.FHeight(3)},
-                    rightB: {left: '', right: 0, top: '', bottom: 50, width: amount_move, height: _X.FHeight(3)},
-                    topL:   {left: 20, right: '', top: 0, bottom: '', width: _X.FWidth(5), height: amount_move},
-                    topR:   {left: '', right: 20, top: 0, bottom: '', width: _X.FWidth(5), height: amount_move},
-                    topC:   {left: _X.FWidth(3), right: '', top: 0, bottom: '', width: _X.FWidth(3), height: amount_move},
-                    center: {left: _X.FWidth(9) * 4, right: '', top: _X.FHeight(7) * 3, bottom: '', width: _X.FWidth(9), height: _X.FHeight(7)},
+                    lefT:   {left: 0, right: '', top: 50, bottom: '', width: amount_move, height: FHeight(3)},
+                    lefB:   {left: 0, right: '', top: '', bottom: 50, width: amount_move, height: FHeight(3)},
+                    rightT: {left: '', right: 0, top: 50, bottom: '', width: amount_move, height: FHeight(3)},
+                    rightB: {left: '', right: 0, top: '', bottom: 50, width: amount_move, height: FHeight(3)},
+                    topL:   {left: 20, right: '', top: 0, bottom: '', width: FWidth(5), height: amount_move},
+                    topR:   {left: '', right: 20, top: 0, bottom: '', width: FWidth(5), height: amount_move},
+                    topC:   {left: FWidth(3), right: '', top: 0, bottom: '', width: FWidth(3), height: amount_move},
+                    center: {left: FWidth(9) * 4, right: '', top: FHeight(7) * 3, bottom: '', width: FWidth(9), height: FHeight(7)},
                 };
                 var that = _X(WIN.full[WIN.key].winElem);
                 var store = WIN.full[WIN.key].winData;
@@ -1130,7 +1121,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 var elT = that.position('top', 'offset');
                 var elW = that.position('width', 'offset');
                 var elH = that.position('height', 'offset');                
-                var winW = _X('.screen_faces').position('width', 'offset');
+                var winW = _X(WIN.globalDIV).position('width', 'offset');
                 function ResizeMoveToSide(width, height, left, top) {
                     _X(WIN.full[WIN.key].winElem).css({left: left, top: top, width: width, height: height});
                     _X(window).off({mouseup: mouseup});
@@ -1162,36 +1153,36 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     });
                     var mouseup = function(e) {
                         //left top
-                        if (e.pageX < amount_move && e.pageY < _X.FHeight(2)) {
-                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), 0, 0);
+                        if (e.pageX < amount_move && e.pageY < FHeight(2)) {
+                            ResizeMoveToSide(FWidth(2), FHeight(2), 0, 0);
                         }
                         //right top
-                        else if (e.pageX > (_X.FWidth(1) - amount_move) && e.pageY < _X.FHeight(2)) {
-                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), _X.FWidth(2), 0);
+                        else if (e.pageX > (FWidth() - amount_move) && e.pageY < FHeight(2)) {
+                            ResizeMoveToSide(FWidth(2), FHeight(2), FWidth(2), 0);
                         }
                         //left bottom
-                        else if (e.pageX < amount_move && e.pageY > _X.FHeight(2)) {
-                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), 0, _X.FHeight(2));
+                        else if (e.pageX < amount_move && e.pageY > FHeight(2)) {
+                            ResizeMoveToSide(FWidth(2), FHeight(2), 0, FHeight(2));
                         }
                         //right bottom
-                        else if (e.pageX > (_X.FWidth(1) - amount_move) && e.pageY > _X.FHeight(2) ) {
-                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(2), _X.FWidth(2), _X.FHeight(2));
+                        else if (e.pageX > (FWidth() - amount_move) && e.pageY > FHeight(2) ) {
+                            ResizeMoveToSide(FWidth(2), FHeight(2), FWidth(2), FHeight(2));
                         }
                         //Left
-                        else if (e.pageX < _X.FWidth(3) && e.pageY < amount_move) {
-                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(1), 0, 0);
+                        else if (e.pageX < FWidth(3) && e.pageY < amount_move) {
+                            ResizeMoveToSide(FWidth(2), FHeight(), 0, 0);
                         }
                         //Right
-                        else if (e.pageX > (_X.FWidth(1) - _X.FWidth(3)) && e.pageY < amount_move) {
-                            ResizeMoveToSide(_X.FWidth(2), _X.FHeight(1), _X.FWidth(2), 0);
+                        else if (e.pageX > (FWidth() - FWidth(3)) && e.pageY < amount_move) {
+                            ResizeMoveToSide(FWidth(2), FHeight(), FWidth(2), 0);
                         }
                         //Full
-                        else if (e.pageX > _X.FWidth(3) && e.pageX < (_X.FWidth(1) - _X.FWidth(3)) && e.pageY < amount_move) {
-                            ResizeMoveToSide(_X.FWidth(1), _X.FHeight(1), 0, 0);
+                        else if (e.pageX > FWidth(3) && e.pageX < (FWidth() - FWidth(3)) && e.pageY < amount_move) {
+                            ResizeMoveToSide(FWidth(), FHeight(), 0, 0);
                         }
                         //Center
-                        else if (e.pageX > (_X.FWidth(7) * 3) && e.pageX < (_X.FWidth(1) - _X.FWidth(7) * 3) && e.pageY > (_X.FHeight(7) * 3) && e.pageY < (_X.FHeight(1) - _X.FHeight(7) * 3)) {
-                            ResizeMoveToSide(_X.FWidth(3), _X.FHeight(2), _X.FWidth(3), _X.FHeight(5));
+                        else if (e.pageX > (FWidth(7) * 3) && e.pageX < (FWidth() - FWidth(7) * 3) && e.pageY > (FHeight(7) * 3) && e.pageY < (FHeight() - FHeight(7) * 3)) {
+                            ResizeMoveToSide(FWidth(3), FHeight(2), FWidth(3), FHeight(5));
                         }
                         else {
                            _X(window).off({mouseup: mouseup});
@@ -1202,10 +1193,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
             };
 
             this.ResizeStatusBar = function() {
-                var status_width = _X('.active_screen').Xfind('.container_bara_stare').position('width', 'offset') - 7;
-                var selecteditems = _X('.active_screen').Xfind('.thiswindow_statusbar').length;
+                var status_width = _X(WIN.globalDIV).Xfind(WIN.taskbar).position('width', 'offset') - 7;
+                var selecteditems = _X(WIN.globalDIV).Xfind('.thiswindow_statusbar').length;
                 var resultat = (status_width / selecteditems) - 8;
-                _X('.active_screen').Xfind('.thiswindow_statusbar').css({width: resultat});
+                _X(WIN.globalDIV).Xfind('.thiswindow_statusbar').css({width: resultat});
                 //console.log(status_width, selecteditems, resultat);
             };
 
@@ -1249,8 +1240,8 @@ var WIN = { key: 0, full: [NULLWIN()] };
             this.init = function(options) {
                 var obj = SELECTED.obj;
                 var defaults = {
-                    to: _X('.active_screen').Xfind('.desktop_website'),
-                    statusBarTo: _X('.active_screen').Xfind('.container_bara_stare'),
+                    to: _X(WIN.globalDIV).Xfind(WIN.body),
+                    statusBarTo: _X(WIN.globalDIV).Xfind(WIN.taskbar),
                     windowType: self.type[1], // 1 => default window, 2 => small fixed, 3 => right click menu
                     zIndex: 1501,
                     width: 300,
@@ -1265,7 +1256,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     middlebodywidth: 0,
                     imageshow: true,
                     menuTitle: true,
-                    dragArea: _X('.active_screen').Xfind('.desktop_website'),
+                    dragArea: _X(WIN.globalDIV).Xfind(WIN.body),
                 };
                 var settings = _X.JoinObj(defaults, options);
                 //Modal Overlay
@@ -2339,6 +2330,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 //xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 //xhr.getAllResponseHeaders();
                 //xhr.getResponseHeader('Content-Type')
+                return that;
             },
 
             XInput: function(options) {
@@ -2346,7 +2338,9 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     id: '',
                     name: 'Search',
                     width: '100%',
+                    height: 'auto',
                     type: 'text',
+                    css: {},
                 };
                 var s = _X.JoinObj(defaults, options);
                 var that = this;
@@ -2369,8 +2363,10 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     .css({
                         'box-sizing': 'border-box',
                         width: s.width,
-                    });
-                return this;
+                        height: s.height,
+                    })
+                    .css(s.css);
+                return that;
             },
             
             CheckBox: function(options) {
@@ -2388,6 +2384,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             e.stopImmediatePropagation();
                         }});
                 } else {}
+                return that;
             },
 
             XButton: function(options) {
@@ -2417,7 +2414,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                                 .css({color: ''});
                         },
                     });
-                return this;
+                return that;
             },
 
             MenuElements: function(options) {
@@ -2501,6 +2498,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                             v.init();
                         }]);
                 });
+                return that;
             },
 
             OpenWindow: function(options) {
@@ -2519,17 +2517,17 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     else {return null;}
                 }
                 function Left() {
-                    if (MOUSE.X > _X.FWidth(1) - width) {
+                    if (MOUSE.X > FWidth() - width) {
                         return MOUSE.X - width;
                     } else {
                         return MOUSE.X;
                     }
                 }
                 function Top() {
-                    if (MOUSE.Y > _X.FHeight(1) - height && MOUSE.Y < _X.FHeight(1)) {
+                    if (MOUSE.Y > FHeight() - height && MOUSE.Y < FHeight()) {
                         //console.log('1');
                         return MOUSE.Y - height;
-                    } else if (MOUSE.Y > _X.FHeight(1)) {
+                    } else if (MOUSE.Y > FHeight()) {
                         //console.log('2');
                         var value = window.innerHeight - MOUSE.Y;
                         //Valoare 36 corectare inaltime statusbar
@@ -2541,12 +2539,12 @@ var WIN = { key: 0, full: [NULLWIN()] };
                 }
                 if (settings.open === true) {
                     that.css({position: 'absolute'});
-                    if (_X.FWidth(1) < 700 && settings.maxSize === true) { 
+                    if (FWidth() < 700 && settings.maxSize === true) { 
                         that.css({
                                 left: 0,
                                 top: 0,
-                                width: _X.FWidth(1),
-                                height: _X.FHeight(1),
+                                width: FWidth(),
+                                height: FHeight(),
                             });
                     } else {
                         that.css({
@@ -2556,7 +2554,7 @@ var WIN = { key: 0, full: [NULLWIN()] };
                     }
                     that.Xshow(Effect());
                 } else {}
-                return this;
+                return that;
             },           
         };
 
@@ -2848,6 +2846,22 @@ var WIN = { key: 0, full: [NULLWIN()] };
             console.table(init());
         }
         return _X;
+
+        function FWidth(width = 1) {
+            return _X(WIN.globalDIV).Xfind(WIN.body).position('width', 'offset') / width;
+        }
+        
+        function FHeight(height = 1) {
+            return _X(WIN.globalDIV).Xfind(WIN.body).position('height', 'offset') / height;
+        }
+
+        function AdSenseVertical() {
+            if (window.innerWidth > 700) {
+                return WIN.adsense;
+            } else {
+                return 'pages/null.html';
+            }
+        }       
     }
     
     if (typeof window._X === 'undefined') {
@@ -2855,16 +2869,41 @@ var WIN = { key: 0, full: [NULLWIN()] };
     }
 })(window);
 
+_X(window).on({
+    resize: function(e) {
+        var x = new _X.Window();
+        x.ResizeStatusBar();
+    },
+});
+
 _X(document).on({
     mousemove: function(e) {
         //Mouse Move
         MOUSE.X = e.pageX;
         MOUSE.Y = e.pageY;
+        
+        //Toolltip
+        (function() {
+            var width = _X('.tooltip_class').position('width', 'offset');
+            function Left() {
+                if ( (e.pageX > window.innerWidth - width) ) {
+                    return e.pageX - width;
+                } else {
+                    return e.pageX;
+                }
+            }
+            _X('.tooltip_class').css({display: 'block', left: Left(), top: e.pageY - 30});
+        })();
     },
     mousedown: function(e) {
         if (e.which === 1) {
             MOUSE.XD = e.pageX;
             MOUSE.YD = e.pageY;
         }
+        _X('.tooltip_class').Xremove();
+        _X('.remove_on_mousedown').Xremove();
     },
+    mouseup: function(e) {
+        _X('.remove_on_mouseup').Xremove();
+    },    
 });
