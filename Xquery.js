@@ -78,6 +78,8 @@ var SELECTED = {item: 0, obj: 0, obj2: 0};
 
 var DefaultSearchLocation = [];
 
+var DesktopIconsSel = [];
+
 var NULLWIN = function() {
     return {
         winElem:    undefined,
@@ -92,6 +94,7 @@ var WIN = {
     globalDIV: '',
     taskbar: '',
     body: '',
+    icons: '',
     adsense: '',
 };
 
@@ -172,7 +175,7 @@ var WIN = {
         }
 
         //Generate Random Class
-        _X.ClassVirtual = function() {return '.' + 'VirtualClass' + 9 + xs++};    
+        _X.ClassVirtual = function() {return '.' + 'VirtualClass' + 9 + xs++};
 
         //3D Website Rotate
         //rotation in deg
@@ -263,15 +266,15 @@ var WIN = {
                     };
                     //Search
                     if (l == 'search' && glob.search !== undefined && Exclude() === true) {
-                        return glob.search.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                        return glob.search.toString().toLowerCase().indexOf(s.toString().toLowerCase()) > -1;
                     }
                     //Location
                     else if (l == 'loc' && glob.loc !== undefined && Exclude() === true) {
-                        return glob.loc.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                        return glob.loc.toString().toLowerCase().indexOf(s.toString().toLowerCase()) > -1;
                     }
                     //Title
                     else if (l == 'title' && glob.title !== undefined && Exclude() === true) {
-                        return glob.title.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                        return glob.title.toString().toLowerCase().indexOf(s.toString().toLowerCase()) > -1;
                     }
                     //Keyboard Key
                     else if (l == 'key' && glob.key !== undefined && Exclude() === true) {
@@ -279,11 +282,11 @@ var WIN = {
                     }
                     //Icon
                     else if (l == 'ico' && glob.ico !== undefined && Exclude() === true) {
-                        return glob.ico.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                        return glob.ico.toString().toLowerCase().indexOf(s.toString().toLowerCase()) > -1;
                     }
                     //Search by the Name of the Key not Value   
                     else if (l == 'keyname' && Exclude() === true) {
-                        return key.toLowerCase().indexOf(s.toLowerCase()) > -1;
+                        return key.toString().toLowerCase().indexOf(s.toString().toLowerCase()) > -1;
                     }
                 }
                 if (a !== undefined) {
@@ -492,14 +495,14 @@ var WIN = {
     
         _X.OpenPhoto = function() {
             var obj = SELECTED.obj;
-            var x = new _X.Window();        
+            var x = new _X.Window();
             x.init({
                 leftSize: x.AutoLeftResize(),
             });
             _X('<iframe')
                 .XappendTo(x.left)
                 .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
-                .css({width: '100%', height: '100%'});        
+                .css({width: '100%', height: '100%'});
             _X('<img')
                 .XappendTo(x.right)
                 .attr({src: obj.loc})
@@ -515,13 +518,155 @@ var WIN = {
             _X('<iframe')
                 .XappendTo(x.left)
                 .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
-                .css({width: '100%', height: '100%'});        
+                .css({width: '100%', height: '100%'});
             _X('<video')
                 .XappendTo(x.right)
                 .attr({width: '100%', height: 'auto', controls:''})
-                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
-                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
-                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/webm; codecs="vp8.0, vorbis"'}) );
+                //.Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
+                //.Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
+                //.Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/webm; codecs="vp8.0, vorbis"'}) );
+                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' ')}));
+        };
+
+        _X.IconsMoveSelect = function() {
+            var that = this;
+            this.MoveSelection = function() {
+                _X.Xeach(DesktopIconsSel, function(k, v) {
+                    //console.log(DesktopIconsSel);
+                    var left = _X(v).position('left', 'offset');
+                    var top = _X(v).position('top', 'offset');
+                    //console.log(left, top);
+                    var mousemove = function(e) {
+                        _X(v).css({
+                            position: 'absolute',
+                            left: left + (e.pageX - MOUSE.XD),
+                            top: top + (e.pageY - MOUSE.YD)
+                        });
+                    };
+                    var mouseup = function() {
+                        _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                    };
+                    _X(window).on({mousemove: mousemove, mouseup: mouseup});
+                });
+            };
+
+            this.CreateSelectionRectangle = function() {
+                var c = _X('.container_mouse_move');
+                var x = MOUSE.X;
+                var y = MOUSE.Y;
+                //Right Bottom
+                if (x > MOUSE.XD && y > MOUSE.YD) {
+                    c.css({
+                        left:   MOUSE.XD,
+                        top:    MOUSE.YD, 
+                        width:  x - MOUSE.XD,
+                        height: y - MOUSE.YD,
+                    });
+                }
+                //Right Top
+                else if (x > MOUSE.XD && y < MOUSE.YD) {
+                    c.css({
+                        left:   MOUSE.XD,
+                        top:    y, 
+                        width:  x - MOUSE.XD,
+                        height: MOUSE.YD - y,
+                    });
+                }
+                //Left Top
+                else if (x < MOUSE.XD && y < MOUSE.YD) {
+                    c.css({
+                        left:   x,
+                        top:    y, 
+                        width:  MOUSE.XD - x,
+                        height: MOUSE.YD - y,
+                    });
+                }
+                //Left Bottom
+                else if (x < MOUSE.XD && y > MOUSE.YD) {
+                    c.css({
+                        left:   x,
+                        top:    MOUSE.YD, 
+                        width:  MOUSE.XD - x,
+                        height: y - MOUSE.YD,
+                    });
+                }
+            };
+
+            this.SelectIcons = function() {
+                _X('<div')
+                    .XappendTo(_X(WIN.globalDIV).Xfind(WIN.body))
+                    .classAdd('container_mouse_move')
+                    .css({
+                        position: 'absolute',
+                        border: '1px solid #ffffff',
+                        opacity: 0.2,
+                        'background-color': '#ff0000',
+                        'z-index': 30,
+                    });
+                _X.Xeach(_X(WIN.globalDIV).Xfind(WIN.icons).Xfind('.xcube'), function(k, v) {
+                    var l1 = _X(v).position('left', 'box');
+                    var t1 = _X(v).position('top', 'box');
+                    var w1 = _X(v).position('width', 'box');
+                    var h1 = _X(v).position('height', 'box');
+                    //console.log('F1', l1, t1, w1, h1);
+                    var mousemove = function() {
+                        that.CreateSelectionRectangle();
+                        var l2 = _X('.container_mouse_move').position('left', 'offset');
+                        var t2 = _X('.container_mouse_move').position('top', 'offset');
+                        var w2 = _X('.container_mouse_move').position('width', 'offset');
+                        var h2 = _X('.container_mouse_move').position('height', 'offset');
+                        //console.log('F2', l2, t2, w2, h2);
+                        if ( (l2 <= l1) && (t2 <= t1) && (l2 + w2 >= l1 + w1) && (t2 + h2 >= t1 + h1) ) {
+                            //if elements dont have this class then they get inside array
+                            if (_X(v).Xfind('children').classBool('xui_highlight') === false) {
+                                _X(v).Xfind('children').classAdd('xui_highlight');
+                                DesktopIconsSel.push(v);
+                            }
+                            //console.log(DesktopIconsSel);
+                        } else {
+                            if (_X(v).Xfind('children').classBool('xui_highlight') === true) {
+                                _X(v).Xfind('children').classRemove('xui_highlight');
+                                DesktopIconsSel = _X.Xgrep(DesktopIconsSel, function(elem) { return elem != v; });
+                                //console.log(DesktopIconsSel);
+                            }
+                        }
+                    };
+                    var mouseup = function() {
+                        _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                        _X('.container_mouse_move').Xremove();
+                    }; 
+                    _X(window).on({mousemove: mousemove, mouseup: mouseup});
+                });
+            };
+
+            this.RemoveSelectedElements = function() {
+                _X('.xcube').Xfind('children').classRemove('xui_highlight');
+                DesktopIconsSel.length = 0;
+            };
+
+            this.init = function() {
+                if (_X('body').classBool('mousedown_true') === false) {
+                    var sel = _X('.xcube').Xfind('children').classBool('xui_highlight');
+                    var hover = _X('.xcube').Xfind('children').classBool('xui_hover');
+                    var sel_hover = _X('.xcube').Xfind('children').classBool('xui_highlight, xui_hover');
+                    if (sel_hover) {
+                        that.MoveSelection();
+                    } else if ((sel === false) && (hover === false)) {
+                        that.SelectIcons();
+                    } else if (sel && (hover === false)) {
+                        that.RemoveSelectedElements();
+                        return that.SelectIcons();
+                    } else if ((sel === false) && hover) {
+                        that.RemoveSelectedElements();
+                        return;
+                    } else if (sel && hover) {
+                        that.RemoveSelectedElements();
+                        return;
+                    } else {
+                        that.RemoveSelectedElements();
+                    }
+                }
+            };
         };
 
         _X.AddTooltip = function(options) {
@@ -534,10 +679,10 @@ var WIN = {
                 _X('<div')
                     .XappendTo('body')
                     .classAdd('tooltip_class, xui_content, xui_corner_all, shadow_border')
+                    .Xhide()
                     .css({
                         position: 'absolute',
                         'white-space': 'nowrap',
-                        display: 'none',
                         padding: 3,
                         'z-index': 2000,
                     })
@@ -680,7 +825,7 @@ var WIN = {
                                 };
                                 var mouseup = function() {
                                     _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                                };     
+                                };
                                 _X(window).on({mousemove: mousemove, mouseup: mouseup});
                             }
                         }
@@ -770,7 +915,7 @@ var WIN = {
                     top:    {clasa: 'top', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle - 90, 0, angle)},
                     bottom: {clasa: 'bottom', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle + 90, 0, -angle)},
                 };
-                if (s.cube === true) {
+                if (s.cube === true || s.cube === 'true') {
                     // All Faces
                     _X.Xeach(cubeFaces, function(k, v) {
                         _X('<div')
@@ -1120,7 +1265,7 @@ var WIN = {
                 var elL = that.position('left', 'offset');
                 var elT = that.position('top', 'offset');
                 var elW = that.position('width', 'offset');
-                var elH = that.position('height', 'offset');                
+                var elH = that.position('height', 'offset');
                 var winW = _X(WIN.globalDIV).position('width', 'offset');
                 function ResizeMoveToSide(width, height, left, top) {
                     _X(WIN.full[WIN.key].winElem).css({left: left, top: top, width: width, height: height});
@@ -1236,7 +1381,7 @@ var WIN = {
                     }, 30);
                 }
             };
-            
+
             this.init = function(options) {
                 var obj = SELECTED.obj;
                 var defaults = {
@@ -1291,7 +1436,7 @@ var WIN = {
                         else if (settings.topBar === 1) {return 40}
                         else if (settings.topBar === 2) {return 75}
                     } else {return 0}
-                };                  
+                };
                 _X.CreateTagElements({
                     t: settings.to,
                     a: [
@@ -1334,7 +1479,7 @@ var WIN = {
                                     e.preventDefault();
                                     e.stopImmediatePropagation();
                                 },
-                            },                                
+                            },
                             init: function(that) {
                                 _X.Xeach(WIN.full, function(k, v) {
                                     if (v.winElem === undefined) {
@@ -1344,7 +1489,7 @@ var WIN = {
                                 _X(that).OpenWindow({
                                     maxSize: settings.windowType.maxSize,
                                     open: settings.open,
-                                });                               
+                                });
                                 self.FindWindowKey(that);
                             },
                             items: [
@@ -1355,7 +1500,7 @@ var WIN = {
                                             var DisableHeader = function() {
                                                 if (SETTINGS.header.sel == 'true') {return 'xui_header';}
                                                 else {return  '';}
-                                            };                                            
+                                            };
                                             _X(that)
                                                 .classAdd('xui_corner_all')
                                                 .classAdd(DisableHeader())
@@ -1555,7 +1700,7 @@ var WIN = {
                                             _X(that)
                                                 .css({
                                                     position: 'relative',
-                                                    height: 15,                                             
+                                                    height: 15,
                                                 });
                                             //div for text
                                             _X('<div')
@@ -1600,9 +1745,9 @@ var WIN = {
                                             });
                                         } else {}
                                     },
-                                },                                    
+                                },
                             ],
-                        },              
+                        },
                     ],
                 });
                 //Add to Status Bar
@@ -1627,7 +1772,8 @@ var WIN = {
                                         _X.ReturnElements({item: this, obj: obj});
                                         self.FindWindowKey(this);
                                         _X(this).classAdd('xui_hover');
-                                        _X.AddTooltip({title: _X(this)[0].innerHTML});
+                                        //var tip = _X(this)[0].innerHTML;
+                                        _X.AddTooltip({title: obj.title});
                                         _X(WIN.full[WIN.key].winElem).classAdd('xui_hover');
                                     },
                                     mouseleave: function() {
@@ -1668,7 +1814,7 @@ var WIN = {
                                         WIN.full.splice(WIN.key, 1);
                                         self.FindWindowKey(this);
                                     },
-                                },                             
+                                },
                                 init: function(that) {
                                     _X.Xeach(WIN.full, function(k, v) {
                                         if (v.winBar === undefined) {
@@ -1779,7 +1925,7 @@ var WIN = {
             }
             Start(s.a, s.t);
         };
-        
+
         //_X Object Prototype
         _X.prototype = {
             name:           info.name,
@@ -1871,12 +2017,12 @@ var WIN = {
                         if (i == that.length - 1) {
                             x[0] = that[i];
                         }
-                    }                    
+                    }
                 }
                 x.length = GetObjectLength(x);
                 return x;
             },
-            
+
             //_X(?).classAdd('?, ?') => SET element class
             classAdd: function(e) {
                 var that = this;
@@ -1892,7 +2038,7 @@ var WIN = {
                 }
                 return that;
             },
-            
+
             //_X(?).classRemove('?, ?') => SET element class
             classRemove: function(e) {
                 var that = this;
@@ -1983,7 +2129,7 @@ var WIN = {
                 }
                 return that;
             },
-            
+
             //_X(?).Xappend('?') => append OBJECT or HTML other object
             Xappend: function(e) {
                 var that = this;
@@ -2012,7 +2158,7 @@ var WIN = {
                 }
                 return that;
             },
-        
+
             //_X(?).Xshow()     => show the current element
             //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
             Xshow: function(effect) {
@@ -2044,7 +2190,7 @@ var WIN = {
                 }
                 return that;
             },
-            
+
             //_X(?).attr('? element')              => GET element attribute
             //_X(?).attr({'? element': ? value})   => SET element attribute
             attr: function(e) {
@@ -2065,8 +2211,8 @@ var WIN = {
                     return that;
                 }
             },
-            
-            //_X(?).checkBool()                     => return TRUE / FALSE
+
+            //_X(?).checkBool() => return TRUE / FALSE
             checkBool: function() {
                 var that = this;
                 if (that[0] !== undefined) {
@@ -2074,8 +2220,8 @@ var WIN = {
                 }
             },
 
-            //_X(?).css('? element key')               => GET element css value
-            //_X(?).css({'? element key': ? value})    => SET element css
+            //_X(?).css('? element key')            => GET element css value
+            //_X(?).css({'? element key': ? value}) => SET element css
             css: function(e) {
                 var that = this;
                 var i, j;
@@ -2092,7 +2238,7 @@ var WIN = {
                                     }
                                 }
                             }
-                        }                        
+                        }
                         return that;
                     } else if (typeof e == 'string') {
                         if (that[0] !== undefined && that[0].style[e] !== undefined) {
@@ -2130,7 +2276,7 @@ var WIN = {
                         return true;
                     }
                 }
-                return false;                
+                return false;
             },
             
             //_X(?).on( ['? ? ?', function(){}] )      => SET event like an array syntax
@@ -2169,7 +2315,7 @@ var WIN = {
                 }
                 return that;
             },
-            
+
             //_X(?).Xempty() => DELETE element contains
             Xempty: function() {
                 var that = this;
@@ -2253,7 +2399,7 @@ var WIN = {
                 x.length = GetObjectLength(x);
                 return x;
             },
-            
+
             //_X(?).position('width || height || left || top',  'offset || client || inner || outer || box || scroll || screen || natural');
             position: function(type, e) {
                 var that = this[0];
@@ -2272,10 +2418,10 @@ var WIN = {
                         : (e == 'box') ? that.getBoundingClientRect()[type]
                         : (e == 'screen') ? window.screen[type]
                         : (e == 'window') ? window['inner' + str]
-                        : null;                        
+                        : null;
                 }
             },
-        
+
             //_X(?).Xload({url: '', callback: '', dataType: ''})
             Xload: function(options) {
                 var that = this;
@@ -2311,7 +2457,7 @@ var WIN = {
                         newUrl = url.split(' ');
                         var temp = _X(to).Xappend(responseType).Xfind(newUrl[1]);
                         _X(to).Xempty();
-                        return temp;                        
+                        return temp;
                     }
                 }
                 xhr.open('GET', ReturnUrl(s.url), s.syncron);
@@ -2340,6 +2486,8 @@ var WIN = {
                     width: '100%',
                     height: 'auto',
                     type: 'text',
+                    tooltip: false,
+                    tooltipData: '',
                     css: {},
                 };
                 var s = _X.JoinObj(defaults, options);
@@ -2365,10 +2513,24 @@ var WIN = {
                         width: s.width,
                         height: s.height,
                     })
-                    .css(s.css);
+                    .css(s.css)
+                    .on({
+                        mouseenter: function() {
+                            if (s.tooltip === true) {
+                                _X(this).classAdd('xui_hover');
+                                _X.AddTooltip({title: s.tooltipData});
+                            }
+                        },
+                        mouseleave: function() {
+                            if (s.tooltip === true) {
+                                _X(this).classRemove('xui_hover');
+                                _X('.tooltip_class').Xremove();
+                            }
+                        },
+                    });
                 return that;
             },
-            
+
             CheckBox: function(options) {
                 var defaults = {
                     check: true,
@@ -2626,39 +2788,32 @@ var WIN = {
                 return val < -max ? -1
                     : val < min && val > -min ? 0
                     : val > max ? 1
-                    : Math.round(val * rnd) / rnd;                
+                    : Math.round(val * rnd) / rnd;
             },
-            
             RotateXAxis: function(val) {
                 var s = this.round(Math.sin(val));
                 var c = this.round(Math.cos(val));
                 return [1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1];
             },
-        
             RotateYAxis: function(val) {
                 var s = this.round(Math.sin(val));
-                var c = this.round(Math.cos(val));                
+                var c = this.round(Math.cos(val));
                 return [c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1];
             },
-        
             RotateZAxis: function(val) {
                 var s = this.round(Math.sin(val));
-                var c = this.round(Math.cos(val));                
+                var c = this.round(Math.cos(val));
                 return [c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             },
-        
             translate: function(x, y, z) {
                 return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1];
             },
-        
             scale: function(w, h, d) {
                 return [w, 0, 0, 0, 0, h, 0, 0, 0, 0, d, 0, 0, 0, 0, 1];
             },
-
             skew: function(x, y) {
                 return [1, Math.tan(x), 0, 0, Math.tan(y), 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
             },
-        
             multiplyMatrixAndPoint: function(matrix, point) {
                 //Give a simple variable name to each part of the matrix, a column and row number
                 var c0r0 = matrix[ 0], c1r0 = matrix[ 1], c2r0 = matrix[ 2], c3r0 = matrix[ 3];
@@ -2680,7 +2835,6 @@ var WIN = {
                 var resultW = (x * c3r0) + (y * c3r1) + (z * c3r2) + (w * c3r3);
                 return [resultX, resultY, resultZ, resultW];
             },
-        
             multiplyMatrices: function(matrixA, matrixB) {
                 var R = function(v) {
                     return Math.round(v * 1000000) / 1000000;
@@ -2703,7 +2857,6 @@ var WIN = {
                     R(result0[3]), R(result1[3]), R(result2[3]), R(result3[3]),
                 ];
             },
-        
             Multiply: function(matrices) {
                 var inputMatrix = matrices[0];
                 var i;
@@ -2718,16 +2871,16 @@ var WIN = {
                     this.RotateYAxis(_X.GetRadians(y)),
                     this.RotateXAxis(_X.GetRadians(x)),
                 ]).join(', ');
-            }            
+            },
         };
-        
+
         function GetClasa(elem) {
             var clasa = elem.getAttribute('class') || '';
             if (clasa.length > 0) {
                 return clasa.split(' ');
             } else {return []}
         }
-        
+
         function ClassAddRemove(options) {
             var defaults = {
                 type: '', //remove => arr1 - arr2 || add => arr1 + arr2
@@ -2753,7 +2906,7 @@ var WIN = {
                 return result.concat(s.arr1, temp).join(' ');
             }
         }
-        
+
         function SearchChildren(options) {
             var defaults = {
                 a: '', 
@@ -2787,7 +2940,7 @@ var WIN = {
             Local({a: a, s: s});
             return temp;
         }
-        
+
         function ReturnClassOrId(el) {
             if (el.indexOf('.') > -1) {
                 return 'class';
@@ -2795,7 +2948,7 @@ var WIN = {
                 return 'id';
             }
         }
-        
+
         function ArrayToObject(arr, obj) {
             var i;
             for (i = 0; i < arr.length; i++) {
@@ -2803,7 +2956,7 @@ var WIN = {
             }
             return obj;
         }
-                
+
         function GetObjectLength(obj) {
             var pushkey = [];
             var i;
@@ -2850,7 +3003,7 @@ var WIN = {
         function FWidth(width = 1) {
             return _X(WIN.globalDIV).Xfind(WIN.body).position('width', 'offset') / width;
         }
-        
+
         function FHeight(height = 1) {
             return _X(WIN.globalDIV).Xfind(WIN.body).position('height', 'offset') / height;
         }
@@ -2863,13 +3016,16 @@ var WIN = {
             }
         }       
     }
-    
+
     if (typeof window._X === 'undefined') {
         window._X = xquery();
     }
 })(window);
 
 _X(window).on({
+    load: function() {
+        _X('.body_load').Xremove();
+    },
     resize: function(e) {
         var x = new _X.Window();
         x.ResizeStatusBar();
@@ -2881,18 +3037,27 @@ _X(document).on({
         //Mouse Move
         MOUSE.X = e.pageX;
         MOUSE.Y = e.pageY;
-        
         //Toolltip
         (function() {
-            var width = _X('.tooltip_class').position('width', 'offset');
-            function Left() {
-                if ( (e.pageX > window.innerWidth - width) ) {
-                    return e.pageX - width;
-                } else {
-                    return e.pageX;
-                }
+            if (_X('.tooltip_class').length > 0) {
+                var width = _X('.tooltip_class').position('width', 'offset');
+                var height = _X('.tooltip_class').position('height', 'offset');
+                var Left = function() {
+                    if (e.pageX > window.innerWidth - width) {
+                        return e.pageX - width;
+                    } else {
+                        return e.pageX;
+                    }
+                };
+                var Top = function() {
+                    if (e.pageY < height) {
+                        return e.pageY + height;
+                    } else {
+                        return e.pageY - 30;
+                    }
+                };
+                _X('.tooltip_class').Xshow().css({display: 'block', left: Left(), top: Top()});
             }
-            _X('.tooltip_class').css({display: 'block', left: Left(), top: e.pageY - 30});
         })();
     },
     mousedown: function(e) {
@@ -2902,8 +3067,12 @@ _X(document).on({
         }
         _X('.tooltip_class').Xremove();
         _X('.remove_on_mousedown').Xremove();
+        _X('body').classAdd('mousedown_true');
+        _X('iframe').css({'pointer-events': 'none'});
     },
     mouseup: function(e) {
         _X('.remove_on_mouseup').Xremove();
+        _X('body').classRemove('mousedown_true');
+        _X('iframe').css({'pointer-events': 'auto'});
     },    
 });
