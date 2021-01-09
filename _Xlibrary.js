@@ -106,7 +106,7 @@ var WIN = {
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17.10.2019',
-            updated:     '22.12.2020',
+            updated:     '09.01.2021',
         };
         
         var xs = 0;
@@ -307,7 +307,9 @@ var WIN = {
             if (typeof s == 'string' && s.indexOf(',') > -1) {
                 search = s.replace(/\s/g, '').split(',');
                 for (i = 0; i < search.length; i++) {
-                    SearchTemp({a: a, s: search[i], l: l, d: d, e: e});
+                    if (search[i].length > 0) {
+                        SearchTemp({a: a, s: search[i], l: l, d: d, e: e});
+                    }
                 }
             } else {
                 search = s || '';
@@ -843,7 +845,7 @@ var WIN = {
                 size: 60, // Number or Array [from, to]
                 clasa: '',
                 rotationAngle: 0, // Number or Array [from, to]
-                opacity: 0.8,
+                opacity: 0.9,
                 margin: 3,
                 css: {},
                 icoControls: false,
@@ -1949,6 +1951,22 @@ var WIN = {
                 var that = this;
                 if (options !== undefined && settings.ico !== '') {
                     if (settings.ico.indexOf('/') > -1) {
+                        _X('<img')
+                            .XappendTo(that)
+                            .attr({
+                                width: settings.size,
+                                height: settings.size,
+                                src: settings.ico,
+                            })
+                            .classAdd('xui_corner_all')
+                            .css(settings.css)
+                            .css({
+                                color: settings.color,
+                                'pointer-events': 'none',
+                                'vertical-align': 'middle',
+                            })
+                            .on(settings.on);
+                    } else if (settings.ico.indexOf('_.') > -1) {
                         _X('<img')
                             .XappendTo(that)
                             .attr({
