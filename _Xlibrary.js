@@ -524,10 +524,10 @@ var WIN = {
             _X('<video')
                 .XappendTo(x.right)
                 .attr({width: '100%', height: 'auto', controls:''})
-                //.Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
-                //.Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
-                //.Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/webm; codecs="vp8.0, vorbis"'}) );
-                .Xappend(_X('<source').attr({src: obj.loc.replace('%20', ' ')}));
+                //.append(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
+                //.append(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
+                //.append(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/webm; codecs="vp8.0, vorbis"'}) );
+                .append(_X('<source').attr({src: obj.loc.replace('%20', ' ')}));
         };
 
         _X.IconsMoveSelect = function() {
@@ -688,7 +688,7 @@ var WIN = {
                         padding: 3,
                         'z-index': 2000,
                     })
-                    .Xappend(settings.title);
+                    .append(settings.title);
             } else {}
         };
 
@@ -901,7 +901,7 @@ var WIN = {
                                 'background-color': '#f7f7f7',
                                 'font-size': 12,
                             })
-                            .Xappend(obj.title);
+                            .append(obj.title);
                     } else {}
                 } else {} 
                 return that;
@@ -1539,7 +1539,7 @@ var WIN = {
                                                     width: '47%',
                                                 })
                                                 .iconAdd({ico: obj.ico, color: obj.color, size: 27})
-                                                .Xappend(' ' + obj.title);
+                                                .append(' ' + obj.title);
                                             //Buttons -- Right Side Header
                                             _X('<div')
                                                 .XappendTo(that)
@@ -1565,7 +1565,7 @@ var WIN = {
                                                     .XappendTo(that)
                                                     .classAdd('xui_disabled, format_text')
                                                     .css({'text-align': 'center'})
-                                                    .Xappend(obj.title);
+                                                    .append(obj.title);
                                             }
                                             _X('<div')
                                                 .XappendTo(that)
@@ -1617,7 +1617,7 @@ var WIN = {
                                                         color: '#636363',
                                                     })
                                                     .iconAdd({ico: obj.ico, color: obj.color, size: 20})
-                                                    .Xappend(_X.AddSpace(1) + obj.title);
+                                                    .append(_X.AddSpace(1) + obj.title);
                                             }
                                         } else {}
                                     },
@@ -1842,26 +1842,21 @@ var WIN = {
                 {
                     //create the element '<div' || '<img' || html tag
                     elem: '',
-                    
-                    //add class name
+
                     classAdd: {},
                     
-                    //add css
                     css: {},
                     
-                    //append to element
                     append: '',
                     
-                    //add mouse events 
                     on: {},
                     
-                    //add icon
                     iconAdd: {},
                     
-                    //add function
+                    //function
                     init: {},
                     
-                    //add subelements
+                    //subelements
                     items: [
                         {
                             elem: '',
@@ -1919,7 +1914,7 @@ var WIN = {
                         .attr(v.attr)
                         .css(v.css)
                         .iconAdd(v.iconAdd)
-                        .Xappend(v.append)
+                        .append(v.append)
                         .on(v.on)
                         ._init(v.init)
                         ._items(v);
@@ -1987,7 +1982,7 @@ var WIN = {
                             .XappendTo(that)
                             .classAdd('material-icons')
                             .classAdd(settings.clasa)
-                            .Xappend(settings.ico)
+                            .append(settings.ico)
                             .css(settings.css)
                             .css({
                                 'text-shadow': '1px 1px 1px #636363',
@@ -2051,7 +2046,7 @@ var WIN = {
                     if (e !== undefined) {
                         oldClass = GetClasa(that[i]);
                         addClass = e.replace(/\s/g, '').split(',');
-                        that[i].className = ClassAddRemove({type: 'add', arr1: oldClass, arr2: addClass});
+                        that[i].className = ClassAddRemove({type: 'join', arr1: oldClass, arr2: addClass});
                     }
                 }
                 return that;
@@ -2148,8 +2143,8 @@ var WIN = {
                 return that;
             },
 
-            //_X(?).Xappend('?') => append OBJECT or HTML other object
-            Xappend: function(e) {
+            //_X(?).append('?') => append OBJECT or HTML other object
+            append: function(e) {
                 var that = this;
                 var i;
                 if (e !== undefined) {
@@ -2166,8 +2161,8 @@ var WIN = {
                 return that;
             },
 
-            //_X(?).Xprepend('?') => prepend OBJECT or HTML other object
-            Xprepend: function(e) {
+            //_X(?).prepend('?') => prepend OBJECT or HTML other object
+            prepend: function(e) {
                 var that = this;
                 if (e !== undefined && typeof e == 'object') {
                     that[0].insertBefore(e[0], that[0].childNodes[0]);
@@ -2473,7 +2468,7 @@ var WIN = {
                         return responseType;
                     } else {
                         newUrl = url.split(' ');
-                        var temp = _X(to).Xappend(responseType).Xfind(newUrl[1]);
+                        var temp = _X(to).append(responseType).Xfind(newUrl[1]);
                         _X(to).Xempty();
                         return temp;
                     }
@@ -2483,7 +2478,7 @@ var WIN = {
                 xhr.send(null);
                 xhr.onload = function() {
                     if (this.readyState == 4 && this.status == 200) {
-                        _X(that).Xappend(ReturnData(that, s.url, xhr.response));
+                        _X(that).append(ReturnData(that, s.url, xhr.response));
                         if (s.callback !== undefined) {
                             s.callback.apply(xhr, []);
                         } else {}
@@ -2583,7 +2578,7 @@ var WIN = {
                         'text-align': 'center',
                         'box-sizing': 'border-box',
                     })
-                    .Xappend(settings.text)
+                    .append(settings.text)
                     .on({
                         mouseenter: function() {
                             that.classAdd('xui_hover')
@@ -2630,8 +2625,8 @@ var WIN = {
                         })
                         .css(s.css)
                         .iconAdd({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
-                        .Xappend(_X('<div')
-                            .Xappend(TitleLoad(v))
+                        .append(_X('<div')
+                            .append(TitleLoad(v))
                             .css({display: 'inline'})
                             .classAdd('edit_title')
                         )
@@ -2843,13 +2838,13 @@ var WIN = {
                 var y = point[1];
                 var z = point[2];
                 var w = point[3];
-                //Multiply the point against each part of the 1st column, then add together
+                //Multiply the point against each part of the 1st column, then join together
                 var resultX = (x * c0r0) + (y * c0r1) + (z * c0r2) + (w * c0r3);
-                //Multiply the point against each part of the 2nd column, then add together
+                //Multiply the point against each part of the 2nd column, then join together
                 var resultY = (x * c1r0) + (y * c1r1) + (z * c1r2) + (w * c1r3);
-                //Multiply the point against each part of the 3rd column, then add together
+                //Multiply the point against each part of the 3rd column, then join together
                 var resultZ = (x * c2r0) + (y * c2r1) + (z * c2r2) + (w * c2r3);
-                //Multiply the point against each part of the 4th column, then add together
+                //Multiply the point against each part of the 4th column, then join together
                 var resultW = (x * c3r0) + (y * c3r1) + (z * c3r2) + (w * c3r3);
                 return [resultX, resultY, resultZ, resultW];
             },
@@ -2901,7 +2896,7 @@ var WIN = {
 
         function ClassAddRemove(options) {
             var defaults = {
-                type: '', //remove => arr1 - arr2 || add => arr1 + arr2
+                type: '', //remove => arr1 - arr2 || join => arr1 + arr2
                 arr1: [], //first array
                 arr2: [], //second array
             };
@@ -2914,7 +2909,7 @@ var WIN = {
                     }
                 });
                 return result.join(' ');
-            } else if (s.type =='add') {
+            } else if (s.type =='join') {
                 var temp = [];
                 _X.Xeach(s.arr2, function(k, v) {
                     if (s.arr1.join(' ').indexOf(v) < 0) {
