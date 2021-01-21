@@ -110,7 +110,6 @@ var WIN = {
         };
         
         var xs = 0;
-        var effectStyles = null;
        
         function _X(id) {
             var that;
@@ -2177,14 +2176,12 @@ var WIN = {
             Xshow: function(effect) {
                 var that = this;
                 var i;
-                var init = new _X.EFFECT();
                 for (i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
-                        init.loadEffect(effect, that[i], 'show');
-                    } else {
-                        that[i].style.display = '';
-                        that[i].style.visibility = 'visible';
-                    }
+                        loadEffect(effect, that[i], 'show');
+                    }                    
+                    that[i].style.display = '';
+                    that[i].style.visibility = 'visible';                    
                 }
                 return that;
             },
@@ -2194,10 +2191,9 @@ var WIN = {
             Xhide: function(effect) {
                 var that = this;
                 var i;
-                var init = new _X.EFFECT();
                 for (i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
-                        init.loadEffect(effect, that[i], 'hide');
+                        loadEffect(effect, that[i], 'hide');
                     } else {
                         that[i].style.display = 'none';
                         that[i].style.visibility = 'hidden';
@@ -2736,9 +2732,8 @@ var WIN = {
         };
 
         //Effects for Hide / Show prototype function
-        _X.EFFECT = function(init) {
-            var that = this;
-            this.type = [
+        (function CreateEffects() {
+            var type = [
                 {name: 'swipe',         matrix: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
                 {name: 'reverse',       matrix: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
                 {name: 'unfold_big',    matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
@@ -2747,7 +2742,20 @@ var WIN = {
                 {name: 'drop_top',      matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
                 {name: 'drop_left_top', matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},
             ];
-            this.elemCss = function(name) {
+            var matNull = '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1';
+            var effectStyles = document.createElement('style');
+            effectStyles.type = 'text/css';
+            document.head.appendChild(effectStyles);
+            _X.Xeach(type, function(k, v) {
+                //show
+                effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_show {from {transform: matrix3d(' + v.matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
+                //hide
+                effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_hide {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + v.matrix + '); opacity: 0;}}', 0);
+            });
+            //console.log(effectStyles.sheet.cssRules);
+        })();
+        function loadEffect(effect, elem, hideshow) {
+            var loadAnimation = function(name) {
                 return {
                     'animation-name': name,
                     'animation-duration': '.5s',
@@ -2755,32 +2763,16 @@ var WIN = {
                     'animation-direction': 'normal',
                     'animation-fill-mode': 'none',
                 };
-            };
-            this.loadEffect = function(effect, elem, hideshow) {
-                if (hideshow == 'show') {
-                    _X(elem).Xshow().css(that.elemCss(effect + '_motion_show'));
-                } else if (hideshow == 'hide') {
-                    _X(elem).css(that.elemCss(effect + '_motion_hide'));
-                    setTimeout(function() {
-                        _X(elem).Xhide();
-                    }, 150); 
-                }
-            };
-            if (init == 'init') {
-                var matNull = '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1';
-                if (!effectStyles) {
-                    effectStyles = document.createElement('style');
-                    effectStyles.type = 'text/css';
-                    document.head.appendChild(effectStyles);
-                }                
-                _X.Xeach(that.type, function(k, v) {
-                    effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_show {from {transform: matrix3d(' + v.matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
-                    effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_hide {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + v.matrix + '); opacity: 0;}}', 0);
-                });
-            }            
-        };
-        _X.EFFECT('init');
-        //console.log(effectStyles.sheet.cssRules);
+            };                
+            if (hideshow == 'show') {
+                _X(elem).css(loadAnimation(effect + '_motion_show'));
+            } else if (hideshow == 'hide') {
+                _X(elem).css(loadAnimation(effect + '_motion_hide'));
+                setTimeout(function() {
+                    _X(elem).Xhide();
+                }, 150); 
+            }
+        }           
 
         _X.GetRadians = function(degrees) {
             return degrees * (Math.PI / 180);
