@@ -106,7 +106,7 @@ var WIN = {
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17.10.2019',
-            updated:     '09.01.2021',
+            updated:     '21.01.2021',
         };
         
         var xs = 0;
@@ -2177,9 +2177,10 @@ var WIN = {
             Xshow: function(effect) {
                 var that = this;
                 var i;
+                var init = new _X.EFFECT();
                 for (i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
-                        _X.EFFECT.loadEffect(effect, that[i], 'show');
+                        init.loadEffect(effect, that[i], 'show');
                     } else {
                         that[i].style.display = '';
                         that[i].style.visibility = 'visible';
@@ -2193,9 +2194,10 @@ var WIN = {
             Xhide: function(effect) {
                 var that = this;
                 var i;
+                var init = new _X.EFFECT();
                 for (i = 0; i < that.length; i++) {
                     if (effect !== undefined) {
-                        _X.EFFECT.loadEffect(effect, that[i], 'hide');
+                        init.loadEffect(effect, that[i], 'hide');
                     } else {
                         that[i].style.display = 'none';
                         that[i].style.visibility = 'hidden';
@@ -2264,7 +2266,7 @@ var WIN = {
                 }
             },
 
-            //_X(?).cssHave([? 'css element', ? 'css value']) => Check elements CSS based on a CSS element (+ length) 
+            //_X(?).cssHave([? 'css element', ? 'css value']) => Check elements CSS based on a CSS element (+length) 
             cssHave: function(e) {
                 var that = this;
                 var x = new _X();
@@ -2280,7 +2282,7 @@ var WIN = {
                 return x;
             },
 
-            //_X(?).cssBool([? css element, ? css value])   => return TRUE / FALSE on a css element check
+            //_X(?).cssBool([? css element, ? css value]) => return TRUE / FALSE on a css element check
             cssBool: function(e) {
                 var that;
                 var i = 0;
@@ -2292,8 +2294,8 @@ var WIN = {
                 return false;
             },
             
-            //_X(?).on( ['? ? ?', function(){}] )      => SET event like an array syntax
-            //_X(?).on( {'?': function(){}} )          => SET event like an object syntax
+            //_X(?).on( ['? ? ?', function(){}] )      => SET event like an ARRAY syntax
+            //_X(?).on( {'?': function(){}} )          => SET event like an OBJECT syntax
             on: function(e) {
                 var that = this;
                 var i, j;
@@ -2734,8 +2736,9 @@ var WIN = {
         };
 
         //Effects for Hide / Show prototype function
-        _X.EFFECT = {
-            type: [
+        _X.EFFECT = function(init) {
+            var that = this;
+            this.type = [
                 {name: 'swipe',         matrix: '2,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1'},
                 {name: 'reverse',       matrix: '-1,2,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
                 {name: 'unfold_big',    matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,.5'},
@@ -2743,28 +2746,17 @@ var WIN = {
                 {name: 'drop_left',     matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,0,0,1'},
                 {name: 'drop_top',      matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,-50,0,1'},
                 {name: 'drop_left_top', matrix: '1,0,0,0,  0,1,0,0,  0,0,1,0,  -50,-50,0,1'},
-            ],
-            elemCss: function(effectname) {
+            ];
+            this.elemCss = function(name) {
                 return {
-                    'animation-name': effectname,
+                    'animation-name': name,
                     'animation-duration': '.5s',
                     'animation-timing-function': 'ease',
                     'animation-direction': 'normal',
                     'animation-fill-mode': 'none',
                 };
-            },
-            AddAnimation: function(name, matrix) {
-                var matNull = '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1';
-                if (!effectStyles) {
-                    effectStyles = document.createElement('style');
-                    effectStyles.type = 'text/css';
-                    document.head.appendChild(effectStyles);
-                }
-                effectStyles.sheet.insertRule('@keyframes ' + name + '_motion_show {from {transform: matrix3d(' + matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
-                effectStyles.sheet.insertRule('@keyframes ' + name + '_motion_hide {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + matrix + '); opacity: 0;}}', 0);
-            },
-            loadEffect: function(effect, elem, hideshow) {
-                var that = this;
+            };
+            this.loadEffect = function(effect, elem, hideshow) {
                 if (hideshow == 'show') {
                     _X(elem).Xshow().css(that.elemCss(effect + '_motion_show'));
                 } else if (hideshow == 'hide') {
@@ -2773,16 +2765,21 @@ var WIN = {
                         _X(elem).Xhide();
                     }, 150); 
                 }
-            },
-            init: function() {
-                var that = this;
+            };
+            if (init == 'init') {
+                var matNull = '1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1';
+                if (!effectStyles) {
+                    effectStyles = document.createElement('style');
+                    effectStyles.type = 'text/css';
+                    document.head.appendChild(effectStyles);
+                }                
                 _X.Xeach(that.type, function(k, v) {
-                    that.AddAnimation(v.name, v.matrix);
+                    effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_show {from {transform: matrix3d(' + v.matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
+                    effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_hide {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + v.matrix + '); opacity: 0;}}', 0);
                 });
-            },
+            }            
         };
-
-        _X.EFFECT.init();
+        _X.EFFECT('init');
         //console.log(effectStyles.sheet.cssRules);
 
         _X.GetRadians = function(degrees) {
