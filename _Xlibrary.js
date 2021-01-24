@@ -1,6 +1,6 @@
 //jshint maxerr: 2000
 //last version
-//https://github.com/catiadesign/Xquery/blob/master/Xquery.js
+//https://github.com/catiadesign/_Xlibrary/blob/master/_Xlibrary.js
 
 var SETTINGS = {
     theme: {
@@ -984,7 +984,7 @@ var WIN = {
                         height: size,
                         perspective: s.perspective,
                         'transform-style': s.transform,
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                     })
                     .on([s.click, function(e) {
                         _X('.ico_controls').Xremove();
@@ -1374,7 +1374,7 @@ var WIN = {
                                     opacity: '0.15'
                                 })
                                 .attr({
-                                    src: 'images/catiadesign_logo_004.png',
+                                    src: '/images/catiadesign_logo_004.png',
                                     width: '100%',
                                     align: 'middle',
                                 });
@@ -3014,7 +3014,7 @@ var WIN = {
             if (window.innerWidth > 700) {
                 return WIN.adsense;
             } else {
-                return 'pages/null.html';
+                return '/pages/null.html';
             }
         }       
     }
