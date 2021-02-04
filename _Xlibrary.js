@@ -383,10 +383,12 @@ var WIN = {
         
         _X.XReadAjax = function(options) {
             var defaults = {
+                method: 'GET',
                 url: '',
                 callback: '',
                 dataType: '',
                 syncron: true,
+                send: null,
                 /*
                     ''(default)     => get as string
                     'text'          => get as string
@@ -398,9 +400,9 @@ var WIN = {
             };
             var s = _X.JoinObj(defaults, options);
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', s.url, s.syncron);
+            xhr.open(s.method, s.url, s.syncron);
             xhr.responseType = s.dataType;
-            xhr.send(null);
+            xhr.send(s.send);
             xhr.onload = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     s.callback.apply(xhr, []);
@@ -1363,8 +1365,8 @@ var WIN = {
                 var item = _X(settings.item);
                 if (settings.show === true) {
                     setTimeout(function() {
-                        var width = item.Xparent().position('width', 'offset');
-                        var height = item.Xparent().position('height', 'offset');
+                        var width = item.parent().position('width', 'offset');
+                        var height = item.parent().position('height', 'offset');
                         if (width < height) {
                             _X('<img')
                                 .XappendTo(item)
@@ -1518,7 +1520,7 @@ var WIN = {
                                                             self.WindowMoveToSide();
                                                         }
                                                         if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
-                                                            _X.XDraggable({item: _X(this).Xparent(), mouse: e, dragArea: settings.dragArea});
+                                                            _X.XDraggable({item: _X(this).parent(), mouse: e, dragArea: settings.dragArea});
                                                         } else {}
                                                     },
                                                     dblclick: function(e) {
@@ -1735,7 +1737,7 @@ var WIN = {
                                                             if (SETTINGS.resize.sel == 'true') {
                                                                 _X(this).Xfind('i').css({color: 'red'});
                                                                 _X(this).classAdd(v.moveClass);
-                                                                self.ResizableFn({item: _X(this).Xparent('.thiswindow'), mouse: e});
+                                                                self.ResizableFn({item: _X(this).parent('.thiswindow'), mouse: e});
                                                             } else {}
                                                         },
                                                         mouseup: function() {
@@ -1930,6 +1932,16 @@ var WIN = {
             version:        info.version,
             constructor:    _X,
             length:         0,
+
+            x_new: function(e) {
+                var that = this;
+                var x = _X(e);
+                var i;
+                for (i = 0; i < that.length; i++) {
+                    that[i].appendChild(x[0]);
+                }
+                return x;                
+            },
 
             //Add Icon || Image
             iconAdd: function(options) {
@@ -2384,19 +2396,27 @@ var WIN = {
                 return x;
             },
 
-            //_X(?).Xparent()       => return first parent from element
-            //_X(?).Xparent('.?')   => search for class parent element
-            //_X(?).Xparent('#?')   => search for id parent element
-            Xparent: function(e) {
+            //_X(?).parent()       => return first parent from element
+            //_X(?).parent('.?')   => search for class parent element
+            //_X(?).parent('#?')   => search for id parent element
+            parent: function(e) {
                 var that = this;
                 var x = new _X();
                 var parent;
                 var getAttr;
                 var replaceString;
+                var i = 1;
                 if (that[0] !== undefined || that[0] !== null) {
+                    //first parent
                     parent = that[0].parentNode;
                     if (e === undefined) {
                         x[0] = parent;
+                    } else if (!isNaN(e)) {
+                        //start from secont parent
+                        while (e > i++) {
+                            parent = parent.parentNode;
+                            x[0] = parent;
+                        }                        
                     } else {
                         getAttr = parent.getAttribute(ReturnClassOrId(e));
                         replaceString = e.replace(/[.#]/g, '');
@@ -2499,6 +2519,7 @@ var WIN = {
                     type: 'text',
                     tooltip: false,
                     tooltipData: '',
+                    value: '',
                     css: {},
                 };
                 var s = _X.JoinObj(defaults, options);
@@ -2516,7 +2537,7 @@ var WIN = {
                     .attr({
                         placeholder: s.name,
                         type: s.type,
-                        value: '',
+                        value: s.value,
                         maxlength: '50'
                     })
                     .css({
