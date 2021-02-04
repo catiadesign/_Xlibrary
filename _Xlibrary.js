@@ -1750,79 +1750,75 @@ var WIN = {
                 });
                 //Add to Status Bar
                 if (settings.windowType.statusbar === true) {
-                    _X.CreateTagElements({
-                        t: settings.statusBarTo, 
-                        a: [
-                            {
-                                classAdd: 'thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text, ' + settings.name + '_bara_stare',
-                                css: {
-                                    float: 'left',
-                                    padding: 2,
-                                    margin: 1,
-                                    'max-width': 200,
-                                    cursor: 'pointer',
-                                    'z-index': settings.zIndex,
-                                },
-                                iconAdd: {ico: obj.ico, color: obj.color, size: 25},
-                                append: ' ' + obj.title,
-                                on: {
-                                    mouseenter: function() {
-                                        _X.ReturnElements({item: this, obj: obj});
-                                        self.FindWindowKey(this);
-                                        _X(this).classAdd('xui_hover');
-                                        //var tip = _X(this)[0].innerHTML;
-                                        _X.AddTooltip({title: obj.title});
-                                        _X(WIN.full[WIN.key].winElem).classAdd('xui_hover');
-                                    },
-                                    mouseleave: function() {
-                                        _X(this).classRemove('xui_hover');
-                                        _X('.tooltip_class').Xremove();
-                                        _X(WIN.full[WIN.key].winElem).classRemove('xui_hover');
-                                    },
-                                    mousedown: function() {
-                                        _X('body').classAdd('mousedown_true');
-                                        if (_X(WIN.full[WIN.key].winElem).css('z-Index') !== 1501) {
-                                            self.WindowSelect({zIndex: settings.zIndex});
-                                        } else {}
-                                    },
-                                    dblclick: function(e) {
-                                        self.buttons.WindowHideShow.init();
-                                    },
-                                    contextmenu: function(e) {
-                                        e.preventDefault();
-                                        e.stopImmediatePropagation();
-                                        var x = new _X.Window();
-                                        x.init({
-                                            windowType: x.type[3],
-                                            fontSize: 13,
-                                            width: 115,
-                                            height: 'auto',
-                                            open: false,
-                                            clasa: 'remove_on_mousedown',
-                                        });
-                                        x.right.MenuElements({
-                                            array: settings.windowType.menuRC,
-                                            pushObj: false,
-                                            pushItem: false,
-                                            icoSize: 25,
-                                            click: 'mousedown',
-                                            color: false,
-                                        });
-                                        x.win.OpenWindow();
-                                        WIN.full.splice(WIN.key, 1);
-                                        self.FindWindowKey(this);
-                                    },
-                                },
-                                init: function(that) {
-                                    _X.Xeach(WIN.full, function(k, v) {
-                                        if (v.winBar === undefined) {
-                                            v.winBar = that;
-                                        } else {}
-                                    });
-                                },
+                    _X('<div')
+                        .XappendTo(settings.statusBarTo)
+                        .classAdd('thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text')
+                        .classAdd(settings.name + '_bara_stare')
+                        .css({
+                            float: 'left',
+                            padding: 2,
+                            margin: 1,
+                            'max-width': 200,
+                            cursor: 'pointer',
+                            'z-index': settings.zIndex,                            
+                        })
+                        .iconAdd({ico: obj.ico, color: obj.color, size: 25})
+                        .append(' ' + obj.title)
+                        .on({
+                            mouseenter: function() {
+                                _X.ReturnElements({item: this, obj: obj});
+                                self.FindWindowKey(this);
+                                _X(this).classAdd('xui_hover');
+                                //var tip = _X(this)[0].innerHTML;
+                                _X.AddTooltip({title: obj.title});
+                                _X(WIN.full[WIN.key].winElem).classAdd('xui_hover');
                             },
-                        ],
-                    });
+                            mouseleave: function() {
+                                _X(this).classRemove('xui_hover');
+                                _X('.tooltip_class').Xremove();
+                                _X(WIN.full[WIN.key].winElem).classRemove('xui_hover');
+                            },
+                            mousedown: function() {
+                                _X('body').classAdd('mousedown_true');
+                                if (_X(WIN.full[WIN.key].winElem).css('z-Index') !== 1501) {
+                                    self.WindowSelect({zIndex: settings.zIndex});
+                                } else {}
+                            },
+                            dblclick: function(e) {
+                                self.buttons.WindowHideShow.init();
+                            },
+                            contextmenu: function(e) {
+                                e.preventDefault();
+                                e.stopImmediatePropagation();
+                                var x = new _X.Window();
+                                x.init({
+                                    windowType: x.type[3],
+                                    fontSize: 13,
+                                    width: 115,
+                                    height: 'auto',
+                                    open: false,
+                                    clasa: 'remove_on_mousedown',
+                                });
+                                x.right.MenuElements({
+                                    array: settings.windowType.menuRC,
+                                    pushObj: false,
+                                    pushItem: false,
+                                    icoSize: 25,
+                                    click: 'mousedown',
+                                    color: false,
+                                });
+                                x.win.OpenWindow();
+                                WIN.full.splice(WIN.key, 1);
+                                self.FindWindowKey(this);
+                            },
+                        })
+                        .init(function(that) {
+                            _X.Xeach(WIN.full, function(k, v) {
+                                if (v.winBar === undefined) {
+                                    v.winBar = that;
+                                } else {}
+                            });
+                        });                        
                 }
                 self.ResizeStatusBar();
                 self.WindowSelect({zIndex: settings.zIndex});
