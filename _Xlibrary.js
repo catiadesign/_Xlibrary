@@ -878,8 +878,7 @@ var WIN = {
                     return s.size;
                 }
             };
-            _X.prototype.FrontSide = function(obj, size) {
-                var that = this;
+            function FrontSide(that, obj, size) {
                 if (that.classBool('front')) {
                     that.css({'z-index': 1})
                         .iconAdd({
@@ -905,73 +904,7 @@ var WIN = {
                             .append(obj.title);
                     } else {}
                 } else {} 
-                return that;
-            };
-            _X.prototype.Cubefaces = function(obj, size) { 
-                var that = this;
-                var angle = RandomAngle();
-                var cubeFaces = {
-                    front:  {clasa: 'front, ico_full_body', color: '#FFFFFF', opacity: 1, matrix: _X.MATRIX.xyz(angle, angle, 0)},
-                    back:   {clasa: 'back', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle + 180, 0)},
-                    left:   {clasa: 'left', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle - 90, 0)},
-                    right:  {clasa: 'right', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle + 90, 0)},
-                    top:    {clasa: 'top', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle - 90, 0, angle)},
-                    bottom: {clasa: 'bottom', color: obj.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle + 90, 0, -angle)},
-                };
-                if (s.cube === true || s.cube === 'true') {
-                    // All Faces
-                    _X.Xeach(cubeFaces, function(k, v) {
-                        _X('<div')
-                            .XappendTo(that)
-                            .classAdd(v.clasa)
-                            .css({
-                                position: 'absolute',
-                                left: 0,
-                                right: 0,
-                                top: 0,
-                                bottom: 0,
-                                overflow: 'hidden',
-                                'text-align': 'center',
-                                border: '1px solid',
-                                opacity: v.opacity,
-                                'background-color': v.color,
-                                'border-radius': 10,
-                                //'backface-visibility': 'hidden',
-                                //transform: 'rotateX(' + v.x + 'deg) rotateY(' + v.y + 'deg) rotateZ(' + v.z + 'deg)',
-                                'transform-origin': size / 2 + 'px' + _X.AddSpace(1) + size / 2 + 'px' + _X.AddSpace(1) + -size / 2 + 'px',
-                                transform: 'matrix3d(' + v.matrix + ')',
-                            })
-                            .FrontSide(obj, size);
-                    });
-                } else {
-                    // One Face
-                    _X('<div')
-                        .XappendTo(that)
-                        .classAdd(cubeFaces.front.clasa)
-                        .classAdd('xui_corner_all')
-                        .css({
-                            position: 'absolute',
-                            left: 0,
-                            right: 0,
-                            top: 0,
-                            bottom: 0,
-                            overflow: 'hidden',
-                            'text-align': 'center',
-                            cursor: 'pointer',
-                            border: '1px solid transparent',
-                        })
-                        .on({
-                            mouseenter: function() {
-                                _X(this).classAdd('shadow_border');
-                            },
-                            mouseleave: function() {
-                                _X(this).classRemove('shadow_border');
-                            },
-                        })
-                        .FrontSide(obj, size);
-                }
-                return that;
-            };
+            }
             _X.Xeach(s.array, function(_k, _v) {
                 var size = RandomSize();
                 _X('<div')
@@ -1050,7 +983,73 @@ var WIN = {
                             }
                         },
                     })
-                    .Cubefaces(_v, size);
+                    .init(function(that) {
+                        var angle = RandomAngle();
+                        var cubeFaces = {
+                            front:  {clasa: 'front, ico_full_body', color: '#FFFFFF', opacity: 1, matrix: _X.MATRIX.xyz(angle, angle, 0)},
+                            back:   {clasa: 'back', color: _v.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle + 180, 0)},
+                            left:   {clasa: 'left', color: _v.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle - 90, 0)},
+                            right:  {clasa: 'right', color: _v.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle, angle + 90, 0)},
+                            top:    {clasa: 'top', color: _v.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle - 90, 0, angle)},
+                            bottom: {clasa: 'bottom', color: _v.color, opacity: opacity, matrix: _X.MATRIX.xyz(angle + 90, 0, -angle)},
+                        };
+                        if (s.cube === true || s.cube === 'true') {
+                            // All Faces
+                            _X.Xeach(cubeFaces, function(k, v) {
+                                _X('<div')
+                                    .XappendTo(that)
+                                    .classAdd(v.clasa)
+                                    .css({
+                                        position: 'absolute',
+                                        left: 0,
+                                        right: 0,
+                                        top: 0,
+                                        bottom: 0,
+                                        overflow: 'hidden',
+                                        'text-align': 'center',
+                                        border: '1px solid',
+                                        opacity: v.opacity,
+                                        'background-color': v.color,
+                                        'border-radius': 10,
+                                        //'backface-visibility': 'hidden',
+                                        //transform: 'rotateX(' + v.x + 'deg) rotateY(' + v.y + 'deg) rotateZ(' + v.z + 'deg)',
+                                        'transform-origin': size / 2 + 'px' + _X.AddSpace(1) + size / 2 + 'px' + _X.AddSpace(1) + -size / 2 + 'px',
+                                        transform: 'matrix3d(' + v.matrix + ')',
+                                    })
+                                    .init(function(that) {
+                                        FrontSide(that, _v, size);
+                                    });
+                            });
+                        } else {
+                            // One Face
+                            _X('<div')
+                                .XappendTo(that)
+                                .classAdd(cubeFaces.front.clasa)
+                                .classAdd('xui_corner_all')
+                                .css({
+                                    position: 'absolute',
+                                    left: 0,
+                                    right: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    overflow: 'hidden',
+                                    'text-align': 'center',
+                                    cursor: 'pointer',
+                                    border: '1px solid transparent',
+                                })
+                                .on({
+                                    mouseenter: function() {
+                                        _X(this).classAdd('shadow_border');
+                                    },
+                                    mouseleave: function() {
+                                        _X(this).classRemove('shadow_border');
+                                    },
+                                })
+                                .init(function(that) {
+                                    FrontSide(that, _v, size);
+                                });
+                        }
+                    });
             });
         };
 
@@ -1409,24 +1408,20 @@ var WIN = {
                 var settings = _X.JoinObj(defaults, options);
                 //Modal Overlay
                 if ( (SETTINGS.modal.sel == 'true') && (settings.windowType.modal === true) ) {
-                    _X.CreateTagElements({
-                        t: settings.to, 
-                        a: [
-                            {
-                                classAdd: 'xui_overlay, ' + settings.name + '_overlay',
-                                css: {
-                                    'z-index': settings.zIndex - 1
-                                },
-                                init: function(that) {
-                                    _X.Xeach(WIN.full, function(k, v) {
-                                        if (v.winOverlay === undefined) {
-                                            v.winOverlay = that;
-                                        }
-                                    });
-                                },
-                            },
-                        ],
-                    }); 
+                    _X('<div')
+                        .XappendTo(settings.to)
+                        .classAdd('xui_overlay')
+                        .classAdd(settings.name + '_overlay')
+                        .css({
+                            'z-index': settings.zIndex - 1,
+                        })
+                        .init(function(that) {
+                            _X.Xeach(WIN.full, function(k, v) {
+                                if (v.winOverlay === undefined) {
+                                    v.winOverlay = that;
+                                }
+                            });                            
+                        });
                 }
                 //Full Window
                 var LeftSizePosition = function() {
@@ -1941,6 +1936,14 @@ var WIN = {
                     that[i].appendChild(x[0]);
                 }
                 return x;                
+            },
+
+            init: function(elem) {
+                var that = this;
+                if (elem !== undefined) {
+                    elem(that);
+                }
+                return that;
             },
 
             //Add Icon || Image
