@@ -473,7 +473,7 @@ var WIN = {
                 leftSize: x.AutoLeftResize(),
             });
             _X('<iframe')
-                .XappendTo(x.left)
+                .appendTo(x.left)
                 .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});
             x.right.Xload({url: obj.loc});
@@ -487,11 +487,11 @@ var WIN = {
                 scroll: 'hidden',
             });
             _X('<iframe')
-                .XappendTo(x.left)
+                .appendTo(x.left)
                 .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});
             _X('<iframe')
-                .XappendTo(x.right)
+                .appendTo(x.right)
                 .attr({src: obj.loc})
                 .css({width: '100%', height: '100%'});
         };
@@ -503,11 +503,11 @@ var WIN = {
                 leftSize: x.AutoLeftResize(),
             });
             _X('<iframe')
-                .XappendTo(x.left)
+                .appendTo(x.left)
                 .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});
             _X('<img')
-                .XappendTo(x.right)
+                .appendTo(x.right)
                 .attr({src: obj.loc})
                 .css({width: '100%'});
         };
@@ -519,11 +519,11 @@ var WIN = {
                 leftSize: x.AutoLeftResize(),
             });
             _X('<iframe')
-                .XappendTo(x.left)
+                .appendTo(x.left)
                 .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
                 .css({width: '100%', height: '100%'});
             _X('<video')
-                .XappendTo(x.right)
+                .appendTo(x.right)
                 .attr({width: '100%', height: 'auto', controls:''})
                 //.append(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}) )
                 //.append(_X('<source').attr({src: obj.loc.replace('%20', ' '), type: 'video/ogg; codecs="theora, vorbis"'}) )
@@ -597,7 +597,7 @@ var WIN = {
 
             this.SelectIcons = function() {
                 _X('<div')
-                    .XappendTo(_X(WIN.globalDIV).Xfind(WIN.body))
+                    .appendTo(_X(WIN.globalDIV).Xfind(WIN.body))
                     .classAdd('container_mouse_move')
                     .css({
                         position: 'absolute',
@@ -680,7 +680,7 @@ var WIN = {
             var settings = _X.JoinObj(defaults, options);
             if (settings.tooltip === true && _X('body').classBool('mousedown_true') === false) {
                 _X('<div')
-                    .XappendTo('body')
+                    .appendTo('body')
                     .classAdd('tooltip_class, xui_content, xui_corner_all, shadow_border')
                     .Xhide()
                     .css({
@@ -727,7 +727,7 @@ var WIN = {
             var left = _X(settings.elem).position('left','box');
             var top = _X(settings.elem).position('top', 'box');
             _X('<div')
-                .XappendTo('body')
+                .appendTo('body')
                 .classAdd('ico_controls')
                 .css({
                     'z-index': 100,
@@ -742,7 +742,7 @@ var WIN = {
                 });
             _X.Xeach(ICONcontrols, function(k, v) {
                 _X('<div')
-                    .XappendTo('.ico_controls')
+                    .appendTo('.ico_controls')
                     .classAdd(v.clasa)
                     .css({cursor: 'pointer'})
                     .iconAdd({ico: v.ico, size: 20})
@@ -890,7 +890,7 @@ var WIN = {
                         });
                     if (s.title === true) {
                         _X('<div')
-                            .XappendTo(that)
+                            .appendTo(that)
                             .classAdd('format_text, edit_title')
                             .css({
                                 position: 'absolute',
@@ -908,7 +908,7 @@ var WIN = {
             _X.Xeach(s.array, function(_k, _v) {
                 var size = RandomSize();
                 _X('<div')
-                    .XappendTo(s.to)
+                    .appendTo(s.to)
                     .classAdd(s.clasa)
                     .classAdd('xcube')
                     .css(s.css)
@@ -997,7 +997,7 @@ var WIN = {
                             // All Faces
                             _X.Xeach(cubeFaces, function(k, v) {
                                 _X('<div')
-                                    .XappendTo(that)
+                                    .appendTo(that)
                                     .classAdd(v.clasa)
                                     .css({
                                         position: 'absolute',
@@ -1023,7 +1023,7 @@ var WIN = {
                         } else {
                             // One Face
                             _X('<div')
-                                .XappendTo(that)
+                                .appendTo(that)
                                 .classAdd(cubeFaces.front.clasa)
                                 .classAdd('xui_corner_all')
                                 .css({
@@ -1242,8 +1242,8 @@ var WIN = {
                     _X('.thiswindow_statusbar').classRemove('xui_highlight, xui_hover');
                 } else {}
                 if (SETTINGS.autorefresh.sel == 'true') {
-                    _X(WIN.full[WIN.key].winElem).XappendTo(_X(WIN.globalDIV).Xfind(WIN.body)).css({'z-index': settings.zIndex});
-                    _X(WIN.full[WIN.key].winOverlay).XappendTo(_X(WIN.globalDIV).Xfind(WIN.body)).css({'z-index': settings.zIndex - 1});
+                    _X(WIN.full[WIN.key].winElem).appendTo(_X(WIN.globalDIV).Xfind(WIN.body)).css({'z-index': settings.zIndex});
+                    _X(WIN.full[WIN.key].winOverlay).appendTo(_X(WIN.globalDIV).Xfind(WIN.body)).css({'z-index': settings.zIndex - 1});
                 } else {
                     _X(WIN.full[WIN.key].winElem).css({'z-index': settings.zIndex});
                     _X(WIN.full[WIN.key].winOverlay).css({'z-index': settings.zIndex - 1});
@@ -1283,7 +1283,7 @@ var WIN = {
                     } else {}
                     _X.Xeach(pos, function(k, v) {
                         _X('<div')
-                            .XappendTo('body')
+                            .appendTo('body')
                             .classAdd('remove_on_mouseup, xui_disabled, xui_corner_all')
                             .css({
                                 position: 'absolute',
@@ -1368,7 +1368,7 @@ var WIN = {
                         var height = item.parent().position('height', 'offset');
                         if (width < height) {
                             _X('<img')
-                                .XappendTo(item)
+                                .appendTo(item)
                                 .classAdd('xui_disabled')
                                 .css({
                                     position: 'absolute',
@@ -1409,7 +1409,7 @@ var WIN = {
                 //Modal Overlay
                 if ( (SETTINGS.modal.sel == 'true') && (settings.windowType.modal === true) ) {
                     _X('<div')
-                        .XappendTo(settings.to)
+                        .appendTo(settings.to)
                         .classAdd('xui_overlay')
                         .classAdd(settings.name + '_overlay')
                         .css({
@@ -1526,7 +1526,7 @@ var WIN = {
                                                 });
                                             //Title -- Left Side Header
                                             _X('<div')
-                                                .XappendTo(that)
+                                                .appendTo(that)
                                                 .classAdd('format_text')
                                                 .css({
                                                     display: 'block',
@@ -1538,7 +1538,7 @@ var WIN = {
                                                 .append(' ' + obj.title);
                                             //Buttons -- Right Side Header
                                             _X('<div')
-                                                .XappendTo(that)
+                                                .appendTo(that)
                                                 .css({
                                                     display: 'block',
                                                     float: 'right',
@@ -1558,13 +1558,13 @@ var WIN = {
                                             self.WindowLogo({item: that, show: settings.imageshow});
                                             if (settings.menuTitle === true) {
                                                 _X('<div')
-                                                    .XappendTo(that)
+                                                    .appendTo(that)
                                                     .classAdd('xui_disabled, format_text')
                                                     .css({'text-align': 'center'})
                                                     .append(obj.title);
                                             }
                                             _X('<div')
-                                                .XappendTo(that)
+                                                .appendTo(that)
                                                 .css({
                                                     position: 'absolute',
                                                     cursor: 'pointer',
@@ -1578,7 +1578,7 @@ var WIN = {
                                             ];
                                             _X.Xeach(temp, function(k, v) {
                                                 _X('<div')
-                                                    .XappendTo(that)
+                                                    .appendTo(that)
                                                     .iconAdd({ico: v.ico, size: 30})
                                                     .css({
                                                         position: 'absolute',
@@ -1602,7 +1602,7 @@ var WIN = {
                                             self.WindowLogo({item: that, show: settings.imageshow});
                                             if (settings.menuTitle === true) {
                                                 _X('<div')
-                                                    .XappendTo(that)
+                                                    .appendTo(that)
                                                     .classAdd('format_text')
                                                     .css({
                                                         padding: 2,
@@ -1702,7 +1702,7 @@ var WIN = {
                                                 });
                                             //div for text
                                             _X('<div')
-                                                .XappendTo(that)
+                                                .appendTo(that)
                                                 .classAdd('footer_text')
                                                 .css({
                                                     'padding-left': 35,
@@ -1716,7 +1716,7 @@ var WIN = {
                                             ];
                                             _X.Xeach(temp, function(k, v) {
                                                 _X('<div')
-                                                    .XappendTo(that)
+                                                    .appendTo(that)
                                                     .classAdd(v.clasa)
                                                     .css({
                                                         position: 'absolute',
@@ -1751,7 +1751,7 @@ var WIN = {
                 //Add to Status Bar
                 if (settings.windowType.statusbar === true) {
                     _X('<div')
-                        .XappendTo(settings.statusBarTo)
+                        .appendTo(settings.statusBarTo)
                         .classAdd('thiswindow_statusbar, xui_corner_all, xui_header, shadow_border, format_text')
                         .classAdd(settings.name + '_bara_stare')
                         .css({
@@ -1901,7 +1901,7 @@ var WIN = {
                         v.elem = v.elem;
                     }
                     _X(v.elem)
-                        .XappendTo(appendto)
+                        .appendTo(appendto)
                         .classAdd(v.classAdd)
                         .attr(v.attr)
                         .css(v.css)
@@ -1957,7 +1957,7 @@ var WIN = {
                 if (options !== undefined && settings.ico !== '') {
                     if (settings.ico.indexOf('/') > -1) {
                         _X('<img')
-                            .XappendTo(that)
+                            .appendTo(that)
                             .attr({
                                 width: settings.size,
                                 height: settings.size,
@@ -1973,7 +1973,7 @@ var WIN = {
                             .on(settings.on);
                     } else if (settings.ico.indexOf('_.') > -1) {
                         _X('<img')
-                            .XappendTo(that)
+                            .appendTo(that)
                             .attr({
                                 width: settings.size,
                                 height: settings.size,
@@ -1989,7 +1989,7 @@ var WIN = {
                             .on(settings.on);
                     } else {
                         _X('<i')
-                            .XappendTo(that)
+                            .appendTo(that)
                             .classAdd('material-icons')
                             .classAdd(settings.clasa)
                             .append(settings.ico)
@@ -2143,8 +2143,8 @@ var WIN = {
                 return x;
             },
 
-            //_X(?).XappendTo('?') => SET element to parent
-            XappendTo: function(e) {
+            //_X(?).appendTo('?') => SET element to parent
+            appendTo: function(e) {
                 var that = this;
                 var getEl = _X(e);
                 if (getEl.length > 0 && that.length > 0) {
@@ -2531,7 +2531,7 @@ var WIN = {
                     }
                 }
                 _X('<input')
-                    .XappendTo(that)
+                    .appendTo(that)
                     .classAdd(InsertClass())
                     .attr({
                         placeholder: s.name,
@@ -2570,7 +2570,7 @@ var WIN = {
                 var that = this;
                 if (settings.check === true) {
                     _X('<div')
-                        .XappendTo(that)
+                        .appendTo(that)
                         .classAdd('input_checkbox')
                         .XInput({id: 'checkbox_input', type: 'checkbox', width: 'auto'})
                         .on({click: function(e) {
@@ -2634,7 +2634,7 @@ var WIN = {
                 };
                 _X.Xeach(s.array, function(k, v) {
                     _X('<div')
-                        .XappendTo(that)
+                        .appendTo(that)
                         .classAdd('ico_full_body, xui_corner_all, format_text')
                         .classAdd(s.clasa)
                         .css({
