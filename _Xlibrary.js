@@ -412,6 +412,75 @@ var WIN = {
             };
         };
 
+        _X.AbsoluteCenter = function(options) {
+            var defaults = {
+                elem: '',
+                width: '',
+                height: '',
+                container: '',
+                type: 'cover', //cover || contain
+                returnWindow: true,
+                returnLeftTopMargin: false,
+            };
+            var s = _X.JoinObj(defaults, options);
+            var imgRatio;
+            function width() {
+                if (s.returnWindow === true) {return window.innerWidth}
+                else {return s.container.width}
+            }
+            function height() {
+                if (s.returnWindow === true) {return window.innerHeight}
+                else {return s.container.height}
+            }
+            function left() {
+                if ((s.returnWindow === true && s.returnLeftTopMargin === false) || (s.returnWindow === false && s.returnLeftTopMargin === true)) {return 0}
+                else if (s.returnWindow === true && s.returnLeftTopMargin === true) {return s.container.left}
+            }
+            function top() {
+                if ((s.returnWindow === true && s.returnLeftTopMargin === false) || (s.returnWindow === false && s.returnLeftTopMargin === true)) {return 0}
+                else if (s.returnWindow === true && s.returnLeftTopMargin === true) {return s.container.top}
+            }
+            function Load() {
+                var winRatio = height() / width();
+                var h = width() * imgRatio;
+                var w = width() * winRatio / imgRatio;
+                if ((imgRatio < winRatio && s.type == 'contain') || (imgRatio > winRatio && s.type == 'cover')) {
+                    s.elem
+                        .Xshow(CUBE.effect)
+                        .css({
+                            left: 0 - left(),
+                            top: (height() - h) / 2 - top(),
+                            width: width(),
+                            height: h,
+                        });
+                }
+                if ((imgRatio > winRatio && s.type === 'contain') || (imgRatio < winRatio && s.type === 'cover')) {
+                    s.elem
+                        .Xshow(CUBE.effect)
+                        .css({
+                            left: (width() - w) / 2 - left(),
+                            top: 0 - top(),
+                            width: w,
+                            height: height(),
+                        });
+                }
+            }        
+            if (s.elem.position('height', 'natural') === undefined || s.elem.position('width', 'natural') === undefined) {
+                imgRatio = s.height / s.width;
+                Load();
+            } else {
+                if (s.elem.position('height', 'natural') === 0 || s.elem.position('width', 'natural') === 0) {
+                    s.elem[0].onload = function() {
+                        imgRatio = s.elem.position('height', 'natural') / s.elem.position('width', 'natural');
+                        Load();
+                    };
+                } else {
+                    imgRatio = s.elem.position('height', 'natural') / s.elem.position('width', 'natural');
+                    Load();
+                }            
+            }        
+        };
+
         _X.XDraggable = function(options) {
             var defaults = {
                 item: '',
