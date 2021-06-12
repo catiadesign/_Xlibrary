@@ -2099,10 +2099,11 @@ var WIN = {
                 var that = this;
                 var x = new _X();
                 var i;
-                if (e.toLowerCase().indexOf('help') > -1) {
+                if (e === undefined || e.toLowerCase().indexOf('help') > -1) {
                     new Help({
                         name: '.getElem("Param 1")',
                         param1: "'first', 'last'",
+                        about: "Function return Length",
                         usage: "_X(?).getElem('first');",
                     });
                 } else if (e.toLowerCase().indexOf('first') > -1) {
@@ -2510,11 +2511,12 @@ var WIN = {
             position: function(type, e) {
                 var that = this[0];
                 var elem = ['offset' ,'client', 'inner', 'outer', 'scroll', 'natural'];
-                if (type.toLowerCase().indexOf('help') > -1) {
+                if (type === undefined || type.toLowerCase().indexOf('help') > -1) {
                     new Help({
                         name: '.position("Param 1", "Param 2")',
                         param1: "First parameter from '.position' function have to be: 'width || height || left || top'",
                         param2: "Second parameter from Position function have to be: 'offset || client || inner || outer || box || scroll || screen || natural'",
+                        about: "Function return NO Length",
                         usage: "_X(?).position('width', 'offset');",
                     });
                     return this;
@@ -3072,6 +3074,7 @@ var WIN = {
                 param1: undefined,
                 param2: undefined,
                 usage: undefined,
+                about: undefined,
                 tip: "'?' - parameter like ID, CLASS, TAG",
                 constructor: '_X()',
             };
@@ -3082,6 +3085,7 @@ var WIN = {
                     'Function Name:': s.name,
                     'Parameter 1:': s.param1,
                     'Parameter 2:': s.param2,
+                    'About': s.about,
                     'Usage Example:': s.usage,
                     'Tip:': s.tip,
                     'Constructor:': s.constructor,
