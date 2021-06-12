@@ -808,101 +808,103 @@ var WIN = {
                     height: 'auto',
                     'background-image': 'linear-gradient(-90deg, rgba(217, 217, 217, 0) 0%, rgba(217, 217, 217, 1) 100%)',
                     'border-radius': 5,
+                })
+                .init(function(that) {
+                    _X.Xeach(ICONcontrols, function(k, v) {
+                        _X('<div')
+                            .appendTo(that)
+                            .classAdd(v.clasa)
+                            .css({cursor: 'pointer'})
+                            .iconAdd({ico: v.ico, size: 20})
+                            .on({
+                                mouseenter: function() {
+                                    _X(this).Xfind('i').css({color: 'red'});
+                                },
+                                mouseleave: function() {
+                                    _X(this).Xfind('i').css({color: ''});
+                                },
+                                mousedown: function(e) {
+                                    if (e.which === 1) {
+                                        var xd = e.pageX;
+                                        var perspective = _X(item).css('perspective');
+                                        var cube_size = _X(item).css('width');
+                                        var cube_opacity = _X(item).Xfind('.back').css('opacity');
+                                        var cube = {
+                                            front: Transform3D('.front'),
+                                            back: Transform3D('.back'),
+                                            left: Transform3D('.left'),
+                                            right: Transform3D('.right'),
+                                            bottom: Transform3D('.bottom'),
+                                            top: Transform3D('.top'),
+                                        };
+                                        var cube2;
+                                        var mousemove = function(e) {
+                                            var move = (e.pageX - xd);
+                                            var matVal = move * 1/50;
+                                            if (v.clasa == 'ico_rotate_X') {
+                                                cube2 = {
+                                                    front:  _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.front]),
+                                                    back:   _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(matVal), cube.back]),
+                                                    left:   _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.left]),
+                                                    right:  _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.right]),
+                                                    top:    _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.top]),
+                                                    bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.bottom]),
+                                                };
+                                                _X.Xeach(cube2, function(k, v) {
+                                                    _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
+                                                });
+                                            } else if (v.clasa == 'ico_rotate_Y') {
+                                                cube2 = {
+                                                    front:  _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.front]),
+                                                    back:   _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.back]),
+                                                    left:   _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.left]),
+                                                    right:  _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.right]),
+                                                    top:    _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.top]),
+                                                    bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.bottom]),
+                                                };
+                                                _X.Xeach(cube2, function(k, v) {
+                                                    _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
+                                                });
+                                            } else if (v.clasa == 'ico_rotate_Z') {
+                                                cube2 = {
+                                                    front:  _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.front]),
+                                                    back:   _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.back]),
+                                                    left:   _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(matVal), cube.left]),
+                                                    right:  _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.right]),
+                                                    top:    _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.top]),
+                                                    bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(-matVal), cube.bottom]),
+                                                };
+                                                _X.Xeach(cube2, function(k, v) {
+                                                    _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
+                                                });
+                                            } else if (v.clasa == 'ico_perspective') {
+                                                _X(item).css({perspective: perspective + move});
+                                            } else if (v.clasa == 'ico_resize') {
+                                                var valcube = Math.abs(cube_size + move);
+                                                _X(item).css({width: valcube, height: valcube});
+                                                _X(item).Xfind('i').css({'font-size': valcube});
+                                                _X(item).Xfind('img').css({width: valcube, height: valcube});
+                                                //
+                                                _X.Xeach(['.front, .back, .left, .right, .top, .bottom'], function(k, v) {
+                                                    _X(item).Xfind(v).css({'transform-origin': 'center center' + _X.AddSpace(1) + - valcube / 2 + 'px'});
+                                                });
+                                            } else if (v.clasa == 'ico_opacity') {
+                                                var cubeopacity = Math.abs(move / 300).toFixed(1);
+                                                //
+                                                _X.Xeach(['.back, .left, .right, .top, .bottom'], function(k, v) {
+                                                    _X(item).Xfind(v).css({opacity: cubeopacity});
+                                                });
+                                            } else {}
+                                        };
+                                        var mouseup = function() {
+                                            _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                                        };
+                                        _X(window).on({mousemove: mousemove, mouseup: mouseup});
+                                    }
+                                }
+                            });
+                    });                    
                 });
-            _X.Xeach(ICONcontrols, function(k, v) {
-                _X('<div')
-                    .appendTo('.ico_controls')
-                    .classAdd(v.clasa)
-                    .css({cursor: 'pointer'})
-                    .iconAdd({ico: v.ico, size: 20})
-                    .on({
-                        mouseenter: function() {
-                            _X(this).Xfind('i').css({color: 'red'});
-                        },
-                        mouseleave: function() {
-                            _X(this).Xfind('i').css({color: ''});
-                        },
-                        mousedown: function(e) {
-                            if (e.which === 1) {
-                                var xd = e.pageX;
-                                var perspective = _X(item).css('perspective');
-                                var cube_size = _X(item).css('width');
-                                var cube_opacity = _X(item).Xfind('.back').css('opacity');
-                                var cube = {
-                                    front: Transform3D('.front'),
-                                    back: Transform3D('.back'),
-                                    left: Transform3D('.left'),
-                                    right: Transform3D('.right'),
-                                    bottom: Transform3D('.bottom'),
-                                    top: Transform3D('.top'),
-                                };
-                                var cube2;
-                                var mousemove = function(e) {
-                                    var move = (e.pageX - xd);
-                                    var matVal = move * 1/50;
-                                    if (v.clasa == 'ico_rotate_X') {
-                                        cube2 = {
-                                            front:  _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.front]),
-                                            back:   _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(matVal), cube.back]),
-                                            left:   _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.left]),
-                                            right:  _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.right]),
-                                            top:    _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.top]),
-                                            bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.bottom]),
-                                        };
-                                        _X.Xeach(cube2, function(k, v) {
-                                            _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
-                                        });
-                                    } else if (v.clasa == 'ico_rotate_Y') {
-                                        cube2 = {
-                                            front:  _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.front]),
-                                            back:   _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.back]),
-                                            left:   _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.left]),
-                                            right:  _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.right]),
-                                            top:    _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.top]),
-                                            bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.bottom]),
-                                        };
-                                        _X.Xeach(cube2, function(k, v) {
-                                            _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
-                                        });
-                                    } else if (v.clasa == 'ico_rotate_Z') {
-                                        cube2 = {
-                                            front:  _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(matVal), cube.front]),
-                                            back:   _X.MATRIX.Multiply([_X.MATRIX.RotateZAxis(-matVal), cube.back]),
-                                            left:   _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(matVal), cube.left]),
-                                            right:  _X.MATRIX.Multiply([_X.MATRIX.RotateXAxis(-matVal), cube.right]),
-                                            top:    _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(matVal), cube.top]),
-                                            bottom: _X.MATRIX.Multiply([_X.MATRIX.RotateYAxis(-matVal), cube.bottom]),
-                                        };
-                                        _X.Xeach(cube2, function(k, v) {
-                                            _X(item).Xfind('.' + k).css({transform: 'matrix3d(' + v + ')'});
-                                        });
-                                    } else if (v.clasa == 'ico_perspective') {
-                                        _X(item).css({perspective: perspective + move});
-                                    } else if (v.clasa == 'ico_resize') {
-                                        var valcube = Math.abs(cube_size + move);
-                                        _X(item).css({width: valcube, height: valcube});
-                                        _X(item).Xfind('i').css({'font-size': valcube});
-                                        _X(item).Xfind('img').css({width: valcube, height: valcube});
-                                        //
-                                        _X.Xeach(['.front, .back, .left, .right, .top, .bottom'], function(k, v) {
-                                            _X(item).Xfind(v).css({'transform-origin': 'center center' + _X.AddSpace(1) + - valcube / 2 + 'px'});
-                                        });
-                                    } else if (v.clasa == 'ico_opacity') {
-                                        var cubeopacity = Math.abs(move / 300).toFixed(1);
-                                        //
-                                        _X.Xeach(['.back, .left, .right, .top, .bottom'], function(k, v) {
-                                            _X(item).Xfind(v).css({opacity: cubeopacity});
-                                        });
-                                    } else {}
-                                };
-                                var mouseup = function() {
-                                    _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                                };
-                                _X(window).on({mousemove: mousemove, mouseup: mouseup});
-                            }
-                        }
-                    });
-            });
         };
 
         _X.CubeIcon = function(options) {
