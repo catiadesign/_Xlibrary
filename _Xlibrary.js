@@ -464,7 +464,7 @@ var WIN = {
                             height: height(),
                         });
                 }
-            }        
+            }
             if (s.elem.position('height', 'natural') === undefined || s.elem.position('width', 'natural') === undefined) {
                 imgRatio = s.height / s.width;
                 Load();
@@ -477,8 +477,8 @@ var WIN = {
                 } else {
                     imgRatio = s.elem.position('height', 'natural') / s.elem.position('width', 'natural');
                     Load();
-                }            
-            }        
+                }
+            }
         };
 
         _X.XDraggable = function(options) {
@@ -782,14 +782,6 @@ var WIN = {
             };
             var settings = _X.JoinObj(defaults, options);
             var item = SELECTED.item;
-            var ICONcontrols = [
-                {clasa: 'ico_rotate_X', ico: 'panorama_vertical'},
-                {clasa: 'ico_rotate_Y', ico: 'panorama_horizontal'},
-                {clasa: 'ico_rotate_Z', ico: 'panorama_fish_eye'},
-                {clasa: 'ico_perspective', ico: 'landscape'},
-                {clasa: 'ico_resize', ico: 'zoom_out_map'},
-                {clasa: 'ico_opacity', ico: 'beach_access'}
-            ];
             function Transform3D(x) {
                 return _X(SELECTED.item).Xfind(x).css('transform').slice(9, -1).split(',');
             }
@@ -810,6 +802,14 @@ var WIN = {
                     'border-radius': 5,
                 })
                 .init(function(that) {
+                    var ICONcontrols = [
+                        {clasa: 'ico_rotate_X', ico: 'panorama_vertical'},
+                        {clasa: 'ico_rotate_Y', ico: 'panorama_horizontal'},
+                        {clasa: 'ico_rotate_Z', ico: 'panorama_fish_eye'},
+                        {clasa: 'ico_perspective', ico: 'landscape'},
+                        {clasa: 'ico_resize', ico: 'zoom_out_map'},
+                        {clasa: 'ico_opacity', ico: 'beach_access'}
+                    ];                    
                     _X.Xeach(ICONcontrols, function(k, v) {
                         _X('<div')
                             .appendTo(that)
@@ -903,7 +903,7 @@ var WIN = {
                                     }
                                 }
                             });
-                    });                    
+                    });
                 });
         };
 
@@ -1491,7 +1491,7 @@ var WIN = {
                                 if (v.winOverlay === undefined) {
                                     v.winOverlay = that;
                                 }
-                            });                            
+                            });
                         });
                 }
                 //Full Window
@@ -1507,7 +1507,7 @@ var WIN = {
                     } else {return 0}
                 };
                 _X('<div')
-                    .appendTo(settings.to)  
+                    .appendTo(settings.to)
                     .classAdd('thiswindow, shadow_border, xui_corner_all, xui_content')
                     .classAdd(settings.name + '_window')
                     .classAdd(settings.clasa)
@@ -1520,7 +1520,7 @@ var WIN = {
                         border: 0,
                         'font-size': settings.fontSize,
                         'z-index': settings.zIndex,
-                        overflow: settings.windowType.overflow,                        
+                        overflow: settings.windowType.overflow,
                     })
                     .on({
                         mouseenter: function() {
@@ -1547,7 +1547,7 @@ var WIN = {
                         dblclick: function(e) {
                             e.preventDefault();
                             e.stopImmediatePropagation();
-                        },                        
+                        },
                     })
                     .init(function(that) {
                         _X.Xeach(WIN.full, function(k, v) {
@@ -1686,7 +1686,7 @@ var WIN = {
                                             .iconAdd({ico: obj.ico, color: obj.color, size: 20})
                                             .append(_X.AddSpace(1) + obj.title);
                                     }
-                                } else {}                                
+                                } else {}
                             });
                         //Body
                         _X('<div')
@@ -1695,7 +1695,7 @@ var WIN = {
                             .css({
                                 position: 'relative',
                                 height: 'calc(100% - ' + settings.windowType.bodyHeightCalc + 'px)',
-                                overflow: 'hidden',                                
+                                overflow: 'hidden',
                             })
                             .init(function(that) {
                                 _X('<div')
@@ -1709,7 +1709,7 @@ var WIN = {
                                                     padding: 2,
                                                     height: 35,
                                                 });
-                                        } else {}                                        
+                                        } else {}
                                     });
                                 _X('<div')
                                     .appendTo(that)
@@ -1722,7 +1722,7 @@ var WIN = {
                                                     padding: 2,
                                                     height: 35,
                                                 });
-                                        } else {}                                     
+                                        } else {}
                                     });
                                 _X('<div')
                                     .appendTo(that)
@@ -1734,7 +1734,7 @@ var WIN = {
                                         left: 0,
                                         bottom: 0,
                                         padding: 2,
-                                        'user-select': 'text',                                        
+                                        'user-select': 'text',
                                     });
                                 _X('<div')
                                     .appendTo(that)
@@ -1745,7 +1745,7 @@ var WIN = {
                                         width: settings.middlebodywidth ,
                                         top: TopBar(),
                                         bottom: 0,
-                                        padding: 2,                                     
+                                        padding: 2,
                                     });
                                 _X('<div')
                                     .appendTo(that)
@@ -1758,7 +1758,7 @@ var WIN = {
                                         bottom: 0,
                                         padding: 2,
                                         'overflow-x': 'hidden',
-                                        'overflow-y': settings.scroll,                                  
+                                        'overflow-y': settings.scroll,
                                     })
                                     .init(function(that) {
                                         _X('<div')
@@ -1822,7 +1822,7 @@ var WIN = {
                                             });
                                     });
                                 } else {}
-                            });                            
+                            });
                     });
                 //Add to Status Bar
                 if (settings.windowType.statusbar === true) {
@@ -1836,7 +1836,7 @@ var WIN = {
                             margin: 1,
                             'max-width': 200,
                             cursor: 'pointer',
-                            'z-index': settings.zIndex,                            
+                            'z-index': settings.zIndex,
                         })
                         .iconAdd({ico: obj.ico, color: obj.color, size: 25})
                         .append(' ' + obj.title)
@@ -1894,7 +1894,7 @@ var WIN = {
                                     v.winBar = that;
                                 } else {}
                             });
-                        });                        
+                        });
                 }
                 self.ResizeStatusBar();
                 self.WindowSelect({zIndex: settings.zIndex});
@@ -2007,7 +2007,7 @@ var WIN = {
                 for (i = 0; i < that.length; i++) {
                     that[i].appendChild(x[0]);
                 }
-                return x;                
+                return x;
             },
 
             init: function(elem) {
@@ -2269,7 +2269,7 @@ var WIN = {
                         loadEffect(effect, that[i], 'show');
                     }                    
                     that[i].style.display = '';
-                    that[i].style.visibility = 'visible';                    
+                    that[i].style.visibility = 'visible';
                 }
                 return that;
             },
