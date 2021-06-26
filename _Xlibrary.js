@@ -2598,6 +2598,7 @@ var WIN = {
                     tooltipData: '',
                     value: '',
                     css: {},
+                    on: {},
                 };
                 var s = _X.JoinObj(defaults, options);
                 var that = this;
@@ -2623,6 +2624,7 @@ var WIN = {
                         height: s.height,
                     })
                     .css(s.css)
+                    .on(s.on)
                     .on({
                         mouseenter: function() {
                             if (s.tooltip === true) {
@@ -2780,6 +2782,7 @@ var WIN = {
                 };
                 var settings = _X.JoinObj(defaults, options);
                 var that = this;
+                //Width & Height for the new Window
                 var width = that.position('width', 'offset');
                 var height = that.position('height', 'offset');
                 //console.log(width, height);
