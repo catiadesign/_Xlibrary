@@ -481,60 +481,6 @@ var WIN = {
             }
         };
 
-        _X.XDraggable = function(options) {
-            var defaults = {
-                item: '',
-                dragArea: '',
-                mouse: '',
-                clasa: 'xui_disabled',
-            };
-            var settings = _X.JoinObj(defaults, options);
-            var that = _X(settings.item);
-            var e = settings.mouse;
-            if (e.which === 1) {
-                var xd = e.pageX;
-                var yd = e.pageY;
-                var left = that.position('left', 'offset');
-                var top = that.position('top', 'offset');
-                var A = _X(settings.dragArea);
-                var L = A.position('left','box');
-                var T = A.position('top', 'box');
-                var W = A.position('width', 'offset');
-                var H = A.position('height', 'offset');
-                //console.log(left, top, A, L, T, W, H);
-                var mousemove = function(e) {
-                    var x = e.pageX;
-                    var y = e.pageY;
-                    that.classAdd(settings.clasa)
-                        .css({position: 'absolute'});
-                    // Center without borders
-                    if ( (x > L) && (y > T) && (x < L + W) && (y < T + H) ) {
-                        that.css({
-                            left: left + (x - xd),
-                            top: top + (y - yd),
-                        });
-                    }
-                    // Borders on Y Axis
-                    else if ( /*left side*/ (x <= L) && (y > T) && (y < T + H) || /*right side*/ (x >= L + W) && (y > T) && (y < T + H) ) {
-                        that.css({
-                            top: top + (y - yd),
-                        });
-                    }
-                    // Borders on X Axis
-                    else if ( /*top side*/ (y <= T) && (x > L) && (x < L + W) || /*bottom side*/ (y >= T + H) && (x > L) && (x < L + W) ) {
-                        that.css({
-                            left: left + (x - xd),
-                        });
-                    }
-                };
-                var mouseup = function() {
-                    _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                    that.classRemove(settings.clasa);
-                };
-                _X(window).on({mousemove: mousemove, mouseup: mouseup});
-            }
-        };
-
         _X.OpenHtml = function() {
             var obj = SELECTED.obj;
             var x = new _X.Window();
@@ -1017,7 +963,7 @@ var WIN = {
                             _X(this).css({'z-index': 2});
                             //
                             if (s.drag === true) {
-                                _X.XDraggable({item: this, mouse: e, dragArea: s.dragArea});
+                                _X(this).Draggable({dragArea: s.dragArea});
                             } else {}
                             _X.ReturnElements({item: this, obj: _v, pushItem: s.pushItem, pushObj: s.pushObj});
                         },
@@ -1536,7 +1482,7 @@ var WIN = {
                             //console.log(WIN.full);
                             if (settings.windowType !== self.type[1]) {
                                 if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
-                                    _X.XDraggable({item: this, mouse: e, dragArea: settings.dragArea});
+                                    _X(this).Draggable({dragArea: settings.dragArea});
                                 } else {}
                             } else {}
                         },
@@ -1586,7 +1532,7 @@ var WIN = {
                                                     self.WindowMoveToSide();
                                                 }
                                                 if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
-                                                    _X.XDraggable({item: _X(this).parent(), mouse: e, dragArea: settings.dragArea});
+                                                    _X(this).parent().Draggable({dragArea: settings.dragArea});
                                                 } else {}
                                             },
                                             dblclick: function(e) {
@@ -2829,7 +2775,60 @@ var WIN = {
                     that.Xshow(Effect());
                 } else {}
                 return that;
-            },           
+            },
+            
+            Draggable: function(options) {
+                var defaults = {
+                    dragArea: '',
+                    clasa: 'xui_disabled',
+                };
+                var settings = _X.JoinObj(defaults, options);
+                var that = this;
+                var e = event;
+                if (e.which === 1) {
+                    var xd = e.pageX;
+                    var yd = e.pageY;
+                    var left = that.position('left', 'offset');
+                    var top = that.position('top', 'offset');
+                    var A = _X(settings.dragArea);
+                    var L = A.position('left','box');
+                    var T = A.position('top', 'box');
+                    var W = A.position('width', 'offset');
+                    var H = A.position('height', 'offset');
+                    //console.log(left, top, A, L, T, W, H);
+                    var mousemove = function(e) {
+                        var x = e.pageX;
+                        var y = e.pageY;
+                        that.classAdd(settings.clasa)
+                            .css({position: 'absolute'});
+                        // Center without borders
+                        if ( (x > L) && (y > T) && (x < L + W) && (y < T + H) ) {
+                            that.css({
+                                left: left + (x - xd),
+                                top: top + (y - yd),
+                            });
+                        }
+                        // Borders on Y Axis
+                        else if ( /*left side*/ (x <= L) && (y > T) && (y < T + H) || /*right side*/ (x >= L + W) && (y > T) && (y < T + H) ) {
+                            that.css({
+                                top: top + (y - yd),
+                            });
+                        }
+                        // Borders on X Axis
+                        else if ( /*top side*/ (y <= T) && (x > L) && (x < L + W) || /*bottom side*/ (y >= T + H) && (x > L) && (x < L + W) ) {
+                            that.css({
+                                left: left + (x - xd),
+                            });
+                        }
+                    };
+                    var mouseup = function() {
+                        _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                        that.classRemove(settings.clasa);
+                    };
+                    _X(window).on({mousemove: mousemove, mouseup: mouseup});
+                }
+                return that;
+            },            
         };
 
         //Effects for Hide / Show prototype function
