@@ -1214,14 +1214,9 @@ var WIN = {
                 if (window.innerWidth < 700) {return 0}
                 else {return 130}
             };
-            this.ResizableFn = function(options) {
-                var defaults = {
-                    item: '',
-                    mouse: '',
-                };
-                var s = _X.JoinObj(defaults, options);
-                var that = _X(s.item);
-                var e = s.mouse;
+            this.ResizableFn = function() {
+                var e = event;
+                var that = _X(event.target).parent('.thiswindow');
                 if (e.which === 1) {
                     var xd = e.pageX;
                     var yd = e.pageY;
@@ -1758,7 +1753,7 @@ var WIN = {
                                                     if (SETTINGS.resize.sel == 'true') {
                                                         _X(this).Xfind('i').css({color: 'red'});
                                                         _X(this).classAdd(v.moveClass);
-                                                        self.ResizableFn({item: _X(this).parent('.thiswindow'), mouse: e});
+                                                        self.ResizableFn();
                                                     } else {}
                                                 },
                                                 mouseup: function() {
