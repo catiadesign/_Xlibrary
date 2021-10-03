@@ -2237,6 +2237,9 @@ var WIN = {
                             _X(elem).css(loadAnimation(eff_1 + '_motion_hide'));
                             HideTime(elem, dis_3, vis_4);
                         }
+                    } else {
+                        elem.style.display = dis_3;
+                        elem.style.visibility = vis_4;                            
                     }
                 }
                 return that;
