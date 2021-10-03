@@ -1501,11 +1501,12 @@ var WIN = {
                             open: settings.open,
                         });
                         self.FindWindowKey(that);
-                        //
+                        //Window Header
                         _X('<div')
                             .appendTo(that)
                             .classAdd('thiswindow_header')
                             .init(function(that) {
+                                //Header Var 1
                                 if (settings.windowType == self.type[1]) {
                                     var DisableHeader = function() {
                                         if (SETTINGS.header.sel == 'true') {return 'xui_header';}
@@ -1523,12 +1524,16 @@ var WIN = {
                                         })
                                         .on({
                                             mousedown: function(e) {
-                                                if (settings.windowType == self.type[1]) {
-                                                    self.WindowMoveToSide();
+                                                if(e.target.parentElement !== this ) {
+                                                    return;
+                                                } else {                                            
+                                                    if (settings.windowType == self.type[1]) {
+                                                        self.WindowMoveToSide();
+                                                    }
+                                                    if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
+                                                        _X(this).parent().Draggable({dragArea: settings.dragArea});
+                                                    } else {}
                                                 }
-                                                if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
-                                                    _X(this).parent().Draggable({dragArea: settings.dragArea});
-                                                } else {}
                                             },
                                             dblclick: function(e) {
                                                 e.preventDefault();
@@ -1565,6 +1570,7 @@ var WIN = {
                                             color: false,
                                             menuRC: false,
                                         });
+                                //Header Var 2
                                 } else if (settings.windowType == self.type[2]) {
                                     _X(that).css({height: 24});
                                     self.WindowLogo({item: that, show: settings.imageshow});
@@ -1610,6 +1616,7 @@ var WIN = {
                                                 },
                                             });
                                     });
+                                //Header Var 3
                                 } else if (settings.windowType == self.type[3]) {
                                     self.WindowLogo({item: that, show: settings.imageshow});
                                     if (settings.menuTitle === true) {
@@ -2677,6 +2684,7 @@ var WIN = {
                         .css({
                             padding: 3,
                             border: '1px solid transparent',
+                            cursor: 'pointer',
                         })
                         .css(s.css)
                         .iconAdd({ico: v.ico, color: ColorLoad(v), size: s.icoSize})
