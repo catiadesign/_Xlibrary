@@ -2200,35 +2200,51 @@ var WIN = {
                 return that;
             },
 
+            //Hide Show Based Function
+            hide_show: function(eff_1, sh_2, dis_3, vis_4) {
+                var that = this;
+                var i;
+                var loadAnimation = function(name) {
+                    return {
+                        'animation-name': name,
+                        'animation-duration': '.5s',
+                        'animation-timing-function': 'ease',
+                        'animation-direction': 'normal',
+                        'animation-fill-mode': 'none',
+                    };
+                };
+                var HideTime = function(elem, dis_3, vis_4) {
+                    setTimeout(function() {
+                        elem.style.display = dis_3;
+                        elem.style.visibility = vis_4;    
+                    }, 150);                     
+                };
+                for (i = 0; i < that.length; i++) {
+                    var elem = that[i];
+                    if (eff_1 !== undefined) {
+                        if (sh_2 == 'show') {
+                            _X(elem).css(loadAnimation(eff_1 + '_motion_show'));
+                            elem.style.display = dis_3;
+                            elem.style.visibility = vis_4;                            
+                        } else if (sh_2 == 'hide') {
+                            _X(elem).css(loadAnimation(eff_1 + '_motion_hide'));
+                            HideTime(elem, dis_3, vis_4);
+                        }
+                    }
+                }
+                return that;
+            },
+
             //_X(?).Xshow()     => show the current element
             //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
             Xshow: function(effect) {
-                var that = this;
-                var i;
-                for (i = 0; i < that.length; i++) {
-                    if (effect !== undefined) {
-                        loadEffect(effect, that[i], 'show');
-                    }                    
-                    that[i].style.display = '';
-                    that[i].style.visibility = 'visible';
-                }
-                return that;
+                return this.hide_show(effect, 'show', '', 'visible');
             },
 
             //_X(?).Xhide()     => hide the current element
             //_X(?).Xhide('?')  => hide the current element with buildin EFFECTS
             Xhide: function(effect) {
-                var that = this;
-                var i;
-                for (i = 0; i < that.length; i++) {
-                    if (effect !== undefined) {
-                        loadEffect(effect, that[i], 'hide');
-                    } else {
-                        that[i].style.display = 'none';
-                        that[i].style.visibility = 'hidden';
-                    }
-                }
-                return that;
+                return this.hide_show(effect, 'hide', 'none', 'hidden');
             },
 
             //_X(?).attr('? element')              => GET element attribute
@@ -2849,25 +2865,6 @@ var WIN = {
             });
             //console.log(effectStyles.sheet.cssRules);
         })();
-        function loadEffect(effect, elem, hideshow) {
-            var loadAnimation = function(name) {
-                return {
-                    'animation-name': name,
-                    'animation-duration': '.5s',
-                    'animation-timing-function': 'ease',
-                    'animation-direction': 'normal',
-                    'animation-fill-mode': 'none',
-                };
-            };                
-            if (hideshow == 'show') {
-                _X(elem).css(loadAnimation(effect + '_motion_show'));
-            } else if (hideshow == 'hide') {
-                _X(elem).css(loadAnimation(effect + '_motion_hide'));
-                setTimeout(function() {
-                    _X(elem).Xhide();
-                }, 150); 
-            }
-        }           
 
         _X.GetRadians = function(degrees) {
             return degrees * (Math.PI / 180);
