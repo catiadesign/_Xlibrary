@@ -106,7 +106,7 @@ var WIN = {
             version:    '1.0.0',
             author:     'Adrian & Open Source',
             created:    '17.10.2019',
-            updated:     '21.01.2021',
+            updated:     '03.10.2021',
         };
         
         var xs = 0;
