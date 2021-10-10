@@ -2227,15 +2227,13 @@ var WIN = {
                             'animation-direction': 'normal',
                             'animation-fill-mode': 'none',                            
                         });
-                        if (vis_2 == 'visible') {
-                            elem.style.visibility = vis_2;
-                            elem.style.display = dis_3;
-                        } else if (vis_2 == 'hidden') {
-                            HideTime(elem, vis_2, dis_3);
-                        }
-                    } else {
+                    }
+                    if (vis_2 == 'visible' || vis_2 == 'hidden' && eff_1 === undefined) {
                         elem.style.visibility = vis_2;
                         elem.style.display = dis_3;
+                    }
+                    if (vis_2 == 'hidden' && eff_1 !== undefined) {
+                        HideTime(elem, vis_2, dis_3);
                     }
                 }
                 return that;
