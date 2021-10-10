@@ -2208,38 +2208,34 @@ var WIN = {
             },
 
             //Hide Show Based Function
-            hide_show: function(eff_1, sh_2, dis_3, vis_4) {
+            hide_show: function(eff_1, vis_2, dis_3) {
                 var that = this;
                 var i;
-                var loadAnimation = function(name) {
-                    return {
-                        'animation-name': name,
-                        'animation-duration': '.5s',
-                        'animation-timing-function': 'ease',
-                        'animation-direction': 'normal',
-                        'animation-fill-mode': 'none',
-                    };
-                };
-                var HideTime = function(elem, dis_3, vis_4) {
+                var HideTime = function(elem, vis_2, dis_3) {
                     setTimeout(function() {
+                        elem.style.visibility = vis_2;
                         elem.style.display = dis_3;
-                        elem.style.visibility = vis_4;    
                     }, 150);                     
                 };
                 for (i = 0; i < that.length; i++) {
                     var elem = that[i];
                     if (eff_1 !== undefined) {
-                        if (sh_2 == 'show') {
-                            _X(elem).css(loadAnimation(eff_1 + '_motion_show'));
+                        _X(elem).css({
+                            'animation-name': eff_1 + '_motion_' + vis_2,
+                            'animation-duration': '.5s',
+                            'animation-timing-function': 'ease',
+                            'animation-direction': 'normal',
+                            'animation-fill-mode': 'none',                            
+                        });
+                        if (vis_2 == 'visible') {
+                            elem.style.visibility = vis_2;
                             elem.style.display = dis_3;
-                            elem.style.visibility = vis_4;                            
-                        } else if (sh_2 == 'hide') {
-                            _X(elem).css(loadAnimation(eff_1 + '_motion_hide'));
-                            HideTime(elem, dis_3, vis_4);
+                        } else if (vis_2 == 'hidden') {
+                            HideTime(elem, vis_2, dis_3);
                         }
                     } else {
+                        elem.style.visibility = vis_2;
                         elem.style.display = dis_3;
-                        elem.style.visibility = vis_4;                            
                     }
                 }
                 return that;
@@ -2248,13 +2244,13 @@ var WIN = {
             //_X(?).Xshow()     => show the current element
             //_X(?).Xshow('?')  => show the current element with buildin EFFECTS
             Xshow: function(effect) {
-                return this.hide_show(effect, 'show', '', 'visible');
+                return this.hide_show(effect, 'visible', '');
             },
 
             //_X(?).Xhide()     => hide the current element
             //_X(?).Xhide('?')  => hide the current element with buildin EFFECTS
             Xhide: function(effect) {
-                return this.hide_show(effect, 'hide', 'none', 'hidden');
+                return this.hide_show(effect, 'hidden', 'none');
             },
 
             //_X(?).attr('? element')              => GET element attribute
@@ -2870,9 +2866,9 @@ var WIN = {
             document.head.appendChild(effectStyles);
             _X.Xeach(type, function(k, v) {
                 //show
-                effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_show {from {transform: matrix3d(' + v.matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
+                effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_visible {from {transform: matrix3d(' + v.matrix + '); opacity: 0;} to {transform: matrix3d(' + matNull + '); opacity: 1;}}', 0);
                 //hide
-                effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_hide {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + v.matrix + '); opacity: 0;}}', 0);
+                effectStyles.sheet.insertRule('@keyframes ' + v.name + '_motion_hidden {from {transform: matrix3d(' + matNull + '); opacity: 1;} to {transform: matrix3d(' + v.matrix + '); opacity: 0;}}', 0);
             });
             //console.log(effectStyles.sheet.cssRules);
         })();
