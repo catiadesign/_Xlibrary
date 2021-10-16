@@ -2219,6 +2219,7 @@ var WIN = {
                 };
                 for (i = 0; i < that.length; i++) {
                     var elem = that[i];
+                    //Enable effect
                     if (eff_1 !== undefined) {
                         _X(elem).css({
                             'animation-name': eff_1 + '_motion_' + vis_2,
@@ -2228,10 +2229,12 @@ var WIN = {
                             'animation-fill-mode': 'none',                            
                         });
                     }
+                    //Effect displayed when show or hide without effect
                     if (vis_2 == 'visible' || vis_2 == 'hidden' && eff_1 === undefined) {
                         elem.style.visibility = vis_2;
                         elem.style.display = dis_3;
                     }
+                    //Effect displayed when hidden
                     if (vis_2 == 'hidden' && eff_1 !== undefined) {
                         HideTime(elem, vis_2, dis_3);
                     }
