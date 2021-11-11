@@ -2211,11 +2211,9 @@ var WIN = {
             hide_show: function(eff_1, vis_2, dis_3) {
                 var that = this;
                 var i;
-                var HideTime = function(elem, vis_2, dis_3) {
-                    setTimeout(function() {
-                        elem.style.visibility = vis_2;
-                        elem.style.display = dis_3;
-                    }, 150);                     
+                var HideShow = function(elem, vis_2, dis_3) {
+                    elem.style.visibility = vis_2;
+                    elem.style.display = dis_3;
                 };
                 for (i = 0; i < that.length; i++) {
                     var elem = that[i];
@@ -2229,14 +2227,15 @@ var WIN = {
                             'animation-fill-mode': 'none',                            
                         });
                     }
-                    //Effect displayed when show or hide without effect
+                    //Effect displayed
+                    //-when show with or without effect
+                    //-or hide without effect
                     if (vis_2 == 'visible' || vis_2 == 'hidden' && eff_1 === undefined) {
-                        elem.style.visibility = vis_2;
-                        elem.style.display = dis_3;
+                        HideShow(elem, vis_2, dis_3);
                     }
                     //Effect displayed when hidden
                     if (vis_2 == 'hidden' && eff_1 !== undefined) {
-                        HideTime(elem, vis_2, dis_3);
+                        setTimeout(HideShow, 150, elem, vis_2, dis_3);                         
                     }
                 }
                 return that;
@@ -3093,9 +3092,8 @@ var WIN = {
                     'Constructor:': s.constructor,
                 };
                 for(i in x) {
-                    if (x[i] === undefined) {
+                    if (x[i] === undefined)
                         delete x[i];
-                    }
                 }
                 console.log('*** Help Info for Function ' + s.name +' ***');
                 return x;
