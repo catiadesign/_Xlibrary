@@ -2445,7 +2445,7 @@ var WIN = {
                 var getAttr;
                 var replaceString;
                 var i = 1;
-                if (that[0] !== undefined || that[0] !== null) {
+                if ((that[0] !== undefined || that[0] !== null) && that.length > 0) {
                     //first parent
                     parent = that[0].parentNode;
                     if (e === undefined) {
