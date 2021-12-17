@@ -510,6 +510,23 @@ var WIN = {
                 .attr({src: obj.loc})
                 .css({width: '100%', height: '100%'});
         };
+
+        _X.OpenOffice = function() {
+            var obj = SELECTED.obj;
+            var x = new _X.Window();
+            x.init({
+                leftSize: x.AutoLeftResize(),
+                scroll: 'hidden',
+            });
+            _X('<iframe')
+                .appendTo(x.left)
+                .attr({src: AdSenseVertical(), scrolling: 'no', marginwidth: 0, marginheight: 0})
+                .css({width: '100%', height: '100%'});
+            _X('<iframe')
+                .appendTo(x.right)
+                .attr({src: 'https://view.officeapps.live.com/op/embed.aspx?src=http://catiadesign.org/' + obj.loc})
+                .css({width: '100%', height: '100%'});
+        };
     
         _X.OpenPhoto = function() {
             var obj = SELECTED.obj;
