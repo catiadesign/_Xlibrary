@@ -1744,24 +1744,24 @@ var WIN = {
                                             .on({
                                                 mousedown: function(e) {
                                                     if (SETTINGS.resize.sel == 'true' && e.which === 1) {
-                                                        _X(this).Xfind('i').css({color: 'red'});
-                                                        _X(this).classAdd(v.moveClass);
-                                                        var that = _X(e.target).parent('.thiswindow');
-                                                        var self = this;
+                                                        var that = this;
                                                         var xd = e.pageX;
-                                                        var yd = e.pageY;
-                                                        var left = that.position('left', 'offset');
-                                                        var top = that.position('top', 'offset');
-                                                        var width = that.css('width');
-                                                        var height = that.css('height');
+                                                        var yd = e.pageY;  
+                                                        _X(that).Xfind('i').css({color: 'red'});
+                                                        _X(that).classAdd(v.moveClass);
+                                                        var p = _X(that).parent('.thiswindow');
+                                                        var left = p.position('left', 'offset');
+                                                        var top = p.position('top', 'offset');
+                                                        var width = p.css('width');
+                                                        var height = p.css('height');
                                                         var mousemove = function(e) {
-                                                            if (_X(self).classBool('window_right_resize') && e.pageX - left > 100 && e.pageY - top > 100) {
-                                                                that.css({
+                                                            if (_X(that).classBool('window_right_resize') && e.pageX - left > 100 && e.pageY - top > 100) {
+                                                                p.css({
                                                                     width: width + (e.pageX - xd),
                                                                     height: height + (e.pageY - yd)
                                                                 });
-                                                            } else if (_X(self).classBool('window_left_resize') && e.pageX + 100 < left + width && e.pageY - top > 100) {
-                                                                that.css({
+                                                            } else if (_X(that).classBool('window_left_resize') && e.pageX + 100 < left + width && e.pageY - top > 100) {
+                                                                p.css({
                                                                     width: width + (xd - e.pageX),
                                                                     height: height + (e.pageY - yd),
                                                                     left: left + (e.pageX - xd)
@@ -1770,8 +1770,8 @@ var WIN = {
                                                         };
                                                         var mouseup = function() {
                                                             _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                                                            _X(self).classRemove('window_left_resize, window_right_resize');
-                                                            _X(self).Xfind('i').css({color: ''});                                                            
+                                                            _X(that).classRemove('window_left_resize, window_right_resize');
+                                                            _X(that).Xfind('i').css({color: ''});                                                            
                                                         };
                                                         _X(window).on({mousemove: mousemove, mouseup: mouseup});
                                                     } else {}
