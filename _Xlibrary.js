@@ -1756,40 +1756,42 @@ var WIN = {
                                                         var height = p.css('height');
                                                         var limit = 100;
                                                         var mousemove = function(e) {
+                                                            var x = e.pageX;
+                                                            var y = e.pageY;
                                                             if (_X(that).classBool('window_right_resize')) {
-                                                                if (e.pageX - left > limit && e.pageY - top > limit) {
+                                                                if (x - left > limit && y - top > limit) {
                                                                     p.css({
-                                                                        width: width + (e.pageX - xd),
-                                                                        height: height + (e.pageY - yd)
+                                                                        width: width + (x - xd),
+                                                                        height: height + (y - yd)
                                                                     });
                                                                 //X Axis
-                                                                } else if (e.pageX - left <= limit && e.pageY - top > limit) {
+                                                                } else if (x - left <= limit && y - top > limit) {
                                                                     p.css({
-                                                                        height: height + (e.pageY - yd)
+                                                                        height: height + (y - yd)
                                                                     });
                                                                 //Y Axis
-                                                                } else if (e.pageX - left > limit && e.pageY - top <= limit) {
+                                                                } else if (x - left > limit && y - top <= limit) {
                                                                     p.css({
-                                                                        width: width + (e.pageX - xd),
+                                                                        width: width + (x - xd),
                                                                     });                                                                    
                                                                 }
                                                             } else if (_X(that).classBool('window_left_resize')) {
-                                                                if (e.pageX + limit < left + width && e.pageY - top > limit) {
+                                                                if (x + limit < left + width && y - top > limit) {
                                                                     p.css({
-                                                                        width: width + (xd - e.pageX),
-                                                                        height: height + (e.pageY - yd),
-                                                                        left: left + (e.pageX - xd)
+                                                                        width: width + (xd - x),
+                                                                        height: height + (y - yd),
+                                                                        left: left + (x - xd)
                                                                     });
                                                                 //X Axis
-                                                                } else if (e.pageX + limit >= left + width && e.pageY - top > limit) {
+                                                                } else if (x + limit >= left + width && y - top > limit) {
                                                                     p.css({
-                                                                        height: height + (e.pageY - yd),
+                                                                        height: height + (y - yd),
                                                                     });                                                                    
                                                                 //Y Axis
-                                                                } else if (e.pageX + limit < left + width && e.pageY - top <= limit) {
+                                                                } else if (x + limit < left + width && y - top <= limit) {
                                                                     p.css({
-                                                                        width: width + (xd - e.pageX),
-                                                                        left: left + (e.pageX - xd)
+                                                                        width: width + (xd - x),
+                                                                        left: left + (x - xd)
                                                                     });                                                                    
                                                                 }
                                                             }
