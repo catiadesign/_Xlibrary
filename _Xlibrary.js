@@ -1231,35 +1231,6 @@ var WIN = {
                 if (window.innerWidth < 700) {return 0}
                 else {return 130}
             };
-            this.ResizableFn = function() {
-                var e = event;
-                var that = _X(event.target).parent('.thiswindow');
-                if (e.which === 1) {
-                    var xd = e.pageX;
-                    var yd = e.pageY;
-                    var left = that.position('left', 'offset');
-                    var width = that.css('width');
-                    var height = that.css('height');
-                    var mousemove = function(e) {
-                        if (_X('.ico_submenu_resize_se').classBool('window_resize_se')) {
-                            that.css({
-                                width: width + (e.pageX - xd),
-                                height: height + (e.pageY - yd)
-                            });
-                        } else if (_X('.ico_submenu_resize_sw').classBool('window_resize_sw')) {
-                            that.css({
-                                width: width + (xd - e.pageX),
-                                height: height + (e.pageY - yd),
-                                left: left + (e.pageX - xd)
-                            });
-                        } else {}
-                    };
-                    var mouseup = function() {
-                        _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                    };
-                    _X(window).on({mousemove: mousemove, mouseup: mouseup});
-                } else {}
-            };
             this.WindowSelect = function(options) {
                 var defaults = {
                     zIndex: 1501,
@@ -1754,15 +1725,14 @@ var WIN = {
                                             'padding-top': 1,
                                             'font-size': 10,
                                         });
-                                    //divs for actual resize
+                                    //divs for window resize
                                     var temp = [
-                                        {clasa: 'ico_submenu_resize_sw', left: 1, right: '', moveClass: 'window_resize_sw'},
-                                        {clasa: 'ico_submenu_resize_se', left: '', right: 1, moveClass: 'window_resize_se'},
+                                        {left: 1, right: '', moveClass: 'window_left_resize'},
+                                        {left: '', right: 1, moveClass: 'window_right_resize'},
                                     ];
                                     _X.Xeach(temp, function(k, v) {
                                         _X('<div')
                                             .appendTo(that)
-                                            .classAdd(v.clasa)
                                             .css({
                                                 position: 'absolute',
                                                 cursor: 'pointer',
@@ -1773,16 +1743,38 @@ var WIN = {
                                             .iconAdd({ico: 'adjust', size: 12})
                                             .on({
                                                 mousedown: function(e) {
-                                                    _X(this).classRemove(v.moveClass);
-                                                    if (SETTINGS.resize.sel == 'true') {
+                                                    if (SETTINGS.resize.sel == 'true' && e.which === 1) {
                                                         _X(this).Xfind('i').css({color: 'red'});
                                                         _X(this).classAdd(v.moveClass);
-                                                        self.ResizableFn();
+                                                        var that = _X(e.target).parent('.thiswindow');
+                                                        var self = this;
+                                                        var xd = e.pageX;
+                                                        var yd = e.pageY;
+                                                        var left = that.position('left', 'offset');
+                                                        var top = that.position('top', 'offset');
+                                                        var width = that.css('width');
+                                                        var height = that.css('height');
+                                                        var mousemove = function(e) {
+                                                            if (_X(self).classBool('window_right_resize') && e.pageX - left > 100 && e.pageY - top > 100) {
+                                                                that.css({
+                                                                    width: width + (e.pageX - xd),
+                                                                    height: height + (e.pageY - yd)
+                                                                });
+                                                            } else if (_X(self).classBool('window_left_resize') && e.pageX + 100 < left + width && e.pageY - top > 100) {
+                                                                that.css({
+                                                                    width: width + (xd - e.pageX),
+                                                                    height: height + (e.pageY - yd),
+                                                                    left: left + (e.pageX - xd)
+                                                                });
+                                                            }
+                                                        };
+                                                        var mouseup = function() {
+                                                            _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                                                            _X(self).classRemove('window_left_resize, window_right_resize');
+                                                            _X(self).Xfind('i').css({color: ''});                                                            
+                                                        };
+                                                        _X(window).on({mousemove: mousemove, mouseup: mouseup});
                                                     } else {}
-                                                },
-                                                mouseup: function() {
-                                                    _X(this).Xfind('i').css({color: ''});
-                                                    _X(this).classRemove(v.moveClass);
                                                 },
                                             });
                                     });
