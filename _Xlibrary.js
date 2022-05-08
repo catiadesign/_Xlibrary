@@ -1733,6 +1733,7 @@ var WIN = {
                                     _X.Xeach(temp, function(k, v) {
                                         _X('<div')
                                             .appendTo(that)
+                                            .classAdd(v.moveClass)
                                             .css({
                                                 position: 'absolute',
                                                 cursor: 'pointer',
@@ -1748,7 +1749,6 @@ var WIN = {
                                                         var xd = e.pageX;
                                                         var yd = e.pageY;  
                                                         _X(that).Xfind('i').css({color: 'red'});
-                                                        _X(that).classAdd(v.moveClass);
                                                         var p = _X(that).parent('.thiswindow');
                                                         var left = p.position('left', 'offset');
                                                         var top = p.position('top', 'offset');
@@ -1798,7 +1798,6 @@ var WIN = {
                                                         };
                                                         var mouseup = function() {
                                                             _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                                                            _X(that).classRemove('window_left_resize, window_right_resize');
                                                             _X(that).Xfind('i').css({color: ''});                                                            
                                                         };
                                                         _X(window).on({mousemove: mousemove, mouseup: mouseup});
