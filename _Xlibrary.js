@@ -1250,6 +1250,52 @@ var WIN = {
                 }
                 _X(WIN.full[WIN.key].winBar).classAdd('xui_highlight');
             };
+
+            this.ResizeStatusBar = function() {
+                var status_width = _X(WIN.globalDIV).Xfind(WIN.taskbar).position('width', 'offset') - 7;
+                var selecteditems = _X(WIN.globalDIV).Xfind('.thiswindow_statusbar').length;
+                var resultat = (status_width / selecteditems) - 8;
+                _X(WIN.globalDIV).Xfind('.thiswindow_statusbar').css({width: resultat});
+                //console.log(status_width, selecteditems, resultat);
+            };
+
+            this.FindWindowKey = function(that) {
+                _X.Xeach(WIN.full, function(k, v) {
+                    if (_X(v.winElem)[0] == _X(that)[0] || _X(v.winBar)[0] == _X(that)[0]) {
+                        WIN.key = k;
+                    } else {}
+                });
+            };
+
+            this.WindowLogo = function(options) {
+                var defaults = {
+                    item: '',
+                    show: true,
+                };
+                var settings = _X.JoinObj(defaults, options);
+                var item = _X(settings.item);
+                if (settings.show === true) {
+                    setTimeout(function() {
+                        var width = item.parent().position('width', 'offset');
+                        var height = item.parent().position('height', 'offset');
+                        if (width < height) {
+                            _X('<img')
+                                .appendTo(item)
+                                .classAdd('xui_disabled')
+                                .css({
+                                    position: 'absolute',
+                                    opacity: '0.15'
+                                })
+                                .attr({
+                                    src: '/images/catiadesign_logo_004.png',
+                                    width: '100%',
+                                    align: 'middle',
+                                });
+                        }
+                    }, 30);
+                }
+            };
+
             this.WindowMoveToSide = function() {
                 var amount_move = 5;
                 var pos = {
@@ -1269,10 +1315,10 @@ var WIN = {
                 var elW = that.position('width', 'offset');
                 var elH = that.position('height', 'offset');
                 var winW = _X(WIN.globalDIV).position('width', 'offset');
-                function ResizeMoveToSide(width, height, left, top) {
+                var ResizeMoveToSide = function(width, height, left, top) {
                     _X(WIN.full[WIN.key].winElem).css({left: left, top: top, width: width, height: height});
                     _X(window).off({mouseup: mouseup});
-                }
+                };
                 if (elH > 39) {
                     if (elW < winW) {
                         store.left = elL;
@@ -1280,11 +1326,11 @@ var WIN = {
                         store.width = elW;
                         store.height = elH;
                         //console.log(store);
-                    } else {}
+                    }
                     _X.Xeach(pos, function(k, v) {
                         _X('<div')
                             .appendTo('body')
-                            .classAdd('remove_on_mouseup, xui_disabled, xui_corner_all')
+                            .classAdd('window_resize_screen, xui_disabled, xui_corner_all')
                             .css({
                                 position: 'absolute',
                                 margin: 3,
@@ -1334,54 +1380,68 @@ var WIN = {
                         else {
                            _X(window).off({mouseup: mouseup});
                         }
+                        _X('.window_resize_screen').Xremove();
                     };
                     _X(window).on({mouseup: mouseup});
                 } else {}
             };
-
-            this.ResizeStatusBar = function() {
-                var status_width = _X(WIN.globalDIV).Xfind(WIN.taskbar).position('width', 'offset') - 7;
-                var selecteditems = _X(WIN.globalDIV).Xfind('.thiswindow_statusbar').length;
-                var resultat = (status_width / selecteditems) - 8;
-                _X(WIN.globalDIV).Xfind('.thiswindow_statusbar').css({width: resultat});
-                //console.log(status_width, selecteditems, resultat);
-            };
-
-            this.FindWindowKey = function(that) {
-                _X.Xeach(WIN.full, function(k, v) {
-                    if (_X(v.winElem)[0] == _X(that)[0] || _X(v.winBar)[0] == _X(that)[0]) {
-                        WIN.key = k;
-                    } else {}
-                });
-            };
-
-            this.WindowLogo = function(options) {
-                var defaults = {
-                    item: '',
-                    show: true,
-                };
-                var settings = _X.JoinObj(defaults, options);
-                var item = _X(settings.item);
-                if (settings.show === true) {
-                    setTimeout(function() {
-                        var width = item.parent().position('width', 'offset');
-                        var height = item.parent().position('height', 'offset');
-                        if (width < height) {
-                            _X('<img')
-                                .appendTo(item)
-                                .classAdd('xui_disabled')
-                                .css({
-                                    position: 'absolute',
-                                    opacity: '0.15'
-                                })
-                                .attr({
-                                    src: '/images/catiadesign_logo_004.png',
-                                    width: '100%',
-                                    align: 'middle',
-                                });
+            
+            this.WindowResize = function(e, that) {
+                var xd = e.pageX;
+                var yd = e.pageY;  
+                _X(that).Xfind('i').css({color: 'red'});
+                var p = _X(that).parent('.thiswindow');
+                var left = p.position('left', 'offset');
+                var top = p.position('top', 'offset');
+                var width = p.css('width');
+                var height = p.css('height');
+                var limit = 100;
+                var mousemove = function(e) {
+                    var x = e.pageX;
+                    var y = e.pageY;
+                    if (_X(that).classBool('window_right_resize')) {
+                        if (x - left > limit && y - top > limit) {
+                            p.css({
+                                width: width + (x - xd),
+                                height: height + (y - yd)
+                            });
+                        //X Axis
+                        } else if (x - left <= limit && y - top > limit) {
+                            p.css({
+                                height: height + (y - yd)
+                            });
+                        //Y Axis
+                        } else if (x - left > limit && y - top <= limit) {
+                            p.css({
+                                width: width + (x - xd),
+                            });                                                                    
                         }
-                    }, 30);
-                }
+                    } else if (_X(that).classBool('window_left_resize')) {
+                        if (x + limit < left + width && y - top > limit) {
+                            p.css({
+                                width: width + (xd - x),
+                                height: height + (y - yd),
+                                left: left + (x - xd)
+                            });
+                        //X Axis
+                        } else if (x + limit >= left + width && y - top > limit) {
+                            p.css({
+                                height: height + (y - yd),
+                            });                                                                    
+                        //Y Axis
+                        } else if (x + limit < left + width && y - top <= limit) {
+                            p.css({
+                                width: width + (xd - x),
+                                left: left + (x - xd)
+                            });                                                                    
+                        }
+                    }
+                };
+                var mouseup = function() {
+                    _X(window).off({mouseup: mouseup, mousemove: mousemove});
+                    _X(that).Xfind('i').css({color: ''});                                                            
+                };
+                _X(window).on({mousemove: mousemove, mouseup: mouseup});                
             };
 
             this.init = function(options) {
@@ -1515,10 +1575,10 @@ var WIN = {
                                                 if(e.target.parentElement !== this ) {
                                                     return;
                                                 } else {                                            
-                                                    if (settings.windowType == self.type[1]) {
+                                                    if (settings.windowType == self.type[1] && e.which === 1) {
                                                         self.WindowMoveToSide();
                                                     }
-                                                    if ( (SETTINGS.drag.sel == 'true') && (settings.windowType.drag === true) ) {
+                                                    if (SETTINGS.drag.sel == 'true' && settings.windowType.drag === true && e.which === 1) {
                                                         _X(this).parent().Draggable({dragArea: settings.dragArea});
                                                     } else {}
                                                 }
@@ -1745,62 +1805,7 @@ var WIN = {
                                             .on({
                                                 mousedown: function(e) {
                                                     if (SETTINGS.resize.sel == 'true' && e.which === 1) {
-                                                        var that = this;
-                                                        var xd = e.pageX;
-                                                        var yd = e.pageY;  
-                                                        _X(that).Xfind('i').css({color: 'red'});
-                                                        var p = _X(that).parent('.thiswindow');
-                                                        var left = p.position('left', 'offset');
-                                                        var top = p.position('top', 'offset');
-                                                        var width = p.css('width');
-                                                        var height = p.css('height');
-                                                        var limit = 100;
-                                                        var mousemove = function(e) {
-                                                            var x = e.pageX;
-                                                            var y = e.pageY;
-                                                            if (_X(that).classBool('window_right_resize')) {
-                                                                if (x - left > limit && y - top > limit) {
-                                                                    p.css({
-                                                                        width: width + (x - xd),
-                                                                        height: height + (y - yd)
-                                                                    });
-                                                                //X Axis
-                                                                } else if (x - left <= limit && y - top > limit) {
-                                                                    p.css({
-                                                                        height: height + (y - yd)
-                                                                    });
-                                                                //Y Axis
-                                                                } else if (x - left > limit && y - top <= limit) {
-                                                                    p.css({
-                                                                        width: width + (x - xd),
-                                                                    });                                                                    
-                                                                }
-                                                            } else if (_X(that).classBool('window_left_resize')) {
-                                                                if (x + limit < left + width && y - top > limit) {
-                                                                    p.css({
-                                                                        width: width + (xd - x),
-                                                                        height: height + (y - yd),
-                                                                        left: left + (x - xd)
-                                                                    });
-                                                                //X Axis
-                                                                } else if (x + limit >= left + width && y - top > limit) {
-                                                                    p.css({
-                                                                        height: height + (y - yd),
-                                                                    });                                                                    
-                                                                //Y Axis
-                                                                } else if (x + limit < left + width && y - top <= limit) {
-                                                                    p.css({
-                                                                        width: width + (xd - x),
-                                                                        left: left + (x - xd)
-                                                                    });                                                                    
-                                                                }
-                                                            }
-                                                        };
-                                                        var mouseup = function() {
-                                                            _X(window).off({mouseup: mouseup, mousemove: mousemove});
-                                                            _X(that).Xfind('i').css({color: ''});                                                            
-                                                        };
-                                                        _X(window).on({mousemove: mousemove, mouseup: mouseup});
+                                                        self.WindowResize(e, this);
                                                     } else {}
                                                 },
                                             });
@@ -3209,7 +3214,6 @@ _X(document).on({
         _X('iframe').css({'pointer-events': 'none'});
     },
     mouseup: function(e) {
-        _X('.remove_on_mouseup').Xremove();
         _X('body').classRemove('mousedown_true');
         _X('iframe').css({'pointer-events': 'auto'});
     },    
