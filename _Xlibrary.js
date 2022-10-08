@@ -1378,6 +1378,19 @@ var WIN = {
                             ResizeMoveToSide(FWidth(3), FHeight(2), FWidth(3), FHeight(5));
                         }
                         else {
+                            if (_X('.active_screen').classBool('mouse_on_screen')) {
+                            } else {
+                                store.left = MOUSE.XD;
+                                store.top = MOUSE.YD;
+                                _X(WIN.full[WIN.key].winElem).css({left: MOUSE.XD, top: MOUSE.YD});
+                                _X(WIN.full[WIN.key].winOverlay)
+                                    .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));                                
+                                _X(WIN.full[WIN.key].winElem)
+                                    .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));
+                                _X(WIN.full[WIN.key].winBar)
+                                    .appendTo(_X('.mouse_on_screen').Xfind('.container_bara_stare'));
+                                   
+                            }                             
                            _X(window).off({mouseup: mouseup});
                         }
                         _X('.window_resize_screen').Xremove();
@@ -1387,6 +1400,7 @@ var WIN = {
             };
             
             this.WindowResize = function(e, that) {
+                var x, y;
                 var xd = e.pageX;
                 var yd = e.pageY;  
                 _X(that).Xfind('i').css({color: 'red'});
@@ -1397,8 +1411,8 @@ var WIN = {
                 var height = p.css('height');
                 var limit = 100;
                 var mousemove = function(e) {
-                    var x = e.pageX;
-                    var y = e.pageY;
+                    x = e.pageX;
+                    y = e.pageY;
                     if (_X(that).classBool('window_right_resize')) {
                         if (x - left > limit && y - top > limit) {
                             p.css({
@@ -1579,7 +1593,7 @@ var WIN = {
                                                         self.WindowMoveToSide();
                                                     }
                                                     if (SETTINGS.drag.sel == 'true' && settings.windowType.drag === true && e.which === 1) {
-                                                        _X(this).parent().Draggable({dragArea: settings.dragArea});
+                                                        _X(this).parent().Draggable({dragArea: _X(WIN.globalDIV).Xfind(WIN.body)});
                                                     } else {}
                                                 }
                                             },
@@ -2850,8 +2864,8 @@ var WIN = {
                     var left = that.position('left', 'offset');
                     var top = that.position('top', 'offset');
                     var A = _X(settings.dragArea);
-                    var L = A.position('left','box');
-                    var T = A.position('top', 'box');
+                    var L = A.position('left','offset');
+                    var T = A.position('top', 'offset');
                     var W = A.position('width', 'offset');
                     var H = A.position('height', 'offset');
                     //console.log(left, top, A, L, T, W, H);
