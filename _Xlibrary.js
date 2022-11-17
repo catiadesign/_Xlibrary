@@ -1379,7 +1379,6 @@ var WIN = {
                         }
                         else {
                             if (_X('.active_screen').classBool('mouse_on_screen')) {
-                            } else {
                                 store.left = MOUSE.XD;
                                 store.top = MOUSE.YD;
                                 _X(WIN.full[WIN.key].winElem).css({left: MOUSE.XD, top: MOUSE.YD});
@@ -1388,9 +1387,8 @@ var WIN = {
                                 _X(WIN.full[WIN.key].winElem)
                                     .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));
                                 _X(WIN.full[WIN.key].winBar)
-                                    .appendTo(_X('.mouse_on_screen').Xfind('.container_bara_stare'));
-                                   
-                            }                             
+                                    .appendTo(_X('.mouse_on_screen').Xfind('.container_bara_stare'));                                
+                            } else {}                             
                            _X(window).off({mouseup: mouseup});
                         }
                         _X('.window_resize_screen').Xremove();
