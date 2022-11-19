@@ -1377,20 +1377,18 @@ var WIN = {
                         else if (e.pageX > (FWidth(7) * 3) && e.pageX < (FWidth() - FWidth(7) * 3) && e.pageY > (FHeight(7) * 3) && e.pageY < (FHeight() - FHeight(7) * 3)) {
                             ResizeMoveToSide(FWidth(3), FHeight(2), FWidth(3), FHeight(5));
                         }
-                        else {
-                            if (_X('.active_screen').classBool('mouse_on_screen')) {
-                                store.left = MOUSE.XD;
-                                store.top = MOUSE.YD;
-                                _X(WIN.full[WIN.key].winElem).css({left: MOUSE.XD, top: MOUSE.YD});
-                                _X(WIN.full[WIN.key].winOverlay)
-                                    .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));                                
-                                _X(WIN.full[WIN.key].winElem)
-                                    .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));
-                                _X(WIN.full[WIN.key].winBar)
-                                    .appendTo(_X('.mouse_on_screen').Xfind('.container_bara_stare'));                                
-                            } else {}                             
-                           _X(window).off({mouseup: mouseup});
-                        }
+                        else if (_X('.active_screen').classBool('mouse_on_screen') !== true) {
+                            store.left = MOUSE.XD;
+                            store.top = MOUSE.YD;
+                            _X(WIN.full[WIN.key].winElem).css({left: MOUSE.XD, top: MOUSE.YD});
+                            _X(WIN.full[WIN.key].winOverlay)
+                                .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));                                
+                            _X(WIN.full[WIN.key].winElem)
+                                .appendTo(_X('.mouse_on_screen').Xfind('.desktop_website'));
+                            _X(WIN.full[WIN.key].winBar)
+                                .appendTo(_X('.mouse_on_screen').Xfind('.container_bara_stare'));                            
+                        } else {}
+                        _X(window).off({mouseup: mouseup});
                         _X('.window_resize_screen').Xremove();
                     };
                     _X(window).on({mouseup: mouseup});
