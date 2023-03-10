@@ -589,6 +589,26 @@ var WIN = {
                 var c = _X('.container_mouse_move');
                 var x = MOUSE.X;
                 var y = MOUSE.Y;
+                /*
+                var relativeCoords = function( event ) {
+                    var bounds = event.target.getBoundingClientRect();
+                    var x = event.clientX - bounds.left;
+                    var y = event.clientY - bounds.top;
+                    return {x: x, y: y};
+                };
+                
+                var XLeft = function() {
+                    var l = _X('.active_screen').Xfind('.desktop_website').position('left', 'box');
+                    var r = _X('.active_screen').Xfind('.desktop_website').position('right', 'box');
+                    if (l === 0) {
+                        return MOUSE.XD;
+                    } else if (l > 0) {
+                        return MOUSE.XD - l;
+                    } else if (l < 0) {
+                        return MOUSE.XD - r;
+                    }
+                };
+                */
                 //Right Bottom
                 if (x > MOUSE.XD && y > MOUSE.YD) {
                     c.css({
