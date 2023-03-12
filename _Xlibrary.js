@@ -116,58 +116,55 @@ var WIN = {
             var elem;
             var i, j;
             var arr = [];
-            if (id !== undefined) {
-                if (window === this) {
-                    that = new _X();
-                    if (typeof id == 'string' && id.indexOf(',') < 0) {
-                        var repstr = id.replace(/[<.#]/g, '');
-                        //ID
-                        if (id.indexOf('#') > -1) {
-                            elem = document.getElementById(repstr);
-                            if (elem !== null) {
-                                that[0] = elem;
-                            }
-                        }
-                        //Clasa
-                        else if (id.indexOf('.') > -1) {
-                            elem = document.getElementsByClassName(repstr);
-                            for (i = 0; i < elem.length; i++) {
-                                that[i] = elem[i];
-                            }
-                        }
-                        //Tag
-                        else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
-                            elem = document.getElementsByTagName(id);
-                            for (i = 0; i < elem.length; i++) {
-                                that[i] = elem[i];
-                            }
-                        }
-                        //Create Element
-                        else if (id.indexOf('<') > -1) {
-                            elem = document.createElement(repstr);
+            if (window === this) {
+                that = new _X({});
+                if (id === undefined) {
+                }
+                else if (typeof id == 'string' && id.indexOf(',') < 0) {
+                    var repstr = id.replace(/[<.#]/g, '');
+                    //ID
+                    if (id.indexOf('#') > -1) {
+                        elem = document.getElementById(repstr);
+                        if (elem !== null) {
                             that[0] = elem;
                         }
                     }
-                    else if (typeof id == 'object') {
-                        if (id[0] === undefined || id === window || id === document) {
-                            that[0] = id;
-                        } else {
-                            that[0] = id[0];
-                        }
-                    }
-                    else if (id.indexOf(',') > -1) {
-                        elem = id.replace(/\s/g, '').split(',');
+                    //Clasa
+                    else if (id.indexOf('.') > -1) {
+                        elem = document.getElementsByClassName(repstr);
                         for (i = 0; i < elem.length; i++) {
-                            for (j = 0; j < _X(elem[i]).length; j++) {
-                                arr.push(_X(elem[i])[j]);
-                            }
+                            that[i] = elem[i];
                         }
-                        ArrayToObject(arr, that);
                     }
-                    that.length = GetObjectLength(that);
+                    //Tag
+                    else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
+                        elem = document.getElementsByTagName(id);
+                        for (i = 0; i < elem.length; i++) {
+                            that[i] = elem[i];
+                        }
+                    }
+                    //Create Element
+                    else if (id.indexOf('<') > -1) {
+                        elem = document.createElement(repstr);
+                        that[0] = elem;
+                    }
                 }
-            } else {
-                that = new _X({});
+                else if (typeof id == 'object') {
+                    if (id[0] === undefined || id === window || id === document) {
+                        that[0] = id;
+                    } else {
+                        that[0] = id[0];
+                    }
+                }
+                else if (id.indexOf(',') > -1) {
+                    elem = id.replace(/\s/g, '').split(',');
+                    for (i = 0; i < elem.length; i++) {
+                        for (j = 0; j < _X(elem[i]).length; j++) {
+                            arr.push(_X(elem[i])[j]);
+                        }
+                    }
+                    ArrayToObject(arr, that);
+                }
                 that.length = GetObjectLength(that);
             }
             return that;
