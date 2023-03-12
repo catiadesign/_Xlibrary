@@ -122,31 +122,31 @@ var WIN = {
                 }
                 else if (typeof id == 'string' && id.indexOf(',') < 0) {
                     var repstr = id.replace(/[<.#]/g, '');
-                    //ID
-                    if (id.indexOf('#') > -1) {
+                    //Create Element
+                    if (id.indexOf('<') > -1) {
+                        elem = document.createElement(repstr);
+                        that[0] = elem;
+                    }                    
+                    //ID search
+                    else if (id.indexOf('#') > -1) {
                         elem = document.getElementById(repstr);
                         if (elem !== null) {
                             that[0] = elem;
                         }
                     }
-                    //Clasa
+                    //Class search
                     else if (id.indexOf('.') > -1) {
                         elem = document.getElementsByClassName(repstr);
                         for (i = 0; i < elem.length; i++) {
                             that[i] = elem[i];
                         }
                     }
-                    //Tag
-                    else if (id.indexOf('.') < 0 && id.indexOf('#') < 0 && id.indexOf('<') < 0) {
+                    //Tag search
+                    else {
                         elem = document.getElementsByTagName(id);
                         for (i = 0; i < elem.length; i++) {
                             that[i] = elem[i];
                         }
-                    }
-                    //Create Element
-                    else if (id.indexOf('<') > -1) {
-                        elem = document.createElement(repstr);
-                        that[0] = elem;
                     }
                 }
                 else if (typeof id == 'object') {
